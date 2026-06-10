@@ -16,6 +16,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const nextPath = params?.next ?? "/portal";
   const hasCodeError = params?.error === "1";
   const hasAuthError = params?.auth_error === "1";
+  const isAccessGateAvailable = Boolean(process.env.ACCESS_GATE_PASSWORD) || process.env.NODE_ENV !== "production";
 
   return (
     <section className="grid min-h-[calc(100vh-4rem)] place-items-center py-10">
@@ -117,12 +118,20 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </label>
 
             <button
-              className="mt-4 flex w-full items-center justify-center gap-2 border-2 border-ink bg-white px-4 py-3 text-sm font-black uppercase text-ink hover:bg-acid"
+              className="mt-4 flex w-full items-center justify-center gap-2 border-2 border-ink bg-white px-4 py-3 text-sm font-black uppercase text-ink hover:bg-acid disabled:cursor-not-allowed disabled:border-line disabled:bg-stone-300 disabled:text-stone-600"
               type="submit"
+              disabled={!isAccessGateAvailable}
             >
               Entrer avec le code
               <ShieldCheck className="h-4 w-4" />
             </button>
+
+            {!isAccessGateAvailable ? (
+              <p className="mt-3 text-xs font-bold leading-5 text-stone-500">
+                Code temporaire desactive en production. Ajoutez ACCESS_GATE_PASSWORD dans Vercel ou activez Supabase
+                Auth.
+              </p>
+            ) : null}
           </form>
 
           <p className="text-xs font-bold leading-5 text-stone-500">

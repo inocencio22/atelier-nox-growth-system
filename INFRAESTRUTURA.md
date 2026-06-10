@@ -13,6 +13,16 @@ Ter o sistema acessivel online, com dados reais, contas separadas por cliente e 
 - Dominio: `ateliernox.ch` ou `joaopedro.chat`.
 - Variaveis de ambiente: credenciais publicas do Supabase e URL publica do site.
 
+## Deploy atual
+
+O webapp ja esta publicado na Vercel:
+
+```text
+https://atelier-nox-growth-system.vercel.app
+```
+
+Este link serve para validacao interna, demos e revisao do produto. Antes de enviar para clientes reais, configurar as variaveis de ambiente de producao e o dominio final.
+
 ## Variaveis obrigatorias
 
 ```bash
@@ -79,3 +89,5 @@ A pagina `/infra` mostra quais variaveis estao configuradas e qual etapa ainda f
 ## Observacao importante
 
 O access gate por codigo e apenas fallback de MVP. Para cliente real, usar Supabase Auth com usuario, senha e roles.
+
+Em producao, o app nao aceita senha padrao. Se `ACCESS_GATE_PASSWORD` nao estiver configurado na Vercel, o acesso por codigo temporario fica desativado.

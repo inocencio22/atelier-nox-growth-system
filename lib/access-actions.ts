@@ -9,14 +9,26 @@ const ACCESS_COOKIE = "nox_access";
 const ACCESS_VALUE = "granted";
 
 function getAccessPassword() {
-  return process.env.ACCESS_GATE_PASSWORD || "atelier-nox";
+  const configuredPassword = process.env.ACCESS_GATE_PASSWORD?.trim();
+
+  if (configuredPassword) {
+    return configuredPassword;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return null;
+  }
+
+  return "atelier-nox";
 }
 
 export async function loginWithAccessCode(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const nextPath = String(formData.get("next") ?? "/portal");
 
-  if (password !== getAccessPassword()) {
+  const accessPassword = getAccessPassword();
+
+  if (!accessPassword || password !== accessPassword) {
     redirect(`/login?error=1&next=${encodeURIComponent(nextPath)}`);
   }
 
