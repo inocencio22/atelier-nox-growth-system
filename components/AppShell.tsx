@@ -1,0 +1,75 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
+import { BrandMark } from "@/components/BrandMark";
+import { logoutAccess } from "@/lib/access-actions";
+import { adminNavItems, clientNavItems, publicNavItems, type NavMode } from "@/lib/navigation";
+
+type AppShellProps = {
+  children: React.ReactNode;
+  navMode: NavMode;
+  shellLabel: string;
+  shellTitle: string;
+  showLogout: boolean;
+};
+
+export function AppShell({ children, navMode, shellLabel, shellTitle, showLogout }: AppShellProps) {
+  const pathname = usePathname();
+  const navItems = navMode === "client" ? clientNavItems : navMode === "admin" ? adminNavItems : publicNavItems;
+
+  return (
+    <div className="nox-grid min-h-screen">
+      <aside className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-ink bg-white/95 px-2 py-2 backdrop-blur md:inset-y-0 md:left-0 md:right-auto md:w-64 md:border-r-2 md:border-t-0 md:px-4 md:py-5">
+        <div className="hidden md:block">
+          <div className="flex items-start gap-3">
+            <BrandMark compact />
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-blue">{shellLabel}</p>
+              <h2 className="mt-1 max-w-36 text-2xl font-black uppercase leading-[0.9] text-ink">{shellTitle}</h2>
+            </div>
+          </div>
+        </div>
+
+        <nav className="grid grid-cols-4 gap-1 md:mt-8 md:flex md:flex-col md:gap-2">
+          {navItems.map((item) => {
+            const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={clsx(
+                  "flex min-h-12 flex-col items-center justify-center gap-1 border border-transparent px-2 py-2 text-[10px] font-black uppercase tracking-[0.03em] transition md:min-h-0 md:flex-row md:justify-start md:gap-3 md:px-3 md:text-xs",
+                  active
+                    ? "border-ink bg-ink text-white"
+                    : "text-stone-600 hover:border-ink hover:bg-acid hover:text-ink"
+                )}
+              >
+                <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                <span className="truncate">{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {showLogout ? (
+          <form action={logoutAccess} className="mt-4 hidden md:block">
+            <button
+              className="w-full border border-line bg-paper px-3 py-2 text-left text-[11px] font-black uppercase text-stone-500 hover:border-ink hover:bg-white hover:text-ink"
+              type="submit"
+            >
+              Verrouiller l&apos;acces
+            </button>
+          </form>
+        ) : null}
+      </aside>
+
+      <main className="mx-auto max-w-7xl px-4 pb-28 pt-5 sm:px-6 md:ml-64 md:px-8 md:pb-10 md:pt-8">
+        {children}
+      </main>
+    </div>
+  );
+}
