@@ -1,6 +1,17 @@
-import { CheckCircle2, CircleAlert, Cloud, Database, ExternalLink, KeyRound, ShieldCheck } from "lucide-react";
+import {
+  CheckCircle2,
+  CircleAlert,
+  Cloud,
+  Database,
+  ExternalLink,
+  FileCode2,
+  GitBranch,
+  KeyRound,
+  ShieldCheck,
+  TerminalSquare
+} from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
-import { getInfraCompletion, getInfraStatus } from "@/lib/infra-status";
+import { getDeployStatus, getInfraCompletion, getInfraStatus } from "@/lib/infra-status";
 
 const migrationFiles = [
   "001_create_contacts.sql",
@@ -15,19 +26,19 @@ const migrationFiles = [
 const productionSteps = [
   {
     title: "Creer projet Supabase",
-    detail: "Choisir region europeenne, activer Auth email/password et garder Project URL + anon key."
+    detail: "Choisir region europeenne, activer Auth email/password et copier Project URL + anon key."
   },
   {
-    title: "Executer migrations",
-    detail: "Coller les fichiers SQL dans l'ordre dans Supabase SQL Editor."
+    title: "Executer production.sql",
+    detail: "Coller supabase/production.sql dans Supabase SQL Editor pour creer tables, RLS, profiles et roles."
   },
   {
     title: "Creer utilisateur admin",
-    detail: "Creer le compte de Joao dans Authentication puis mettre role = admin dans public.profiles."
+    detail: "Creer le compte de Joao dans Authentication puis executer supabase/admin-bootstrap.sql."
   },
   {
     title: "Configurer Vercel",
-    detail: "Importer le repo, ajouter variables d'environnement, deployer en production."
+    detail: "Ajouter NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY dans Production, Preview et Development."
   },
   {
     title: "Connecter domaine",
@@ -39,9 +50,40 @@ const productionSteps = [
   }
 ];
 
+const quickLinks = [
+  {
+    label: "GitHub",
+    href: "https://github.com/inocencio22/atelier-nox-growth-system",
+    detail: "Code source, branches main/develop et historique."
+  },
+  {
+    label: "Vercel",
+    href: "https://vercel.com/atelier-nox-ch/atelier-nox-growth-system",
+    detail: "Deploys, domaines, variables et previews."
+  },
+  {
+    label: "Supabase",
+    href: "https://supabase.com/dashboard/projects",
+    detail: "Projet, Auth, SQL Editor et API keys."
+  },
+  {
+    label: "Webapp",
+    href: "https://atelier-nox-growth-system.vercel.app",
+    detail: "Production publique."
+  }
+];
+
+const setupCommands = [
+  "npm run supabase:bundle",
+  "git checkout develop",
+  "git push origin develop",
+  "npx vercel --prod"
+];
+
 export default function InfraPage() {
   const status = getInfraStatus();
   const completion = getInfraCompletion();
+  const deployStatus = getDeployStatus();
 
   return (
     <>
@@ -56,6 +98,40 @@ export default function InfraPage() {
         <Metric label="Supabase" value={status[0].configured && status[1].configured ? "Pret" : "A config"} detail="Auth + data" />
         <Metric label="Vercel" value={process.env.VERCEL ? "Detecte" : "Local"} detail="Hosting Next.js" />
         <Metric label="Production" value={completion.isProductionReady ? "OK" : "En cours"} detail="Avant vente client" />
+      </section>
+
+      <section className="mb-6 grid gap-6 xl:grid-cols-[1fr_1.15fr]">
+        <article className="border-2 border-ink bg-white p-5 shadow-soft">
+          <GitBranch className="h-8 w-8 text-blue" />
+          <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Depot & deploy</h2>
+          <div className="mt-5 grid gap-3">
+            {deployStatus.map((item) => (
+              <DeployRow key={item.label} item={item} />
+            ))}
+          </div>
+        </article>
+
+        <article className="border-2 border-ink bg-paper p-5 shadow-soft">
+          <TerminalSquare className="h-8 w-8 text-green" />
+          <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Raccourcis operationnels</h2>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {quickLinks.map((link) => (
+              <a
+                key={link.href}
+                className="group border-2 border-ink bg-white p-4 transition hover:bg-acid"
+                href={link.href}
+                rel="noreferrer"
+                target="_blank"
+              >
+                <span className="flex items-center justify-between gap-3 text-sm font-black uppercase text-ink">
+                  {link.label}
+                  <ExternalLink className="h-4 w-4 text-blue transition group-hover:text-ink" />
+                </span>
+                <span className="mt-2 block text-sm font-semibold leading-5 text-stone-600">{link.detail}</span>
+              </a>
+            ))}
+          </div>
+        </article>
       </section>
 
       <section className="mb-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
@@ -82,7 +158,19 @@ export default function InfraPage() {
       <section className="mb-6 grid gap-6 xl:grid-cols-2">
         <article className="border-2 border-ink bg-white p-5 shadow-soft">
           <KeyRound className="h-8 w-8 text-blue" />
-          <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Migrations Supabase</h2>
+          <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Supabase SQL</h2>
+          <div className="mt-5 border-2 border-ink bg-acid p-4">
+            <div className="flex items-start gap-3">
+              <FileCode2 className="mt-1 h-5 w-5 shrink-0 text-ink" />
+              <div>
+                <p className="text-sm font-black uppercase leading-5 text-ink">Fichier recommande</p>
+                <p className="mt-1 text-sm font-semibold leading-5 text-ink">
+                  Utiliser `supabase/production.sql` pour la premiere installation. Les migrations restent listees pour
+                  audit et maintenance.
+                </p>
+              </div>
+            </div>
+          </div>
           <div className="mt-5 grid gap-2">
             {migrationFiles.map((file, index) => (
               <div key={file} className="flex items-center justify-between gap-3 border-2 border-line bg-paper p-3">
@@ -108,6 +196,18 @@ export default function InfraPage() {
         </article>
       </section>
 
+      <section className="mb-6 border-2 border-ink bg-white p-5 shadow-soft">
+        <TerminalSquare className="h-8 w-8 text-blue" />
+        <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Commandes utiles</h2>
+        <div className="mt-5 grid gap-3 md:grid-cols-2">
+          {setupCommands.map((command) => (
+            <code key={command} className="block border-2 border-line bg-ink p-3 text-sm font-bold text-white">
+              {command}
+            </code>
+          ))}
+        </div>
+      </section>
+
       <section className="border-2 border-ink bg-white p-5 shadow-soft">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -126,6 +226,23 @@ export default function InfraPage() {
         </div>
       </section>
     </>
+  );
+}
+
+function DeployRow({ item }: { item: ReturnType<typeof getDeployStatus>[number] }) {
+  return (
+    <div className="flex items-start gap-3 border-2 border-line bg-paper p-3">
+      {item.configured ? (
+        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green" />
+      ) : (
+        <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-coral" />
+      )}
+      <div>
+        <p className="text-xs font-black uppercase tracking-[0.12em] text-blue">{item.label}</p>
+        <p className="mt-1 break-words text-sm font-black uppercase leading-5 text-ink">{item.value}</p>
+        <p className="mt-1 text-sm font-semibold leading-5 text-stone-600">{item.detail}</p>
+      </div>
+    </div>
   );
 }
 
