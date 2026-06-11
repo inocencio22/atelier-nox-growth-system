@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "supabase:bundle": "node scripts/build-supabase-sql.mjs"
   },
   "dependencies": {
     "@next/eslint-plugin-next": "16.2.7",

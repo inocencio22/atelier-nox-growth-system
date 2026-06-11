@@ -34,6 +34,18 @@ npm run build
 
 O CRM de contatos já está preparado para Supabase, mas continua funcionando em modo demo quando as variáveis não existem.
 
+Guia operacional completo:
+
+```text
+supabase/README.md
+```
+
+Para gerar um SQL único com todas as migrations:
+
+```bash
+npm run supabase:bundle
+```
+
 1. Crie um projeto no Supabase.
 2. Copie `.env.example` para `.env.local`.
 3. Preencha:
