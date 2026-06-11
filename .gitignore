@@ -6,3 +6,5 @@ dist/
 *.log
 
 .vercel
+.supabase-db-password.local
+supabase/.temp/

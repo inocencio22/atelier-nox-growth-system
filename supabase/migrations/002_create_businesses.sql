@@ -41,6 +41,12 @@ values (
 on conflict (id) do nothing;
 
 alter table public.contacts
+  alter column business_id drop default;
+
+drop policy if exists "Public demo read contacts" on public.contacts;
+drop policy if exists "Public demo insert contacts" on public.contacts;
+
+alter table public.contacts
   alter column business_id type uuid using
     case
       when business_id = 'atelier-nox-demo' then '00000000-0000-0000-0000-000000000001'::uuid
