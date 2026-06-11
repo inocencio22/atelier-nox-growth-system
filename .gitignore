@@ -8,4 +8,5 @@ dist/
 .vercel
 .supabase-db-password.local
 .supabase-admin.local
+.supabase-client-test.local
 supabase/.temp/
