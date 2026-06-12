@@ -9,7 +9,7 @@ type DiagnosticLandingProps = {
   }>;
 };
 
-const signals = ["Réseaux sociaux", "Avis Google", "Messages", "Contacts", "Réservation"];
+const signals = ["Réseaux sociaux", "Avis Google", "Messages", "Contacts", "Réservations"];
 
 const deliverables = [
   ["01", "Lecture locale", "Une première lecture claire de votre présence locale."],
@@ -115,7 +115,7 @@ export default async function DiagnosticGratuitPage({ searchParams }: Diagnostic
           ) : null}
 
           <div className="mt-5 grid gap-3">
-            <Field label="Nom du business" name="businessName" placeholder="Votre commerce" required />
+            <Field label="Nom de votre activité" name="businessName" placeholder="Votre commerce" required />
             <Field label="Email" name="ownerEmail" placeholder="contact@business.ch" type="email" required />
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Ville" name="city" placeholder="Lausanne" defaultValue="Lausanne" />
@@ -132,7 +132,7 @@ export default async function DiagnosticGratuitPage({ searchParams }: Diagnostic
               >
                 <option value="rendez_vous">Plus de rendez-vous</option>
                 <option value="instagram">Réseaux sociaux qui inspirent confiance</option>
-                <option value="relancer_contacts">Relancer anciens clients</option>
+                <option value="relancer_contacts">Réactiver d’anciens clients</option>
                 <option value="avis_google">Plus d&apos;avis Google</option>
                 <option value="plus_clients">Plus de clients</option>
               </select>

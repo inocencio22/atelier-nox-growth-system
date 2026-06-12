@@ -13,9 +13,10 @@ type LoginPageProps = {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
-  const nextPath = params?.next ?? "/portal";
+  const nextPath = params?.next ?? "";
   const hasCodeError = params?.error === "1";
   const hasAuthError = params?.auth_error === "1";
+  const showAccessGate = process.env.NEXT_PUBLIC_SHOW_ACCESS_GATE === "true";
   const isAccessGateAvailable = Boolean(process.env.ACCESS_GATE_PASSWORD) || process.env.NODE_ENV !== "production";
 
   return (
@@ -49,7 +50,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
           ) : null}
 
-          {hasCodeError ? (
+          {showAccessGate && hasCodeError ? (
             <div className="border-2 border-ink bg-coral p-3 text-sm font-black uppercase text-ink">
               Code incorrect. Vérifiez le mot de passe d&apos;accès.
             </div>
@@ -101,43 +102,47 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             ) : null}
           </form>
 
-          <form action={loginWithAccessCode} className="border-2 border-line bg-white p-4">
-            <input name="next" type="hidden" value={nextPath} />
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-stone-500">Accès MVP temporaire</p>
+          {showAccessGate ? (
+            <>
+              <form action={loginWithAccessCode} className="border-2 border-line bg-white p-4">
+                <input name="next" type="hidden" value={nextPath} />
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-stone-500">Accès MVP temporaire</p>
 
-            <label className="mt-4 grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
-              Code d&apos;accès
-              <input
-                autoComplete="current-password"
-                className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
-                name="password"
-                placeholder="Code privé"
-                type="password"
-                required
-              />
-            </label>
+                <label className="mt-4 grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
+                  Code d&apos;accès
+                  <input
+                    autoComplete="current-password"
+                    className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
+                    name="password"
+                    placeholder="Code privé"
+                    type="password"
+                    required
+                  />
+                </label>
 
-            <button
-              className="mt-4 flex w-full items-center justify-center gap-2 border-2 border-ink bg-white px-4 py-3 text-sm font-black uppercase text-ink hover:bg-acid disabled:cursor-not-allowed disabled:border-line disabled:bg-stone-300 disabled:text-stone-600"
-              type="submit"
-              disabled={!isAccessGateAvailable}
-            >
-              Entrer avec le code
-              <ShieldCheck className="h-4 w-4" />
-            </button>
+                <button
+                  className="mt-4 flex w-full items-center justify-center gap-2 border-2 border-ink bg-white px-4 py-3 text-sm font-black uppercase text-ink hover:bg-acid disabled:cursor-not-allowed disabled:border-line disabled:bg-stone-300 disabled:text-stone-600"
+                  type="submit"
+                  disabled={!isAccessGateAvailable}
+                >
+                  Entrer avec le code
+                  <ShieldCheck className="h-4 w-4" />
+                </button>
 
-            {!isAccessGateAvailable ? (
-              <p className="mt-3 text-xs font-bold leading-5 text-stone-500">
-                Code temporaire desactive en production. Ajoutez ACCESS_GATE_PASSWORD dans Vercel ou activez Supabase
-                Auth.
+                {!isAccessGateAvailable ? (
+                  <p className="mt-3 text-xs font-bold leading-5 text-stone-500">
+                    Code temporaire désactivé en production. Activez Supabase Auth ou configurez l&apos;accès temporaire
+                    côté serveur.
+                  </p>
+                ) : null}
+              </form>
+
+              <p className="text-xs font-bold leading-5 text-stone-500">
+                Version opérationnelle: Supabase Auth sépare les comptes admin et client. Le code reste seulement pour
+                tester le MVP localement.
               </p>
-            ) : null}
-          </form>
-
-          <p className="text-xs font-bold leading-5 text-stone-500">
-            Version opérationnelle: Supabase Auth sépare les comptes admin et client. Le code reste seulement pour
-            tester le MVP localement.
-          </p>
+            </>
+          ) : null}
         </div>
       </div>
     </section>

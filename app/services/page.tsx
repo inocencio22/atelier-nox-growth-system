@@ -108,7 +108,7 @@ export default function ServicesPage() {
               href="/diagnostic-gratuit"
               className="inline-flex items-center gap-2 border border-[#12382F] bg-[#E85D2A] px-4 py-3 text-sm font-black uppercase text-white"
             >
-              1er RDV offert
+              Diagnostic offert
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link

@@ -51,12 +51,20 @@ export function AppShell({ children, navMode, shellLabel, shellTitle, showLogout
               })}
             </nav>
 
-            <Link
-              href="/diagnostic-gratuit"
-              className="hidden border border-[#12382F] bg-[#E85D2A] px-4 py-3 text-xs font-black uppercase text-white shadow-[4px_4px_0_#12382F] transition hover:-translate-y-0.5 sm:inline-flex"
-            >
-              1er RDV offert
-            </Link>
+            <div className="hidden items-center gap-3 sm:flex">
+              <Link
+                href="/login"
+                className="border border-[#12382F]/30 px-4 py-3 text-xs font-black uppercase text-[#12382F] transition hover:border-[#12382F] hover:bg-white"
+              >
+                Espace client
+              </Link>
+              <Link
+                href="/diagnostic-gratuit"
+                className="border border-[#12382F] bg-[#E85D2A] px-4 py-3 text-xs font-black uppercase text-white shadow-[4px_4px_0_#12382F] transition hover:-translate-y-0.5"
+              >
+                Diagnostic offert
+              </Link>
+            </div>
           </div>
 
           <nav className="flex gap-2 overflow-x-auto border-t border-[#12382F]/10 px-4 py-2 lg:hidden">
@@ -76,6 +84,18 @@ export function AppShell({ children, navMode, shellLabel, shellTitle, showLogout
                 </Link>
               );
             })}
+            <Link
+              href="/login"
+              className="shrink-0 border border-[#12382F]/20 px-3 py-2 text-[11px] font-black uppercase text-[#12382F]"
+            >
+              Espace client
+            </Link>
+            <Link
+              href="/diagnostic-gratuit"
+              className="shrink-0 border border-[#12382F] bg-[#E85D2A] px-3 py-2 text-[11px] font-black uppercase text-white"
+            >
+              Diagnostic offert
+            </Link>
           </nav>
         </header>
 
@@ -126,7 +146,7 @@ export function AppShell({ children, navMode, shellLabel, shellTitle, showLogout
               className="w-full border border-line bg-paper px-3 py-2 text-left text-[11px] font-black uppercase text-stone-500 hover:border-ink hover:bg-white hover:text-ink"
               type="submit"
             >
-              Verrouiller l&apos;acces
+              Verrouiller l&apos;accès
             </button>
           </form>
         ) : null}
