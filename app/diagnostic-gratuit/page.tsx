@@ -98,7 +98,13 @@ export default async function DiagnosticGratuitPage({ searchParams }: Diagnostic
 
           {status === "ok" ? (
             <div className="mt-5 border border-[#F5F1E8] bg-[#F5F1E8] p-3 text-sm font-black uppercase text-[#12382F]">
-              Demande reçue. Atelier Nox peut préparer votre première lecture.
+              Votre demande a bien été envoyée. Nous vous répondrons sous 24–48h ouvrables.
+            </div>
+          ) : null}
+
+          {status === "error" ? (
+            <div className="mt-5 border border-[#F5F1E8] bg-[#E85D2A] p-3 text-sm font-black uppercase text-white">
+              Nous n’avons pas pu enregistrer votre demande. Veuillez réessayer ou nous contacter directement.
             </div>
           ) : null}
 

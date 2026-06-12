@@ -1,4 +1,4 @@
-import { getSupabaseClient } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/supabase.types";
 
 export type OnboardingStatus = Database["public"]["Tables"]["onboarding_submissions"]["Row"]["status"];
@@ -22,7 +22,10 @@ export type OnboardingSubmission = {
 type OnboardingRow = Database["public"]["Tables"]["onboarding_submissions"]["Row"];
 type OnboardingQueryClient = {
   select: (columns: string) => {
-    order: (column: string, options: { ascending: boolean }) => Promise<{ data: OnboardingRow[] | null; error: unknown }>;
+    order: (
+      column: string,
+      options: { ascending: boolean }
+    ) => Promise<{ data: OnboardingRow[] | null; error: unknown }>;
   };
 };
 
@@ -63,7 +66,7 @@ export async function getOnboardingSubmissions(): Promise<{
   submissions: OnboardingSubmission[];
   source: "mock" | "supabase";
 }> {
-  const supabase = getSupabaseClient();
+  const supabase = await createSupabaseServerClient();
 
   if (!supabase) {
     return { submissions: demoSubmissions, source: "mock" };
@@ -124,8 +127,12 @@ export function generateSubmissionDiagnostic(submission: OnboardingSubmission) {
     summary: `${submission.businessName} a une opportunité claire: ${objective}. La priorité est de transformer la visibilité existante en actions simples, mesurables et répétables.`,
     strengths: [
       `${submission.city} donne un contexte local précis pour cibler la clientèle proche.`,
-      hasInstagram ? "Instagram peut devenir un canal de conversation commerciale." : "Le diagnostic peut définir une présence Instagram minimale et crédible.",
-      hasWebsite ? "Le site web peut soutenir la prise de rendez-vous." : "Une page simple peut clarifier l'offre et rassurer avant le contact."
+      hasInstagram
+        ? "Instagram peut devenir un canal de conversation commerciale."
+        : "Le diagnostic peut définir une présence Instagram minimale et crédible.",
+      hasWebsite
+        ? "Le site web peut soutenir la prise de rendez-vous."
+        : "Une page simple peut clarifier l'offre et rassurer avant le contact."
     ],
     risks: [
       "Les demandes peuvent rester dispersées entre Instagram, téléphone et messages.",

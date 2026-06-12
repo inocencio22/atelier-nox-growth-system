@@ -12,8 +12,12 @@ type OnboardingUpdate = Database["public"]["Tables"]["onboarding_submissions"]["
 type DiagnosticInsert = Database["public"]["Tables"]["diagnostics"]["Insert"];
 type ProposalInsert = Database["public"]["Tables"]["proposals"]["Insert"];
 type BusinessInsert = Database["public"]["Tables"]["businesses"]["Insert"];
+type SupabaseWriteError = {
+  code?: string;
+  message?: string;
+};
 type OnboardingInsertClient = {
-  insert: (value: OnboardingInsert) => Promise<unknown>;
+  insert: (value: OnboardingInsert) => Promise<{ error: SupabaseWriteError | null }>;
 };
 type OnboardingUpdateClient = {
   update: (value: OnboardingUpdate) => {
@@ -74,8 +78,31 @@ export async function createOnboardingSubmission(formData: FormData) {
 
   const supabase = getSupabaseClient();
 
-  if (supabase && isSupabaseConfigured) {
-    await (supabase.from("onboarding_submissions") as unknown as OnboardingInsertClient).insert(submission);
+  if (!supabase || !isSupabaseConfigured) {
+    console.error("[onboarding] Supabase client is not configured; submission was not saved.");
+    redirect(`${safeReturnPath}?status=error`);
+  }
+
+  let insertError: SupabaseWriteError | null = null;
+
+  try {
+    const result = await (supabase.from("onboarding_submissions") as unknown as OnboardingInsertClient).insert(
+      submission
+    );
+    insertError = result.error;
+  } catch (error) {
+    console.error("[onboarding] Unexpected submission failure.", {
+      name: error instanceof Error ? error.name : "unknown"
+    });
+    redirect(`${safeReturnPath}?status=error`);
+  }
+
+  if (insertError) {
+    console.error("[onboarding] Failed to create submission.", {
+      code: insertError.code ?? "unknown",
+      message: insertError.message ?? "Supabase insert failed"
+    });
+    redirect(`${safeReturnPath}?status=error`);
   }
 
   redirect(`${safeReturnPath}?status=ok`);
