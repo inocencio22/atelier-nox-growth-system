@@ -263,7 +263,7 @@ export const subscriptionPlans = [
   {
     name: "Local Clarity",
     price: "CHF 190",
-    rhythm: "/ mois",
+    rhythm: "/mois",
     description: "Pour les petits business qui veulent une direction claire sans apprendre le marketing ou l'IA.",
     features: [
       "Diagnostic mensuel de visibilité",
@@ -276,7 +276,7 @@ export const subscriptionPlans = [
   {
     name: "Managed Growth",
     price: "CHF 390",
-    rhythm: "/ mois",
+    rhythm: "/mois",
     description: "Le plan principal: Atelier Nox prépare les actions, les relances et le suivi commercial.",
     features: [
       "Tout Local Clarity",
@@ -290,8 +290,9 @@ export const subscriptionPlans = [
   {
     name: "Done For You Local",
     price: "CHF 690",
-    rhythm: "/ mois",
-    description: "Pour les entrepreneurs qui veulent déléguer la croissance locale avec un accompagnement plus complet.",
+    rhythm: "/mois",
+    description:
+      "Pour les entrepreneurs qui veulent déléguer la croissance locale avec un accompagnement plus complet.",
     features: [
       "Tout Managed Growth",
       "Optimisation Google Business",

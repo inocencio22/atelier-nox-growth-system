@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint .",
-    "format:check": "prettier --check AGENTS.md SECURITY_CHECKLIST.md package.json .prettierrc .github/dependabot.yml playwright.config.ts \"tests/e2e/**/*.ts\" next.config.ts app/layout.tsx lib/form-schemas.ts lib/onboarding-actions.ts lib/contact-actions.ts lib/commercial-action-actions.ts lib/content-item-actions.ts lib/contacts.ts",
-    "format:write": "prettier --write AGENTS.md SECURITY_CHECKLIST.md package.json .prettierrc .github/dependabot.yml playwright.config.ts \"tests/e2e/**/*.ts\" next.config.ts app/layout.tsx lib/form-schemas.ts lib/onboarding-actions.ts lib/contact-actions.ts lib/commercial-action-actions.ts lib/content-item-actions.ts lib/contacts.ts",
+    "format:check": "prettier --check AGENTS.md SECURITY_CHECKLIST.md package.json .prettierrc .github/dependabot.yml playwright.config.ts \"tests/e2e/**/*.ts\" next.config.ts app/layout.tsx app/globals.css app/page.tsx app/services/page.tsx app/abonnement/page.tsx app/diagnostic-gratuit/page.tsx components/AppShell.tsx components/BrandMark.tsx components/PlanCard.tsx lib/data.ts lib/navigation.ts lib/form-schemas.ts lib/onboarding-actions.ts lib/contact-actions.ts lib/commercial-action-actions.ts lib/content-item-actions.ts lib/contacts.ts",
+    "format:write": "prettier --write AGENTS.md SECURITY_CHECKLIST.md package.json .prettierrc .github/dependabot.yml playwright.config.ts \"tests/e2e/**/*.ts\" next.config.ts app/layout.tsx app/globals.css app/page.tsx app/services/page.tsx app/abonnement/page.tsx app/diagnostic-gratuit/page.tsx components/AppShell.tsx components/BrandMark.tsx components/PlanCard.tsx lib/data.ts lib/navigation.ts lib/form-schemas.ts lib/onboarding-actions.ts lib/contact-actions.ts lib/commercial-action-actions.ts lib/content-item-actions.ts lib/contacts.ts",
     "supabase:bundle": "node scripts/build-supabase-sql.mjs",
     "supabase:types": "supabase gen types typescript --project-id pxjoymdnsojwggoinkta > lib/supabase.types.ts",
     "test:e2e": "playwright test"

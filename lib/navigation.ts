@@ -28,11 +28,11 @@ export type NavItem = {
 export type NavMode = "public" | "client" | "admin";
 
 export const publicNavItems: NavItem[] = [
-  { href: "/", label: "Accueil", icon: Home },
+  { href: "/", label: "Notre approche", icon: Home },
   { href: "/services", label: "Services", icon: Layers3 },
-  { href: "/diagnostic-gratuit", label: "Diagnostic", icon: Rocket },
-  { href: "/abonnement", label: "Abonnement", icon: CreditCard },
-  { href: "/login", label: "Connexion", icon: LogIn }
+  { href: "/#experience", label: "Notre expérience", icon: Rocket },
+  { href: "/abonnement", label: "Tarifs", icon: CreditCard },
+  { href: "/#apropos", label: "À propos", icon: LogIn }
 ];
 
 export const clientNavItems: NavItem[] = [

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("public home loads Atelier Nox promise", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /plus de clarte/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /nous pilotons votre croissance locale/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /diagnostic/i }).first()).toBeVisible();
 });
 
@@ -15,7 +15,7 @@ test("login page loads account and temporary access forms", async ({ page }) => 
 
 test("diagnostic gratuit page loads lead capture form", async ({ page }) => {
   await page.goto("/diagnostic-gratuit");
-  await expect(page.getByRole("heading", { name: /vos signaux digitaux/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /parlons de votre commerce/i })).toBeVisible();
   await expect(page.getByLabel(/nom du business/i)).toBeVisible();
   await expect(page.getByRole("button", { name: /demander le diagnostic/i })).toBeVisible();
 });

@@ -1,11 +1,9 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  Bot,
   Camera,
   CheckCircle2,
   ClipboardList,
-  Globe2,
   MapPinned,
   MessageSquareText,
   Search,
@@ -15,69 +13,69 @@ import { PageHeader } from "@/components/PageHeader";
 
 const services = [
   {
-    title: "Diagnostic local IA",
-    icon: Search,
-    detail: "Analyse claire de votre visibilite: site, Google, reseaux sociaux, avis, offre et parcours client."
+    title: "Visibilité locale",
+    detail:
+      "Google, site, réseaux sociaux et points de contact sont observés pour comprendre ce qui aide vraiment votre commerce."
   },
   {
-    title: "Google Business",
-    icon: MapPinned,
-    detail: "Optimisation locale, posts, services, photos, FAQ et avis pour inspirer confiance."
+    title: "Relances utiles",
+    detail:
+      "Nous préparons des messages simples pour anciens clients, demandes de prix, avis Google et conversations à reprendre."
   },
   {
-    title: "Reseaux sociaux",
-    icon: Globe2,
-    detail: "Contenus utiles orientes rendez-vous, pas seulement des publications decoratives."
+    title: "Contenus humains",
+    detail:
+      "Nous structurons les sujets, les angles photo/vidéo et les publications qui renforcent la confiance locale."
   },
   {
-    title: "Relances clients",
-    icon: MessageSquareText,
-    detail: "Messages prets pour recontacter les clients dormants, demandes de prix et avis Google."
+    title: "Réputation & avis",
+    detail: "Nous aidons à demander, organiser et répondre aux avis avec un ton professionnel, local et fiable."
   },
   {
-    title: "Photo & video locale",
-    icon: Camera,
-    detail: "Briefs et production legere pour donner une presence plus premium et plus humaine."
+    title: "Suivi régulier",
+    detail: "Chaque semaine, vous voyez les actions préparées, les validations nécessaires et les prochaines priorités."
   },
   {
-    title: "Automatisation & IA",
-    icon: Bot,
-    detail: "IA utilisee avec precision pour preparer, organiser et mesurer, avec validation humaine."
+    title: "IA en soutien",
+    detail: "L'IA aide à préparer, classer et accélérer. La décision, la relation et la validation restent humaines."
   }
 ];
 
 const method = [
-  "Observer les signaux",
-  "Prioriser les actions",
-  "Preparer les contenus",
+  "Observer les signaux locaux",
+  "Choisir les priorités simples",
+  "Préparer les contenus et relances",
   "Valider les points sensibles",
-  "Mesurer les resultats"
+  "Suivre les résultats chaque mois"
 ];
 
-const values = ["qualite", "clarte", "suivi", "precision", "fiable", "local", "sans bruit", "mesurable"];
+const values = ["qualité", "clarté", "suivi", "précision", "fiable", "local", "sans bruit", "mesurable"];
 
 export default function ServicesPage() {
   return (
     <>
       <PageHeader
         eyebrow="Services"
-        title="Un systeme de croissance locale gere pour PME."
-        description="Atelier Nox combine marketing local, IA, reseaux sociaux, Google Business et suivi client pour transformer la visibilite en actions concretes."
+        title="Un service géré pour faire avancer votre croissance locale."
+        description="Atelier Nox aide les PME de Suisse romande à organiser visibilité, contenus, relances, avis Google et suivi commercial sans ajouter de charge inutile."
       />
 
-      <section className="mb-6 grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
-        <article className="border-2 border-ink bg-acid p-6 shadow-soft">
-          <ShieldCheck className="h-8 w-8 text-ink" />
-          <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">
-            Pas une agence classique. Un service gere, clair et mesurable.
+      <section className="mb-8 grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
+        <article className="border border-[#12382F] bg-[#12382F] p-6 text-white shadow-[8px_8px_0_#E85D2A]">
+          <ShieldCheck className="h-8 w-8 text-[#E85D2A]" />
+          <h2 className="mt-4 text-4xl font-black leading-none">
+            Pas une plateforme à apprendre. Un service qui avance avec vous.
           </h2>
-          <p className="mt-4 text-sm font-semibold leading-6 text-ink">
-            Le client ne doit pas tout apprendre. Nous structurons les priorites, preparons les actions et montrons le
-            travail dans un portail simple.
+          <p className="mt-4 text-sm font-semibold leading-6 text-[#F5F1E8]">
+            Nous préparons le travail, nous montrons ce qui a été fait et nous gardons un rythme simple, mesurable et
+            humain.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
             {values.map((value) => (
-              <span key={value} className="border-2 border-ink bg-white px-3 py-2 text-xs font-black uppercase text-ink">
+              <span
+                key={value}
+                className="border border-[#F5F1E8]/40 bg-[#F5F1E8] px-3 py-2 text-xs font-black uppercase text-[#12382F]"
+              >
                 {value}
               </span>
             ))}
@@ -85,60 +83,78 @@ export default function ServicesPage() {
         </article>
 
         <div className="grid gap-3 md:grid-cols-2">
-          {services.map((service) => {
-            const Icon = service.icon;
-
-            return (
-              <article key={service.title} className="border-2 border-ink bg-white p-5 shadow-soft">
-                <span className="grid h-11 w-11 place-items-center border-2 border-ink bg-blue text-white">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <h2 className="mt-4 text-2xl font-black uppercase leading-none text-ink">{service.title}</h2>
-                <p className="mt-3 text-sm font-semibold leading-6 text-stone-600">{service.detail}</p>
-              </article>
-            );
-          })}
+          {services.map((service) => (
+            <article
+              key={service.title}
+              className="border border-[#12382F] bg-[#fffaf0] p-5 shadow-[5px_5px_0_rgba(18,56,47,0.12)]"
+            >
+              <h2 className="text-2xl font-black leading-none text-[#101820]">{service.title}</h2>
+              <p className="mt-3 text-sm font-semibold leading-6 text-[#12382F]">{service.detail}</p>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section className="mb-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <article className="border-2 border-ink bg-white p-6 shadow-soft">
-          <ClipboardList className="h-8 w-8 text-blue" />
-          <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Methode Atelier Nox</h2>
+      <section className="mb-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <article className="border border-[#12382F] bg-[#fffaf0] p-6 shadow-[6px_6px_0_rgba(18,56,47,0.12)]">
+          <ClipboardList className="h-8 w-8 text-[#E85D2A]" />
+          <h2 className="mt-4 text-3xl font-black leading-none text-[#101820]">Méthode Atelier Nox</h2>
           <div className="mt-5 grid gap-3">
             {method.map((step, index) => (
               <div key={step} className="grid grid-cols-[3rem_1fr] gap-2">
-                <span className="grid place-items-center border-2 border-ink bg-paper text-sm font-black">{index + 1}</span>
-                <div className="border-2 border-line bg-paper p-3 text-sm font-black uppercase text-ink">{step}</div>
+                <span className="grid place-items-center border border-[#12382F] bg-[#F5F1E8] text-sm font-black">
+                  {index + 1}
+                </span>
+                <div className="border border-[#D9D3C7] bg-[#F5F1E8] p-3 text-sm font-black uppercase text-[#12382F]">
+                  {step}
+                </div>
               </div>
             ))}
           </div>
         </article>
 
-        <article className="border-2 border-ink bg-white p-6 shadow-soft">
-          <CheckCircle2 className="h-8 w-8 text-green" />
-          <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Pour qui?</h2>
-          <p className="mt-4 text-sm font-semibold leading-6 text-stone-600">
-            PME locales qui veulent une presence plus professionnelle, des relances mieux organisees et un suivi clair,
-            sans engager une equipe marketing complete.
+        <article className="border border-[#12382F] bg-[#F5F1E8] p-6">
+          <CheckCircle2 className="h-8 w-8 text-[#E85D2A]" />
+          <h2 className="mt-4 text-3xl font-black leading-none text-[#101820]">Pour qui ?</h2>
+          <p className="mt-4 text-sm font-semibold leading-6 text-[#12382F]">
+            Pour les commerces, indépendants et PME qui veulent une présence plus professionnelle, des relances mieux
+            organisées et un suivi clair, sans engager une équipe marketing complète.
           </p>
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mt-5 grid gap-3">
+            <ServiceLine icon={<MapPinned className="h-4 w-4" />} text="Commerce local avec peu de temps disponible" />
+            <ServiceLine icon={<Camera className="h-4 w-4" />} text="Besoin de contenus plus humains et réguliers" />
+            <ServiceLine
+              icon={<MessageSquareText className="h-4 w-4" />}
+              text="Contacts à relancer et avis à mieux gérer"
+            />
+            <ServiceLine icon={<Search className="h-4 w-4" />} text="Visibilité Google et locale à clarifier" />
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/diagnostic-gratuit"
-              className="inline-flex items-center gap-2 border-2 border-ink bg-acid px-4 py-3 text-sm font-black uppercase text-ink"
+              className="inline-flex items-center gap-2 border border-[#12382F] bg-[#E85D2A] px-4 py-3 text-sm font-black uppercase text-white"
             >
               1er RDV offert
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/abonnement"
-              className="inline-flex items-center gap-2 border-2 border-ink bg-white px-4 py-3 text-sm font-black uppercase text-ink hover:bg-paper"
+              className="inline-flex items-center gap-2 border border-[#12382F] bg-[#fffaf0] px-4 py-3 text-sm font-black uppercase text-[#12382F]"
             >
-              Recevoir une offre
+              Voir les tarifs
             </Link>
           </div>
         </article>
       </section>
     </>
+  );
+}
+
+function ServiceLine({ icon, text }: { icon: React.ReactNode; text: string }) {
+  return (
+    <div className="flex items-center gap-3 border border-[#D9D3C7] bg-[#fffaf0] p-3">
+      <span className="grid h-8 w-8 place-items-center bg-[#12382F] text-white">{icon}</span>
+      <span className="text-sm font-black text-[#12382F]">{text}</span>
+    </div>
   );
 }

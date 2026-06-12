@@ -12,22 +12,22 @@ export const metadata: Metadata = {
     template: "%s | Atelier Nox"
   },
   description:
-    "Service gere d'IA et marketing local pour aider les PME de Suisse romande a transformer leurs signaux digitaux en clients.",
+    "Service humain, clair et mesurable pour aider les PME de Suisse romande à piloter leur croissance locale.",
   keywords: [
     "Atelier Nox",
     "marketing local Suisse romande",
-    "IA marketing Lausanne",
+    "croissance locale Lausanne",
     "coiffure Lausanne",
     "Google Business",
-    "reseaux sociaux PME"
+    "réseaux sociaux PME"
   ],
   applicationName: "Atelier Nox Growth System",
   authors: [{ name: "Atelier Nox" }],
   creator: "Atelier Nox",
   publisher: "Atelier Nox",
   openGraph: {
-    title: "Atelier Nox Growth System",
-    description: "L'IA qui transforme votre visibilite locale en actions clients.",
+    title: "Atelier Nox - Croissance locale pour PME",
+    description: "Nous pilotons votre croissance locale, avec vous.",
     url: "/",
     siteName: "Atelier Nox",
     locale: "fr_CH",
