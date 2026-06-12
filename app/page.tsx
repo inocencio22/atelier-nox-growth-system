@@ -37,15 +37,7 @@ export default function HomePage() {
     <div className="space-y-16">
       <section className="grid min-h-[calc(100vh-8rem)] gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
         <article className="pt-6">
-          <div className="flex items-center gap-4">
-            <BrandMark />
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-[#E85D2A]">Atelier Nox</p>
-              <p className="mt-2 max-w-md text-sm font-black uppercase leading-5 text-[#12382F]">
-                Service géré de croissance locale pour PME de Suisse romande.
-              </p>
-            </div>
-          </div>
+          <BrandMark variant="horizontal" />
 
           <h1 className="mt-10 max-w-5xl text-5xl font-black leading-[0.92] text-[#101820] sm:text-6xl lg:text-7xl">
             Nous pilotons votre croissance locale, avec vous.
@@ -83,19 +75,31 @@ export default function HomePage() {
           </div>
         </article>
 
-        <article className="relative min-h-[28rem] overflow-hidden border border-[#12382F] bg-[#12382F] p-5 text-white shadow-[10px_10px_0_rgba(18,56,47,0.18)]">
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-[#D9D3C7]" />
-          <div className="lausanne-ridge absolute inset-x-0 bottom-0 h-72 bg-[#F5F1E8]" />
-          <div className="lausanne-ridge absolute inset-x-0 bottom-0 h-52 translate-y-6 bg-[#E85D2A]" />
-          <div className="relative z-10 flex h-full min-h-[26rem] flex-col justify-between">
-            <div className="flex justify-between gap-4">
-              <span className="border border-white/40 px-3 py-2 text-xs font-black uppercase tracking-[0.16em]">
-                Lausanne
-              </span>
-              <Mountain className="h-8 w-8 text-[#E85D2A]" />
+        <article className="lausanne-hero relative min-h-[30rem] overflow-hidden border border-[#12382F] bg-[#12382F] p-5 text-white shadow-[10px_10px_0_rgba(18,56,47,0.18)]">
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(245,241,232,0.08),transparent_42%),linear-gradient(180deg,#12382F_0%,#12382F_45%,#D9D3C7_45%,#D9D3C7_100%)]" />
+          <div className="lausanne-sun absolute right-8 top-8 h-20 w-20 border border-[#F5F1E8]/50 bg-[#E85D2A]" />
+          <div className="lausanne-mountains absolute inset-x-0 bottom-40 h-52 bg-[#F5F1E8]" />
+          <div className="lausanne-mountains lausanne-mountains-front absolute inset-x-0 bottom-[8.5rem] h-44 bg-[#D9D3C7]" />
+          <div className="lausanne-city absolute inset-x-0 bottom-28 h-28 bg-[#12382F]" />
+          <div className="lausanne-lake absolute inset-x-0 bottom-0 h-36 bg-[#F5F1E8]" />
+          <div className="lausanne-lake-line absolute inset-x-8 bottom-20 h-px bg-[#12382F]" />
+          <div className="relative z-10 flex h-full min-h-[28rem] flex-col justify-between">
+            <div className="flex flex-wrap justify-between gap-3">
+              <div className="flex flex-wrap gap-2">
+                <span className="border border-white/40 bg-[#12382F]/80 px-3 py-2 text-xs font-black uppercase tracking-[0.16em]">
+                  Lausanne
+                </span>
+                <span className="border border-white/40 bg-[#12382F]/80 px-3 py-2 text-xs font-black uppercase tracking-[0.16em]">
+                  Lac Léman
+                </span>
+                <span className="border border-white/40 bg-[#12382F]/80 px-3 py-2 text-xs font-black uppercase tracking-[0.16em]">
+                  Suisse romande
+                </span>
+              </div>
+              <Mountain className="h-8 w-8 text-[#F5F1E8]" />
             </div>
 
-            <div className="max-w-md border border-white/40 bg-[#12382F]/88 p-5 backdrop-blur">
+            <div className="max-w-md border border-white/40 bg-[#12382F]/92 p-5 backdrop-blur">
               <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E85D2A]">Présence locale</p>
               <h2 className="mt-3 text-4xl font-black leading-none">
                 Plus de clarté. Moins de bruit. Un suivi régulier.
@@ -103,6 +107,11 @@ export default function HomePage() {
               <p className="mt-4 text-sm font-semibold leading-6 text-[#F5F1E8]">
                 Une méthode simple pour savoir quoi publier, qui relancer et quelles actions préparer chaque semaine.
               </p>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px] font-black uppercase tracking-[0.12em] text-[#12382F]">
+                <span className="bg-[#F5F1E8] px-2 py-2">Avis</span>
+                <span className="bg-[#F5F1E8] px-2 py-2">Relances</span>
+                <span className="bg-[#F5F1E8] px-2 py-2">Suivi</span>
+              </div>
             </div>
           </div>
         </article>

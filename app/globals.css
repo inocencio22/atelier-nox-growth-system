@@ -56,3 +56,82 @@ a {
     0 100%
   );
 }
+
+.lausanne-hero {
+  isolation: isolate;
+}
+
+.lausanne-sun {
+  transform: rotate(8deg);
+}
+
+.lausanne-mountains {
+  clip-path: polygon(
+    0 72%,
+    9% 54%,
+    18% 66%,
+    29% 38%,
+    39% 61%,
+    50% 30%,
+    62% 59%,
+    72% 42%,
+    83% 65%,
+    100% 47%,
+    100% 100%,
+    0 100%
+  );
+}
+
+.lausanne-mountains-front {
+  opacity: 0.9;
+  clip-path: polygon(0 82%, 13% 66%, 23% 74%, 34% 55%, 47% 70%, 58% 49%, 70% 68%, 82% 57%, 100% 74%, 100% 100%, 0 100%);
+}
+
+.lausanne-city {
+  clip-path: polygon(
+    0 72%,
+    6% 72%,
+    6% 56%,
+    12% 56%,
+    12% 70%,
+    19% 70%,
+    19% 46%,
+    25% 46%,
+    25% 68%,
+    33% 68%,
+    33% 54%,
+    39% 54%,
+    39% 70%,
+    47% 70%,
+    47% 38%,
+    52% 38%,
+    52% 69%,
+    60% 69%,
+    60% 50%,
+    66% 50%,
+    66% 71%,
+    74% 71%,
+    74% 58%,
+    81% 58%,
+    81% 72%,
+    89% 72%,
+    89% 49%,
+    95% 49%,
+    95% 72%,
+    100% 72%,
+    100% 100%,
+    0 100%
+  );
+}
+
+.lausanne-lake {
+  background:
+    linear-gradient(to bottom, rgba(245, 241, 232, 0.92), #f5f1e8),
+    repeating-linear-gradient(
+      0deg,
+      rgba(18, 56, 47, 0.16) 0,
+      rgba(18, 56, 47, 0.16) 1px,
+      transparent 1px,
+      transparent 14px
+    );
+}
