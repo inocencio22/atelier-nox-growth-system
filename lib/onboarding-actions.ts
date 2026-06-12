@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 import type { Database } from "@/lib/supabase.types";
+import { formValue, onboardingSubmissionSchema } from "@/lib/form-schemas";
 import { generateSubmissionDiagnostic, getOnboardingSubmissionById, type OnboardingStatus } from "@/lib/onboarding";
 
 type OnboardingInsert = Database["public"]["Tables"]["onboarding_submissions"]["Insert"];
@@ -38,26 +39,36 @@ type BusinessInsertClient = {
 };
 
 export async function createOnboardingSubmission(formData: FormData) {
-  const businessName = String(formData.get("businessName") ?? "").trim();
-  const ownerEmail = String(formData.get("ownerEmail") ?? "").trim();
-  const returnPath = String(formData.get("returnPath") ?? "/onboarding").trim();
-  const safeReturnPath = returnPath.startsWith("/") ? returnPath : "/onboarding";
+  const parsed = onboardingSubmissionSchema.safeParse({
+    businessName: formValue(formData, "businessName"),
+    ownerEmail: formValue(formData, "ownerEmail"),
+    ownerName: formValue(formData, "ownerName"),
+    city: formValue(formData, "city", "Lausanne"),
+    niche: formValue(formData, "niche", "Coiffure"),
+    website: formValue(formData, "website"),
+    instagramHandle: formValue(formData, "instagramHandle"),
+    mainObjective: formValue(formData, "mainObjective", "plus_clients"),
+    desiredPlan: formValue(formData, "desiredPlan", "essentiel"),
+    notes: formValue(formData, "notes"),
+    returnPath: formValue(formData, "returnPath", "/onboarding")
+  });
+  const safeReturnPath = parsed.success ? parsed.data.returnPath : "/onboarding";
 
-  if (!businessName || !ownerEmail) {
+  if (!parsed.success) {
     redirect(`${safeReturnPath}?status=missing`);
   }
 
   const submission: OnboardingInsert = {
-    business_name: businessName,
-    owner_email: ownerEmail,
-    owner_name: String(formData.get("ownerName") ?? "").trim() || null,
-    city: String(formData.get("city") ?? "Lausanne").trim() || "Lausanne",
-    niche: String(formData.get("niche") ?? "Coiffure").trim() || "Coiffure",
-    website: String(formData.get("website") ?? "").trim() || null,
-    instagram_handle: String(formData.get("instagramHandle") ?? "").trim() || null,
-    main_objective: String(formData.get("mainObjective") ?? "plus_clients"),
-    desired_plan: String(formData.get("desiredPlan") ?? "essentiel"),
-    notes: String(formData.get("notes") ?? "").trim() || null,
+    business_name: parsed.data.businessName,
+    owner_email: parsed.data.ownerEmail,
+    owner_name: parsed.data.ownerName,
+    city: parsed.data.city,
+    niche: parsed.data.niche,
+    website: parsed.data.website,
+    instagram_handle: parsed.data.instagramHandle,
+    main_objective: parsed.data.mainObjective,
+    desired_plan: parsed.data.desiredPlan,
+    notes: parsed.data.notes,
     status: "new"
   };
 

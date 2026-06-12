@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { ContactStatus, CustomerContact } from "@/lib/data";
 import { DEMO_BUSINESS_ID } from "@/lib/business";
+import { contactImportSchema, contactSchema, formValue } from "@/lib/form-schemas";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 import type { Database } from "@/lib/supabase.types";
 
@@ -18,22 +19,29 @@ export async function createContact(formData: FormData) {
     return;
   }
 
-  const name = String(formData.get("name") ?? "").trim();
-  const nextAction = String(formData.get("nextAction") ?? "").trim();
+  const parsed = contactSchema.safeParse({
+    name: formValue(formData, "name"),
+    channel: formValue(formData, "channel", "Instagram"),
+    lastInteraction: formValue(formData, "lastInteraction", "Aujourd'hui"),
+    nextAction: formValue(formData, "nextAction"),
+    value: formValue(formData, "value", "CHF 100"),
+    status: formValue(formData, "status", "a_relancer"),
+    consent: formData.get("consent") === "on"
+  });
 
-  if (!name || !nextAction) {
+  if (!parsed.success) {
     return;
   }
 
   const newContact: ContactInsert = {
     business_id: DEMO_BUSINESS_ID,
-    name,
-    channel: String(formData.get("channel") ?? "Instagram") as CustomerContact["channel"],
-    last_interaction: String(formData.get("lastInteraction") ?? "Aujourd'hui"),
-    next_action: nextAction,
-    value: String(formData.get("value") ?? "CHF 100"),
-    status: String(formData.get("status") ?? "a_relancer") as ContactStatus,
-    consent: formData.get("consent") === "on"
+    name: parsed.data.name,
+    channel: parsed.data.channel as CustomerContact["channel"],
+    last_interaction: parsed.data.lastInteraction,
+    next_action: parsed.data.nextAction,
+    value: parsed.data.value,
+    status: parsed.data.status as ContactStatus,
+    consent: parsed.data.consent
   };
 
   await (supabase.from("contacts") as unknown as ContactInsertClient).insert(newContact);
@@ -55,24 +63,30 @@ export async function importContacts(formData: FormData) {
     return;
   }
 
-  let parsedContacts: Array<Partial<CustomerContact>>;
+  let parsedContacts: unknown;
 
   try {
-    parsedContacts = JSON.parse(rawContacts) as Array<Partial<CustomerContact>>;
+    parsedContacts = JSON.parse(rawContacts);
   } catch {
     return;
   }
 
-  const contactsToInsert: ContactInsert[] = parsedContacts
+  const parsed = contactImportSchema.safeParse(parsedContacts);
+
+  if (!parsed.success) {
+    return;
+  }
+
+  const contactsToInsert: ContactInsert[] = parsed.data
     .map((contact) => ({
       business_id: DEMO_BUSINESS_ID,
-      name: String(contact.name ?? "").trim(),
-      channel: (contact.channel ?? "Instagram") as CustomerContact["channel"],
-      last_interaction: String(contact.lastInteraction ?? "Import CSV"),
-      next_action: String(contact.nextAction ?? "Qualifier et préparer une relance."),
-      value: String(contact.value ?? "CHF 100"),
-      status: (contact.status ?? "a_relancer") as ContactStatus,
-      consent: Boolean(contact.consent)
+      name: contact.name,
+      channel: contact.channel as CustomerContact["channel"],
+      last_interaction: contact.lastInteraction,
+      next_action: contact.nextAction,
+      value: contact.value,
+      status: contact.status as ContactStatus,
+      consent: contact.consent
     }))
     .filter((contact) => contact.name && contact.next_action);
 

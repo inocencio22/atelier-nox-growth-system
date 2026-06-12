@@ -1,0 +1,16 @@
+.next
+node_modules
+out
+dist
+coverage
+playwright-report
+test-results
+*.log
+*.pdf
+*.docx
+manual-assets
+manual-output
+brand/atelier-nox/brand-board.png
+supabase/.temp
+supabase/production.sql
+lib/supabase.types.ts

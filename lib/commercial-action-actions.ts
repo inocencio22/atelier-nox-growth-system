@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { DEMO_BUSINESS_ID } from "@/lib/business";
+import { commercialActionSchema, formValue } from "@/lib/form-schemas";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 import type { CommercialActionPriority, CommercialActionStatus } from "@/lib/commercial-actions";
 import type { Database } from "@/lib/supabase.types";
@@ -18,11 +18,20 @@ type CommercialActionUpdateClient = {
 };
 
 export async function createCommercialAction(formData: FormData) {
-  const title = String(formData.get("title") ?? "").trim();
-  const description = String(formData.get("description") ?? "").trim();
-  const businessId = String(formData.get("businessId") ?? DEMO_BUSINESS_ID).trim() || DEMO_BUSINESS_ID;
+  const parsed = commercialActionSchema.safeParse({
+    businessId: formValue(formData, "businessId"),
+    title: formValue(formData, "title"),
+    description: formValue(formData, "description"),
+    channel: formValue(formData, "channel", "WhatsApp"),
+    status: formValue(formData, "status", "todo"),
+    priority: formValue(formData, "priority", "medium"),
+    dueDate: formValue(formData, "dueDate"),
+    estimatedValue: formValue(formData, "estimatedValue", "CHF 0"),
+    result: formValue(formData, "result"),
+    visibleToClient: formData.get("visibleToClient") !== "off"
+  });
 
-  if (!title || !description) {
+  if (!parsed.success) {
     return;
   }
 
@@ -33,23 +42,23 @@ export async function createCommercialAction(formData: FormData) {
   }
 
   const action: CommercialActionInsert = {
-    business_id: businessId,
-    title,
-    description,
-    channel: String(formData.get("channel") ?? "WhatsApp"),
-    status: String(formData.get("status") ?? "todo") as CommercialActionStatus,
-    priority: String(formData.get("priority") ?? "medium") as CommercialActionPriority,
-    due_date: String(formData.get("dueDate") ?? "").trim() || null,
-    estimated_value: String(formData.get("estimatedValue") ?? "CHF 0"),
-    result: String(formData.get("result") ?? "").trim() || null,
-    visible_to_client: formData.get("visibleToClient") !== "off"
+    business_id: parsed.data.businessId,
+    title: parsed.data.title,
+    description: parsed.data.description,
+    channel: parsed.data.channel,
+    status: parsed.data.status as CommercialActionStatus,
+    priority: parsed.data.priority as CommercialActionPriority,
+    due_date: parsed.data.dueDate,
+    estimated_value: parsed.data.estimatedValue,
+    result: parsed.data.result,
+    visible_to_client: parsed.data.visibleToClient
   };
 
   await (supabase.from("commercial_actions") as unknown as CommercialActionInsertClient).insert(action);
 
   revalidatePath("/actions");
   revalidatePath("/dashboard");
-  revalidatePath(`/clients/${businessId}`);
+  revalidatePath(`/clients/${parsed.data.businessId}`);
 }
 
 export async function updateCommercialActionStatus(formData: FormData) {

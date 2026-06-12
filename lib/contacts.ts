@@ -46,5 +46,5 @@ export async function getContacts(
     return { contacts: mockContacts, source: "mock" };
   }
 
-  return { contacts: data.map(mapContact), source: "supabase" };
+  return { contacts: data.map((row) => mapContact(row as ContactRow)), source: "supabase" };
 }

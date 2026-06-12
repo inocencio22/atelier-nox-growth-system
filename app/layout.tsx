@@ -6,8 +6,41 @@ import { getWorkspaceAccess } from "@/lib/auth-model";
 import { getNavModeForWorkspace, isPublicPath, type NavMode } from "@/lib/navigation";
 
 export const metadata: Metadata = {
-  title: "Atelier Nox Growth System",
-  description: "Plateforme IA + marketing local pour transformer visibilite et contacts en clients."
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://atelier-nox-growth-system.vercel.app"),
+  title: {
+    default: "Atelier Nox Growth System",
+    template: "%s | Atelier Nox"
+  },
+  description:
+    "Service gere d'IA et marketing local pour aider les PME de Suisse romande a transformer leurs signaux digitaux en clients.",
+  keywords: [
+    "Atelier Nox",
+    "marketing local Suisse romande",
+    "IA marketing Lausanne",
+    "coiffure Lausanne",
+    "Google Business",
+    "reseaux sociaux PME"
+  ],
+  applicationName: "Atelier Nox Growth System",
+  authors: [{ name: "Atelier Nox" }],
+  creator: "Atelier Nox",
+  publisher: "Atelier Nox",
+  openGraph: {
+    title: "Atelier Nox Growth System",
+    description: "L'IA qui transforme votre visibilite locale en actions clients.",
+    url: "/",
+    siteName: "Atelier Nox",
+    locale: "fr_CH",
+    type: "website"
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true
+    }
+  }
 };
 
 export default function RootLayout({

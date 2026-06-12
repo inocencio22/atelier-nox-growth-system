@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { DEMO_BUSINESS_ID } from "@/lib/business";
+import { contentItemSchema, formValue } from "@/lib/form-schemas";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 import type { ContentStatus, ContentType } from "@/lib/content-items";
 import type { Database } from "@/lib/supabase.types";
@@ -18,11 +18,20 @@ type ContentUpdateClient = {
 };
 
 export async function createContentItem(formData: FormData) {
-  const title = String(formData.get("title") ?? "").trim();
-  const objective = String(formData.get("objective") ?? "").trim();
-  const businessId = String(formData.get("businessId") ?? DEMO_BUSINESS_ID).trim() || DEMO_BUSINESS_ID;
+  const parsed = contentItemSchema.safeParse({
+    businessId: formValue(formData, "businessId"),
+    title: formValue(formData, "title"),
+    objective: formValue(formData, "objective"),
+    contentType: formValue(formData, "contentType", "post"),
+    channel: formValue(formData, "channel", "Instagram"),
+    status: formValue(formData, "status", "idea"),
+    plannedDate: formValue(formData, "plannedDate"),
+    caption: formValue(formData, "caption"),
+    assetBrief: formValue(formData, "assetBrief"),
+    visibleToClient: formData.get("visibleToClient") !== "off"
+  });
 
-  if (!title || !objective) {
+  if (!parsed.success) {
     return;
   }
 
@@ -33,23 +42,23 @@ export async function createContentItem(formData: FormData) {
   }
 
   const content: ContentInsert = {
-    business_id: businessId,
-    title,
-    objective,
-    content_type: String(formData.get("contentType") ?? "post") as ContentType,
-    channel: String(formData.get("channel") ?? "Instagram"),
-    status: String(formData.get("status") ?? "idea") as ContentStatus,
-    planned_date: String(formData.get("plannedDate") ?? "").trim() || null,
-    caption: String(formData.get("caption") ?? "").trim() || null,
-    asset_brief: String(formData.get("assetBrief") ?? "").trim() || null,
-    visible_to_client: formData.get("visibleToClient") !== "off"
+    business_id: parsed.data.businessId,
+    title: parsed.data.title,
+    objective: parsed.data.objective,
+    content_type: parsed.data.contentType as ContentType,
+    channel: parsed.data.channel,
+    status: parsed.data.status as ContentStatus,
+    planned_date: parsed.data.plannedDate,
+    caption: parsed.data.caption,
+    asset_brief: parsed.data.assetBrief,
+    visible_to_client: parsed.data.visibleToClient
   };
 
   await (supabase.from("content_items") as unknown as ContentInsertClient).insert(content);
 
   revalidatePath("/contenus");
   revalidatePath("/portal");
-  revalidatePath(`/clients/${businessId}`);
+  revalidatePath(`/clients/${parsed.data.businessId}`);
 }
 
 export async function updateContentStatus(formData: FormData) {
