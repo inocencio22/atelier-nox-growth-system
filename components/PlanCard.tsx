@@ -9,7 +9,9 @@ export function PlanCard({
     price: string;
     rhythm: string;
     description: string;
+    positioning?: string;
     features: string[];
+    note?: string;
     highlighted?: boolean;
   };
 }) {
@@ -44,6 +46,18 @@ export function PlanCard({
       >
         {plan.description}
       </p>
+      {plan.positioning ? (
+        <p
+          className={clsx(
+            "mt-3 border px-3 py-2 text-xs font-black uppercase leading-5",
+            plan.highlighted
+              ? "border-[#F5F1E8]/30 bg-[#F5F1E8] text-[#12382F]"
+              : "border-[#D9D3C7] bg-[#F5F1E8] text-[#12382F]"
+          )}
+        >
+          {plan.positioning}
+        </p>
+      ) : null}
       <ul className="mt-5 space-y-2">
         {plan.features.map((feature) => (
           <li
@@ -61,6 +75,11 @@ export function PlanCard({
           </li>
         ))}
       </ul>
+      {plan.note ? (
+        <p className={clsx("mt-5 text-xs font-bold leading-5", plan.highlighted ? "text-[#D9D3C7]" : "text-stone-600")}>
+          {plan.note}
+        </p>
+      ) : null}
     </article>
   );
 }

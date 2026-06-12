@@ -2,7 +2,15 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Eye, ShieldCheck, Wrench } from "lucide-react";
 import { PlanCard } from "@/components/PlanCard";
 import { PageHeader } from "@/components/PageHeader";
-import { subscriptionPlans } from "@/lib/data";
+import {
+  faqItems,
+  paidExtras,
+  planPositioning,
+  recommendedAdBudgets,
+  separateFeesIntro,
+  separateFeesNotice,
+  subscriptionPlans
+} from "@/lib/data";
 
 const deliveryPoints = [
   "Service géré pour PME locales.",
@@ -33,8 +41,8 @@ export default function AbonnementPage() {
     <>
       <PageHeader
         eyebrow="Tarifs"
-        title="Des plans mensuels pour avancer avec clarté."
-        description="Atelier Nox prépare les actions, les contenus et le suivi. Vous gardez la visibilité sur le travail, sans gérer une plateforme de plus."
+        title="Des forfaits mensuels clairs, avec les frais externes séparés."
+        description="Atelier Nox prépare, organise et suit votre croissance locale. Les budgets publicitaires, outils et créations spécifiques restent séparés pour garder un cadre transparent."
       />
 
       <section className="mb-8 border border-[#12382F] bg-[#12382F] p-6 text-white shadow-[8px_8px_0_#E85D2A]">
@@ -55,6 +63,16 @@ export default function AbonnementPage() {
       <section className="grid gap-4 lg:grid-cols-3">
         {subscriptionPlans.map((plan) => (
           <PlanCard key={plan.name} plan={plan} />
+        ))}
+      </section>
+
+      <section className="mt-8 grid gap-4 lg:grid-cols-3">
+        {planPositioning.map((item) => (
+          <article key={item.plan} className="border border-[#12382F] bg-[#fffaf0] p-5">
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">{item.plan}</p>
+            <h2 className="mt-3 text-2xl font-black leading-none text-[#101820]">{item.summary}</h2>
+            <p className="mt-4 text-sm font-semibold leading-6 text-[#12382F]">{item.boundary}</p>
+          </article>
         ))}
       </section>
 
@@ -102,12 +120,68 @@ export default function AbonnementPage() {
         })}
       </section>
 
+      <section className="mt-8 border border-[#12382F] bg-[#fffaf0] p-6 shadow-[6px_6px_0_rgba(18,56,47,0.12)]">
+        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Frais séparés</p>
+        <h2 className="mt-2 text-3xl font-black leading-none text-[#101820]">
+          Des forfaits lisibles, sans frais cachés.
+        </h2>
+        <p className="mt-4 max-w-4xl text-sm font-semibold leading-6 text-[#12382F]">{separateFeesIntro}</p>
+        <p className="mt-3 max-w-5xl border border-[#D9D3C7] bg-[#F5F1E8] p-4 text-sm font-bold leading-6 text-[#12382F]">
+          {separateFeesNotice}
+        </p>
+      </section>
+
+      <section className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <article className="border border-[#12382F] bg-[#fffaf0] p-6">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Extras disponibles</p>
+          <h2 className="mt-2 text-3xl font-black leading-none text-[#101820]">À activer seulement si nécessaire.</h2>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+            {paidExtras.map((extra) => (
+              <div key={extra.name} className="border border-[#D9D3C7] bg-[#F5F1E8] p-3">
+                <p className="text-sm font-black text-[#101820]">{extra.name}</p>
+                <p className="mt-1 text-sm font-black text-[#E85D2A]">{extra.price}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="border border-[#12382F] bg-[#12382F] p-6 text-white">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Budgets publicitaires</p>
+          <h2 className="mt-2 text-3xl font-black leading-none">Le budget média reste votre budget.</h2>
+          <p className="mt-4 text-sm font-semibold leading-6 text-[#F5F1E8]">
+            Nous pouvons préparer et suivre les campagnes, mais l&apos;argent investi chez Meta ou Google est séparé du
+            forfait Atelier Nox.
+          </p>
+          <div className="mt-5 grid gap-2">
+            {recommendedAdBudgets.map((item) => (
+              <div key={item.name} className="border border-[#F5F1E8]/30 bg-[#F5F1E8] p-3 text-[#12382F]">
+                <p className="text-sm font-black">{item.name}</p>
+                <p className="mt-1 text-sm font-black text-[#E85D2A]">{item.budget}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+
       <section className="mt-8 border border-[#12382F] bg-[#fffaf0] p-6">
         <h2 className="text-3xl font-black leading-none text-[#101820]">Pourquoi ce modèle ?</h2>
         <p className="mt-5 max-w-4xl text-sm font-semibold leading-6 text-[#12382F]">
           Les entrepreneurs locaux ne veulent pas seulement des publications. Ils veulent une présence fiable, des
           relances organisées, des actions mesurables et une personne responsable du suivi.
         </p>
+      </section>
+
+      <section className="mt-8 border border-[#12382F] bg-[#F5F1E8] p-6">
+        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Questions fréquentes</p>
+        <h2 className="mt-2 text-3xl font-black leading-none text-[#101820]">Un cadre clair avant de commencer.</h2>
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          {faqItems.map((item) => (
+            <article key={item.question} className="border border-[#D9D3C7] bg-[#fffaf0] p-4">
+              <h3 className="text-base font-black text-[#101820]">{item.question}</h3>
+              <p className="mt-3 text-sm font-semibold leading-6 text-[#12382F]">{item.answer}</p>
+            </article>
+          ))}
+        </div>
       </section>
     </>
   );

@@ -259,47 +259,199 @@ export const instagramSignals = [
   { label: "Meilleur contenu", value: "Avant / Après", detail: "+41% d'engagement vs moyenne" }
 ];
 
+export const centralServicePromise =
+  "Nous organisons votre visibilité locale, vos relances, vos contenus, vos campagnes et votre suivi commercial avec un accompagnement humain et des outils modernes.";
+
+export const separateFeesIntro =
+  "Nous séparons les frais pour garder les forfaits mensuels clairs, accessibles et adaptés à votre situation réelle.";
+
+export const separateFeesNotice =
+  "Les budgets publicitaires, frais de plateformes, outils externes, hébergement, domaines, créations de sites avancées et shootings photo/vidéo ne sont pas inclus dans les forfaits mensuels. Ils sont proposés séparément selon les besoins du client.";
+
+export const officialServices = [
+  {
+    title: "Visibilité locale",
+    detail:
+      "Clarifier les points de contact qui comptent vraiment: Google, site, réseaux sociaux, recommandations et demandes entrantes.",
+    scope: "Diagnostic, priorités, visibilité de proximité et cohérence des informations publiques."
+  },
+  {
+    title: "Google Business & avis clients",
+    detail:
+      "Améliorer la présence Google, préparer les demandes d'avis et organiser les réponses avec un ton professionnel.",
+    scope: "Fiche Google, avis, réputation locale et signaux de confiance."
+  },
+  {
+    title: "Contenus locaux et humains",
+    detail:
+      "Préparer des sujets, angles photo/vidéo, textes et idées de publications proches de la réalité du commerce.",
+    scope: "Posts, stories, briefs photo/vidéo, messages et calendrier simple."
+  },
+  {
+    title: "Relances clients & suivi commercial",
+    detail:
+      "Organiser les contacts, préparer des messages de relance et suivre les conversations utiles sans automatisation agressive.",
+    scope: "Clients dormants, demandes de prix, avis à demander et opportunités à reprendre."
+  },
+  {
+    title: "Campagnes locales Meta & Google",
+    detail:
+      "Préparer et accompagner des campagnes simples pour tester une offre locale, avec budget publicitaire séparé.",
+    scope: "Brief, angle, ciblage local, suivi et recommandations. Le budget média reste séparé."
+  },
+  {
+    title: "Landing pages locales",
+    detail:
+      "Créer ou ajuster des pages simples pour présenter une offre, rassurer le visiteur et faciliter la prise de contact.",
+    scope: "Page locale, message clair, CTA, structure mobile-first et suivi de base."
+  },
+  {
+    title: "Automatisation légère",
+    detail:
+      "Mettre en place des aides simples pour préparer, classer ou rappeler les actions, sans remplacer la relation humaine.",
+    scope: "Relances préparées, organisation, rappels, modèles de messages et validations."
+  },
+  {
+    title: "Suivi régulier & portail client",
+    detail: "Rendre le travail visible: actions préparées, validations, priorités, résultats et prochaines étapes.",
+    scope: "Portail client, rapport mensuel, suivi des actions et décisions claires."
+  }
+];
+
+export const planPositioning = [
+  {
+    plan: "Local Clarity",
+    summary: "Clarté, diagnostic, priorités, recommandations.",
+    boundary: "Ce plan ne promet pas d'exécution lourde: il sert à savoir quoi faire, dans quel ordre, et pourquoi."
+  },
+  {
+    plan: "Managed Growth",
+    summary: "Accompagnement régulier, contenus, relances, Google Business basique, avis clients, suivi.",
+    boundary:
+      "Les campagnes peuvent être préparées et suivies, mais les budgets publicitaires restent séparés du forfait."
+  },
+  {
+    plan: "Done For You Local",
+    summary:
+      "Exécution plus complète, campagnes locales simples, landing pages simples ou ajustements, automatisations légères, suivi renforcé.",
+    boundary:
+      "Les créations avancées, outils externes, budgets média et setups spécifiques sont proposés séparément si nécessaire."
+  }
+];
+
 export const subscriptionPlans = [
   {
     name: "Local Clarity",
     price: "CHF 190",
     rhythm: "/mois",
-    description: "Pour les petits business qui veulent une direction claire sans apprendre le marketing ou l'IA.",
+    description: "Pour clarifier la situation, choisir les priorités et recevoir des recommandations simples.",
+    positioning: "Clarté, diagnostic, priorités, recommandations.",
     features: [
       "Diagnostic mensuel de visibilité",
       "Plan d'actions priorisées",
-      "5 messages prêts à utiliser",
+      "Recommandations claires",
       "Recommandations Google / Instagram",
       "Rapport mensuel simple dans le portail"
-    ]
+    ],
+    note: "Pas d'exécution lourde dans ce plan."
   },
   {
     name: "Managed Growth",
     price: "CHF 390",
     rhythm: "/mois",
-    description: "Le plan principal: Atelier Nox prépare les actions, les relances et le suivi commercial.",
+    description: "Le plan principal pour avancer chaque mois avec contenus, relances et suivi commercial.",
+    positioning: "Accompagnement régulier, contenus, relances, Google Business basique, avis clients, suivi.",
     features: [
       "Tout Local Clarity",
       "Plan hebdomadaire d'actions",
       "Relances et messages personnalisés",
       "Organisation légère des contacts",
+      "Google Business basique et avis clients",
       "Suivi des résultats et validations"
     ],
-    highlighted: true
+    highlighted: true,
+    note: "Les budgets publicitaires restent séparés."
   },
   {
     name: "Done For You Local",
     price: "CHF 690",
     rhythm: "/mois",
-    description:
-      "Pour les entrepreneurs qui veulent déléguer la croissance locale avec un accompagnement plus complet.",
+    description: "Pour déléguer davantage d'exécution locale avec un suivi renforcé et des actions plus complètes.",
+    positioning:
+      "Exécution plus complète, campagnes locales simples, landing pages simples ou ajustements, automatisations légères, suivi renforcé.",
     features: [
       "Tout Managed Growth",
       "Optimisation Google Business",
-      "Micro-campagnes mensuelles",
+      "Campagnes locales simples à préparer",
+      "Landing pages simples ou ajustements",
+      "Automatisations légères",
       "Analyse concurrence locale",
       "Revue stratégique mensuelle"
-    ]
+    ],
+    note: "Budget média, outils, hosting et créations avancées séparés."
+  }
+];
+
+export const paidExtras = [
+  { name: "Setup Google Business complet", price: "CHF 250–490" },
+  { name: "Setup Meta Ads", price: "CHF 190–390" },
+  { name: "Setup Google Ads local", price: "CHF 390–690" },
+  { name: "Landing page locale simple", price: "CHF 590–1’490" },
+  { name: "Mini-site PME", price: "CHF 1’490–2’900" },
+  { name: "Automatisation légère de relance", price: "CHF 290–790" },
+  { name: "Setup tracking / pixel / conversions", price: "CHF 190–490" },
+  { name: "Audit concurrence locale", price: "CHF 190–390" },
+  { name: "Session stratégie IA pratique pour PME", price: "CHF 190–390" },
+  { name: "Pack messages de relance", price: "CHF 150–300" }
+];
+
+export const recommendedAdBudgets = [
+  { name: "Meta Ads test local", budget: "CHF 200–500/mois" },
+  { name: "Meta Ads régulier", budget: "CHF 400–800/mois" },
+  { name: "Google Ads test local", budget: "CHF 500–1’000/mois" },
+  { name: "Google Ads régulier", budget: "CHF 1’000–1’500+/mois selon secteur" }
+];
+
+export const faqItems = [
+  {
+    question: "Les campagnes publicitaires sont-elles incluses ?",
+    answer:
+      "La préparation, le suivi et les recommandations peuvent être inclus selon le plan. Le budget publicitaire payé à Meta ou Google reste toujours séparé."
+  },
+  {
+    question: "Dois-je payer un budget Meta ou Google séparément ?",
+    answer:
+      "Oui, seulement si une campagne est pertinente pour votre situation. Nous proposons d'abord un budget réaliste, puis vous validez avant toute dépense."
+  },
+  {
+    question: "Est-ce que vous garantissez des clients ?",
+    answer:
+      "Non. Nous ne promettons pas un nombre fixe de clients. Nous organisons les actions, le suivi et les conditions qui améliorent les chances de conversion."
+  },
+  {
+    question: "Est-ce que l'IA remplace l'accompagnement humain ?",
+    answer:
+      "Non. L'IA aide en interne à préparer, classer et accélérer. La stratégie, les validations et la relation restent humaines."
+  },
+  {
+    question: "Puis-je commencer sans site web ?",
+    answer:
+      "Oui. Nous pouvons commencer par Google Business, contenus, relances et une page locale simple si elle devient nécessaire."
+  },
+  {
+    question: "Est-ce que je dois gérer la plateforme moi-même ?",
+    answer:
+      "Non. Le portail sert surtout à voir le travail, approuver les points importants et suivre les résultats. Le service reste géré par Atelier Nox."
+  },
+  {
+    question: "Puis-je arrêter après un mois ?",
+    answer:
+      "Le démarrage peut rester simple. Les conditions exactes sont confirmées dans l'offre afin de garder un cadre clair pour les deux côtés."
+  },
+  {
+    question: "Quel plan choisir pour commencer ?",
+    answer:
+      "Local Clarity convient pour clarifier. Managed Growth est le plan principal pour avancer chaque mois. Done For You Local convient si vous voulez déléguer davantage."
   }
 ];
 

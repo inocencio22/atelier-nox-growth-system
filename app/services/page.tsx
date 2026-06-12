@@ -10,36 +10,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
-
-const services = [
-  {
-    title: "Visibilité locale",
-    detail:
-      "Google, site, réseaux sociaux et points de contact sont observés pour comprendre ce qui aide vraiment votre commerce."
-  },
-  {
-    title: "Relances utiles",
-    detail:
-      "Nous préparons des messages simples pour anciens clients, demandes de prix, avis Google et conversations à reprendre."
-  },
-  {
-    title: "Contenus humains",
-    detail:
-      "Nous structurons les sujets, les angles photo/vidéo et les publications qui renforcent la confiance locale."
-  },
-  {
-    title: "Réputation & avis",
-    detail: "Nous aidons à demander, organiser et répondre aux avis avec un ton professionnel, local et fiable."
-  },
-  {
-    title: "Suivi régulier",
-    detail: "Chaque semaine, vous voyez les actions préparées, les validations nécessaires et les prochaines priorités."
-  },
-  {
-    title: "IA en soutien",
-    detail: "L'IA aide à préparer, classer et accélérer. La décision, la relation et la validation restent humaines."
-  }
-];
+import { centralServicePromise, officialServices } from "@/lib/data";
 
 const method = [
   "Observer les signaux locaux",
@@ -56,8 +27,8 @@ export default function ServicesPage() {
     <>
       <PageHeader
         eyebrow="Services"
-        title="Un service géré pour faire avancer votre croissance locale."
-        description="Atelier Nox aide les PME de Suisse romande à organiser visibilité, contenus, relances, avis Google et suivi commercial sans ajouter de charge inutile."
+        title="Un service géré de croissance locale pour PME suisses romandes."
+        description={centralServicePromise}
       />
 
       <section className="mb-8 grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
@@ -67,8 +38,8 @@ export default function ServicesPage() {
             Pas une plateforme à apprendre. Un service qui avance avec vous.
           </h2>
           <p className="mt-4 text-sm font-semibold leading-6 text-[#F5F1E8]">
-            Nous préparons le travail, nous montrons ce qui a été fait et nous gardons un rythme simple, mesurable et
-            humain.
+            Atelier Nox n&apos;est pas une agence de posts. Nous organisons les actions commerciales visibles, les
+            contenus, les relances et le suivi avec un cadre clair.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
             {values.map((value) => (
@@ -83,13 +54,16 @@ export default function ServicesPage() {
         </article>
 
         <div className="grid gap-3 md:grid-cols-2">
-          {services.map((service) => (
+          {officialServices.map((service) => (
             <article
               key={service.title}
               className="border border-[#12382F] bg-[#fffaf0] p-5 shadow-[5px_5px_0_rgba(18,56,47,0.12)]"
             >
               <h2 className="text-2xl font-black leading-none text-[#101820]">{service.title}</h2>
               <p className="mt-3 text-sm font-semibold leading-6 text-[#12382F]">{service.detail}</p>
+              <p className="mt-4 border-t border-[#D9D3C7] pt-3 text-xs font-black uppercase leading-5 text-[#12382F]">
+                {service.scope}
+              </p>
             </article>
           ))}
         </div>
@@ -118,7 +92,7 @@ export default function ServicesPage() {
           <h2 className="mt-4 text-3xl font-black leading-none text-[#101820]">Pour qui ?</h2>
           <p className="mt-4 text-sm font-semibold leading-6 text-[#12382F]">
             Pour les commerces, indépendants et PME qui veulent une présence plus professionnelle, des relances mieux
-            organisées et un suivi clair, sans engager une équipe marketing complète.
+            organisées et un suivi clair, sans engager une équipe marketing complète ni gérer une plateforme de plus.
           </p>
           <div className="mt-5 grid gap-3">
             <ServiceLine icon={<MapPinned className="h-4 w-4" />} text="Commerce local avec peu de temps disponible" />
