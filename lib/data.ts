@@ -39,6 +39,7 @@ export type Lead = {
 export type CustomerContact = {
   id: string;
   name: string;
+  phone: string | null;
   channel: "Instagram" | "WhatsApp" | "Email" | "Téléphone";
   lastInteraction: string;
   nextAction: string;
@@ -132,6 +133,7 @@ export const contacts: CustomerContact[] = [
   {
     id: "contact-001",
     name: "Sophie Martin",
+    phone: null,
     channel: "Instagram",
     lastInteraction: "Il y a 54 jours",
     nextAction: "Proposer un créneau couleur cette semaine",
@@ -142,6 +144,7 @@ export const contacts: CustomerContact[] = [
   {
     id: "contact-002",
     name: "Claire Dubois",
+    phone: "+41 79 111 22 33",
     channel: "WhatsApp",
     lastInteraction: "Il y a 12 jours",
     nextAction: "Demander un avis Google après la visite",
@@ -152,6 +155,7 @@ export const contacts: CustomerContact[] = [
   {
     id: "contact-003",
     name: "Nadia Keller",
+    phone: "+41 79 444 55 66",
     channel: "Téléphone",
     lastInteraction: "Hier",
     nextAction: "Confirmer rendez-vous soin + coupe",
@@ -162,6 +166,7 @@ export const contacts: CustomerContact[] = [
   {
     id: "contact-004",
     name: "Amélie Rochat",
+    phone: null,
     channel: "Email",
     lastInteraction: "Il y a 89 jours",
     nextAction: "Envoyer relance douce sans promotion agressive",

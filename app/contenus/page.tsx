@@ -47,7 +47,7 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
       />
 
       {isDemo ? (
-        <section className="mb-6 border-2 border-ink bg-yellow p-4">
+        <section className="mb-6 border border-[#dedad2] bg-[#fffbeb] p-4">
           <p className="text-sm font-black uppercase text-ink">Mode démo</p>
           <p className="mt-1 text-sm font-semibold leading-6 text-ink">
             Les contenus affichés sont des exemples. Activez Supabase et appliquez la migration 006 pour créer et suivre
@@ -57,8 +57,8 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
       ) : null}
 
       {selectedClient ? (
-        <section className="mb-6 border-2 border-ink bg-white p-4 shadow-soft">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Client selectionne</p>
+        <section className="mb-6 border border-[#dedad2] bg-white p-4 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Client selectionne</p>
           <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-2xl font-black uppercase leading-none text-ink">{selectedClient.name}</h2>
@@ -68,7 +68,7 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
             </div>
             <a
               href={`/clients/${selectedClient.id}`}
-              className="border-2 border-ink bg-acid px-3 py-2 text-xs font-black uppercase text-ink"
+              className="border border-[#dedad2] bg-[#f0faf5] px-3 py-2 text-xs font-black uppercase text-ink"
             >
               Retour fiche client
             </a>
@@ -95,7 +95,7 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
 
       <section className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
         <div className="grid gap-6">
-          <article className="border-2 border-ink bg-acid p-5 shadow-soft">
+          <article className="border border-[#dedad2] bg-[#f0faf5] p-5 shadow-sm">
             <Clapperboard className="h-8 w-8 text-ink" />
             <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">Principe</h2>
             <p className="mt-4 text-sm font-semibold leading-6 text-ink">
@@ -104,10 +104,10 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
             </p>
           </article>
 
-          <form action={createContentItem} className="border-2 border-ink bg-white p-5 shadow-soft">
+          <form action={createContentItem} className="border border-[#dedad2] bg-white p-5 shadow-sm">
             <input type="hidden" name="businessId" value={selectedClient?.id ?? ""} />
             <div className="flex items-start gap-3">
-              <span className="grid h-10 w-10 shrink-0 place-items-center border-2 border-ink bg-blue text-white">
+              <span className="grid h-10 w-10 shrink-0 place-items-center border border-[#dedad2] bg-[#12382F] text-white">
                 <ImagePlus className="h-5 w-5" />
               </span>
               <div>
@@ -144,7 +144,7 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
               <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
                 Légende / message
                 <textarea
-                  className="min-h-28 border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case leading-6 tracking-normal text-ink outline-none focus:bg-acid"
+                  className="min-h-28 border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case leading-6 tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
                   name="caption"
                   placeholder="Texte proposé pour la publication."
                 />
@@ -152,7 +152,7 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
               <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
                 Brief asset
                 <textarea
-                  className="min-h-24 border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case leading-6 tracking-normal text-ink outline-none focus:bg-acid"
+                  className="min-h-24 border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case leading-6 tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
                   name="assetBrief"
                   placeholder="Photos, vidéos ou scènes à produire."
                 />
@@ -163,7 +163,7 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
               </label>
             </div>
             <button
-              className="mt-5 w-full border-2 border-ink bg-acid px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-5 w-full border border-[#dedad2] bg-[#f0faf5] px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
               disabled={!canCreate}
               title={
                 isDemo
@@ -199,8 +199,8 @@ function ClientPicker({
   title: string;
 }) {
   return (
-    <section className="mb-6 border-2 border-ink bg-white p-4 shadow-soft">
-      <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Contexte obligatoire</p>
+    <section className="mb-6 border border-[#dedad2] bg-white p-4 shadow-sm">
+      <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Contexte obligatoire</p>
       <h2 className="mt-2 text-2xl font-black uppercase leading-none text-ink">{title}</h2>
       <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-stone-600">
         Les contenus sont liés à un business précis pour que le client voie uniquement ses publications, validations et
@@ -211,7 +211,7 @@ function ClientPicker({
           <Link
             key={client.id}
             href={`${currentPath}?businessId=${client.id}`}
-            className="border-2 border-ink bg-paper px-3 py-2 text-xs font-black uppercase text-ink hover:bg-acid"
+            className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-2 text-xs font-black uppercase text-ink hover:bg-[#e8f5ee]"
           >
             {client.name}
             <span className="ml-2 text-stone-500">{client.detail}</span>
@@ -224,7 +224,7 @@ function ClientPicker({
 
 function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <article className="border-2 border-ink bg-white p-4 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-4 shadow-sm">
       <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-600">{label}</p>
       <strong className="mt-2 block text-4xl font-black text-ink">{value}</strong>
       <p className="mt-1 text-sm font-semibold text-stone-600">{detail}</p>
@@ -234,18 +234,18 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
 
 function ContentCard({ item, isDemo }: { item: ContentItem; isDemo: boolean }) {
   return (
-    <article className="border-2 border-ink bg-white p-5 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-2xl font-black uppercase leading-none text-ink">{item.title}</h2>
             <StatusBadge status={item.status} />
           </div>
-          <p className="mt-2 text-sm font-black uppercase text-blue">
+          <p className="mt-2 text-sm font-black uppercase text-[#E85D2A]">
             {item.channel} · {formatContentType(item.contentType)}
           </p>
         </div>
-        <span className="grid h-12 w-12 place-items-center border-2 border-ink bg-acid">
+        <span className="grid h-12 w-12 place-items-center border border-[#dedad2] bg-[#f0faf5]">
           {item.status === "published" ? <CheckCircle2 className="h-6 w-6" /> : <CalendarDays className="h-6 w-6" />}
         </span>
       </div>
@@ -257,21 +257,21 @@ function ContentCard({ item, isDemo }: { item: ContentItem; isDemo: boolean }) {
       </div>
 
       {item.caption ? (
-        <div className="mt-4 border-2 border-line bg-paper p-3">
+        <div className="mt-4 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
           <p className="text-[11px] font-black uppercase tracking-[0.12em] text-stone-500">Légende</p>
           <p className="mt-1 text-sm font-semibold leading-6 text-stone-700">{item.caption}</p>
         </div>
       ) : null}
 
       {item.assetBrief ? (
-        <div className="mt-4 border-2 border-line bg-paper p-3">
+        <div className="mt-4 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
           <p className="text-[11px] font-black uppercase tracking-[0.12em] text-stone-500">Brief asset</p>
           <p className="mt-1 text-sm font-semibold leading-6 text-stone-700">{item.assetBrief}</p>
         </div>
       ) : null}
 
       {item.result ? (
-        <div className="mt-4 border-2 border-ink bg-paper p-3 text-sm font-black leading-5 text-ink">{item.result}</div>
+        <div className="mt-4 border border-[#dedad2] bg-[#f8f7f2] p-3 text-sm font-black leading-5 text-ink">{item.result}</div>
       ) : null}
 
       <div className="mt-4 flex flex-wrap gap-2">
@@ -280,7 +280,7 @@ function ContentCard({ item, isDemo }: { item: ContentItem; isDemo: boolean }) {
             <input type="hidden" name="id" value={item.id} />
             <input type="hidden" name="status" value={button.value} />
             <button
-              className="border-2 border-ink bg-white px-3 py-2 text-xs font-black uppercase text-ink hover:bg-acid disabled:cursor-not-allowed disabled:border-line disabled:text-stone-400"
+              className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-black uppercase text-ink hover:bg-[#e8f5ee] disabled:cursor-not-allowed disabled:border-[#e8e5dd] disabled:text-stone-400"
               disabled={isDemo || item.status === button.value}
               title={isDemo ? "Activez Supabase pour modifier les statuts" : undefined}
               type="submit"
@@ -296,7 +296,7 @@ function ContentCard({ item, isDemo }: { item: ContentItem; isDemo: boolean }) {
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-2 border-line bg-paper p-3">
+    <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
       <p className="text-[11px] font-black uppercase tracking-[0.12em] text-stone-500">{label}</p>
       <p className="mt-1 break-words text-sm font-black text-ink">{value}</p>
     </div>
@@ -320,7 +320,7 @@ function Field({
     <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
       {label}
       <input
-        className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
+        className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
         name={name}
         placeholder={placeholder}
         required={required}
@@ -335,7 +335,7 @@ function Select({ label, name, options }: { label: string; name: string; options
     <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
       {label}
       <select
-        className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
+        className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
         name={name}
       >
         {options.map((option) => (

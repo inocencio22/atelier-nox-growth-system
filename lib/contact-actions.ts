@@ -21,6 +21,7 @@ export async function createContact(formData: FormData) {
 
   const parsed = contactSchema.safeParse({
     name: formValue(formData, "name"),
+    phone: formValue(formData, "phone"),
     channel: formValue(formData, "channel", "Instagram"),
     lastInteraction: formValue(formData, "lastInteraction", "Aujourd'hui"),
     nextAction: formValue(formData, "nextAction"),
@@ -33,12 +34,13 @@ export async function createContact(formData: FormData) {
     return;
   }
 
+  const phonePrefix = parsed.data.phone ? `📱 ${parsed.data.phone}\n` : "";
   const newContact: ContactInsert = {
     business_id: DEMO_BUSINESS_ID,
     name: parsed.data.name,
     channel: parsed.data.channel as CustomerContact["channel"],
     last_interaction: parsed.data.lastInteraction,
-    next_action: parsed.data.nextAction,
+    next_action: phonePrefix ? `${phonePrefix}${parsed.data.nextAction}` : parsed.data.nextAction,
     value: parsed.data.value,
     status: parsed.data.status as ContactStatus,
     consent: parsed.data.consent

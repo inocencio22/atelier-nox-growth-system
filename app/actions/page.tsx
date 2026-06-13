@@ -47,7 +47,7 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
       />
 
       {isDemo ? (
-        <section className="mb-6 border-2 border-ink bg-yellow p-4">
+        <section className="mb-6 border border-[#dedad2] bg-[#fffbeb] p-4">
           <p className="text-sm font-black uppercase text-ink">Mode démo</p>
           <p className="mt-1 text-sm font-semibold leading-6 text-ink">
             Les actions affichées sont des exemples. Activez Supabase et appliquez la migration 005 pour créer et suivre
@@ -57,8 +57,8 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
       ) : null}
 
       {selectedClient ? (
-        <section className="mb-6 border-2 border-ink bg-white p-4 shadow-soft">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Client selectionne</p>
+        <section className="mb-6 border border-[#dedad2] bg-white p-4 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Client selectionne</p>
           <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-2xl font-black uppercase leading-none text-ink">{selectedClient.name}</h2>
@@ -68,7 +68,7 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
             </div>
             <a
               href={`/clients/${selectedClient.id}`}
-              className="border-2 border-ink bg-acid px-3 py-2 text-xs font-black uppercase text-ink"
+              className="border border-[#dedad2] bg-[#f0faf5] px-3 py-2 text-xs font-black uppercase text-ink"
             >
               Retour fiche client
             </a>
@@ -95,7 +95,7 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
 
       <section className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
         <div className="grid gap-6">
-          <article className="border-2 border-ink bg-acid p-5 shadow-soft">
+          <article className="border border-[#dedad2] bg-[#f0faf5] p-5 shadow-sm">
             <Sparkles className="h-8 w-8 text-ink" />
             <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">Principe</h2>
             <p className="mt-4 text-sm font-semibold leading-6 text-ink">
@@ -104,10 +104,10 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
             </p>
           </article>
 
-          <form action={createCommercialAction} className="border-2 border-ink bg-white p-5 shadow-soft">
+          <form action={createCommercialAction} className="border border-[#dedad2] bg-white p-5 shadow-sm">
             <input type="hidden" name="businessId" value={selectedClient?.id ?? ""} />
             <div className="flex items-start gap-3">
-              <span className="grid h-10 w-10 shrink-0 place-items-center border-2 border-ink bg-blue text-white">
+              <span className="grid h-10 w-10 shrink-0 place-items-center border border-[#dedad2] bg-[#12382F] text-white">
                 <Plus className="h-5 w-5" />
               </span>
               <div>
@@ -122,7 +122,7 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
               <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
                 Description
                 <textarea
-                  className="min-h-28 border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case leading-6 tracking-normal text-ink outline-none focus:bg-acid"
+                  className="min-h-28 border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case leading-6 tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
                   name="description"
                   placeholder="Préparer un message doux et proposer deux créneaux cette semaine."
                   required
@@ -146,7 +146,7 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
               </label>
             </div>
             <button
-              className="mt-5 w-full border-2 border-ink bg-acid px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-5 w-full border border-[#dedad2] bg-[#f0faf5] px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
               disabled={!canCreate}
               title={
                 isDemo
@@ -182,8 +182,8 @@ function ClientPicker({
   title: string;
 }) {
   return (
-    <section className="mb-6 border-2 border-ink bg-white p-4 shadow-soft">
-      <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Contexte obligatoire</p>
+    <section className="mb-6 border border-[#dedad2] bg-white p-4 shadow-sm">
+      <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Contexte obligatoire</p>
       <h2 className="mt-2 text-2xl font-black uppercase leading-none text-ink">{title}</h2>
       <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-stone-600">
         Les actions sont liées à un business précis pour apparaître correctement dans le portail client et dans la fiche
@@ -194,7 +194,7 @@ function ClientPicker({
           <Link
             key={client.id}
             href={`${currentPath}?businessId=${client.id}`}
-            className="border-2 border-ink bg-paper px-3 py-2 text-xs font-black uppercase text-ink hover:bg-acid"
+            className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-2 text-xs font-black uppercase text-ink hover:bg-[#e8f5ee]"
           >
             {client.name}
             <span className="ml-2 text-stone-500">{client.detail}</span>
@@ -207,7 +207,7 @@ function ClientPicker({
 
 function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <article className="border-2 border-ink bg-white p-4 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-4 shadow-sm">
       <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-600">{label}</p>
       <strong className="mt-2 block text-4xl font-black text-ink">{value}</strong>
       <p className="mt-1 text-sm font-semibold text-stone-600">{detail}</p>
@@ -217,21 +217,21 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
 
 function CommercialActionCard({ action, isDemo }: { action: CommercialAction; isDemo: boolean }) {
   return (
-    <article className="border-2 border-ink bg-white p-5 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-2xl font-black uppercase leading-none text-ink">{action.title}</h2>
             <StatusBadge status={action.status} />
           </div>
-          <p className="mt-2 text-sm font-black uppercase text-blue">{action.channel}</p>
+          <p className="mt-2 text-sm font-black uppercase text-[#E85D2A]">{action.channel}</p>
         </div>
-        <span className="grid h-12 w-12 place-items-center border-2 border-ink bg-acid">
+        <span className="grid h-12 w-12 place-items-center border border-[#dedad2] bg-[#f0faf5]">
           {action.status === "done" ? <CheckCircle2 className="h-6 w-6" /> : <CalendarClock className="h-6 w-6" />}
         </span>
       </div>
 
-      <p className="mt-4 border-2 border-line bg-paper p-3 text-sm font-semibold leading-6 text-stone-700">
+      <p className="mt-4 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3 text-sm font-semibold leading-6 text-stone-700">
         {action.description}
       </p>
 
@@ -243,8 +243,8 @@ function CommercialActionCard({ action, isDemo }: { action: CommercialAction; is
       </div>
 
       {action.result ? (
-        <div className="mt-4 flex items-start gap-3 border-2 border-ink bg-paper p-3">
-          <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-blue" />
+        <div className="mt-4 flex items-start gap-3 border border-[#dedad2] bg-[#f8f7f2] p-3">
+          <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#E85D2A]" />
           <div>
             <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-600">Résultat / note</p>
             <p className="mt-1 text-sm font-black leading-5 text-ink">{action.result}</p>
@@ -254,7 +254,7 @@ function CommercialActionCard({ action, isDemo }: { action: CommercialAction; is
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         {action.visibleToClient ? (
-          <span className="inline-flex items-center gap-1 border-2 border-line bg-paper px-2 py-1 text-[11px] font-black uppercase text-ink">
+          <span className="inline-flex items-center gap-1 border-2 border-[#e8e5dd] bg-[#f8f7f2] px-2 py-1 text-[11px] font-black uppercase text-ink">
             <Eye className="h-3 w-3" />
             Portail client
           </span>
@@ -264,7 +264,7 @@ function CommercialActionCard({ action, isDemo }: { action: CommercialAction; is
             <input type="hidden" name="id" value={action.id} />
             <input type="hidden" name="status" value={button.value} />
             <button
-              className="border-2 border-ink bg-white px-3 py-2 text-xs font-black uppercase text-ink hover:bg-acid disabled:cursor-not-allowed disabled:border-line disabled:text-stone-400"
+              className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-black uppercase text-ink hover:bg-[#e8f5ee] disabled:cursor-not-allowed disabled:border-[#e8e5dd] disabled:text-stone-400"
               disabled={isDemo || action.status === button.value}
               title={isDemo ? "Activez Supabase pour modifier les statuts" : undefined}
               type="submit"
@@ -280,7 +280,7 @@ function CommercialActionCard({ action, isDemo }: { action: CommercialAction; is
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-2 border-line bg-paper p-3">
+    <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
       <p className="text-[11px] font-black uppercase tracking-[0.12em] text-stone-500">{label}</p>
       <p className="mt-1 break-words text-sm font-black text-ink">{value}</p>
     </div>
@@ -304,7 +304,7 @@ function Field({
     <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
       {label}
       <input
-        className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
+        className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
         name={name}
         placeholder={placeholder}
         required={required}
@@ -319,7 +319,7 @@ function Select({ label, name, options }: { label: string; name: string; options
     <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
       {label}
       <select
-        className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
+        className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
         name={name}
       >
         {options.map((option) => (

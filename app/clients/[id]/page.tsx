@@ -11,8 +11,10 @@ import {
   ListChecks,
   Mail,
   MapPin,
+  MessageCircle,
   MonitorCheck,
-  Plus
+  Plus,
+  Route
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -55,11 +57,14 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
   const waitingContent = contentItems.filter((item) => item.status === "waiting_approval");
   const visibleContent = contentItems.filter((item) => item.visibleToClient);
 
+  const checkinMonth = new Date().toLocaleDateString("fr-CH", { month: "long", year: "numeric" });
+  const checkinText = `Bonjour ${client.name} \u{1F44B}\n\nCheck-in mensuel Atelier Nox — ${checkinMonth}\n\nCe mois-ci nous avons travaillé sur :\n• Actions et suivi commercial\n• Contenus et présence locale\n• Avis Google et visibilité\n\nProchaine étape : ${getClientNextStep(client)}\n\nDes questions ou des priorités à partager ?\n\nÀ bientôt,\nJoão – Atelier Nox`;
+
   return (
     <>
       <Link
         href="/clients"
-        className="mb-4 inline-flex items-center gap-2 border-2 border-ink bg-white px-3 py-2 text-xs font-black uppercase text-ink hover:bg-acid"
+        className="mb-4 inline-flex items-center gap-2 border border-[#dedad2] bg-white px-3 py-2 text-xs font-black uppercase text-ink hover:bg-[#e8f5ee]"
       >
         <ArrowLeft className="h-4 w-4" />
         Retour clients
@@ -74,7 +79,7 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
       />
 
       {isDemo ? (
-        <section className="mb-6 border-2 border-ink bg-yellow p-4">
+        <section className="mb-6 border border-[#dedad2] bg-[#fffbeb] p-4">
           <p className="text-sm font-black uppercase text-ink">Mode demo</p>
           <p className="mt-1 text-sm font-semibold leading-6 text-ink">
             Cette fiche utilise des donnees exemple. Avec Supabase actif, chaque fiche affichera les donnees du business
@@ -91,10 +96,10 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
       </section>
 
       <section className="mb-6 grid gap-6 xl:grid-cols-[0.82fr_1.18fr]">
-        <article className="border-2 border-ink bg-white p-5 shadow-soft">
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Compte</p>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Compte</p>
               <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">{client.name}</h2>
               <p className="mt-3 text-sm font-black uppercase text-stone-600">{client.niche}</p>
             </div>
@@ -111,7 +116,7 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
           </div>
         </article>
 
-        <article className="border-2 border-ink bg-acid p-5 shadow-soft">
+        <article className="border border-[#dedad2] bg-[#f0faf5] p-5 shadow-sm">
           <CalendarClock className="h-8 w-8 text-ink" />
           <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">Prochaine action</h2>
           <p className="mt-4 text-sm font-semibold leading-6 text-ink">{getClientNextStep(client)}</p>
@@ -131,14 +136,14 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
       </section>
 
       <section className="mb-6 grid gap-6 xl:grid-cols-2">
-        <Panel title="Actions prioritaires" icon={<ListChecks className="h-6 w-6 text-blue" />}>
+        <Panel title="Actions prioritaires" icon={<ListChecks className="h-6 w-6 text-[#E85D2A]" />}>
           {openActions.slice(0, 4).map((action) => (
             <ActionRow key={action.id} action={action} />
           ))}
           {!openActions.length ? <EmptyState text="Aucune action ouverte pour ce client." /> : null}
         </Panel>
 
-        <Panel title="Contenus & validations" icon={<Clapperboard className="h-6 w-6 text-blue" />}>
+        <Panel title="Contenus & validations" icon={<Clapperboard className="h-6 w-6 text-[#E85D2A]" />}>
           {visibleContent.slice(0, 4).map((item) => (
             <ContentRow key={item.id} item={item} />
           ))}
@@ -147,14 +152,14 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
       </section>
 
       <section className="mb-6 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <Panel title="Contacts suivis" icon={<ContactRound className="h-6 w-6 text-blue" />}>
+        <Panel title="Contacts suivis" icon={<ContactRound className="h-6 w-6 text-[#E85D2A]" />}>
           {contacts.slice(0, 5).map((contact) => (
             <ContactRow key={contact.id} contact={contact} />
           ))}
           {!contacts.length ? <EmptyState text="Aucun contact pour ce business." /> : null}
         </Panel>
 
-        <article className="border-2 border-ink bg-white p-5 shadow-soft">
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
           <CheckCircle2 className="h-8 w-8 text-green" />
           <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Definition du succes</h2>
           <p className="mt-4 text-sm font-semibold leading-6 text-stone-600">
@@ -167,6 +172,78 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
             <SuccessRule text="Un rapport mensuel simple et comprehensible." />
           </div>
         </article>
+      </section>
+
+      {/* ROADMAP 30 / 60 / 90 jours */}
+      <section className="mb-6 border border-[#dedad2] bg-white p-5 shadow-sm">
+        <div className="flex items-center gap-3">
+          <Route className="h-7 w-7 text-[#E85D2A]" />
+          <h2 className="text-3xl font-black uppercase leading-none text-ink">Plan 30 / 60 / 90 jours</h2>
+        </div>
+        <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-stone-600">
+          Chaque client suit un parcours structuré. Ces trois phases assurent une progression claire, mesurable et
+          communicable au client via le portail.
+        </p>
+        <div className="mt-5 grid gap-4 sm:grid-cols-3">
+          <RoadmapPhase
+            num="30"
+            label="Activation"
+            color="bg-[#12382F]"
+            items={[
+              "Audit Google Business",
+              "Optimisation fiche GMB",
+              "8-10 premiers avis clients",
+              "Contenu de lancement local"
+            ]}
+          />
+          <RoadmapPhase
+            num="60"
+            label="Contenu & relances"
+            color="bg-[#1a4f3f]"
+            items={[
+              "4 contenus publiés",
+              "20 relances actives",
+              "Rapport N°1 livré au client",
+              "Suivi avis Google continu"
+            ]}
+          />
+          <RoadmapPhase
+            num="90"
+            label="Croissance organique"
+            color="bg-[#E85D2A]"
+            items={[
+              "15+ avis validés",
+              "Campagne locale lancée",
+              "Rapport N°2 livré",
+              "Proposition renouvellement"
+            ]}
+          />
+        </div>
+      </section>
+
+      {/* CHECK-IN MENSUEL WHATSAPP */}
+      <section className="mb-6 border border-[#dedad2] bg-[#f0faf5] p-5 shadow-sm">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3">
+              <MessageCircle className="h-7 w-7 text-[#25D366]" />
+              <h2 className="text-3xl font-black uppercase leading-none text-ink">Check-in mensuel</h2>
+            </div>
+            <p className="mt-3 max-w-xl text-sm font-semibold leading-6 text-stone-600">
+              Envoyez un message WhatsApp de suivi mensuel au client. Ce message résume les actions du mois,
+              confirme la prochaine étape et maintient la relation active.
+            </p>
+          </div>
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(checkinText)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 border border-[#25D366] bg-[#25D366] px-4 py-3 text-sm font-black uppercase text-white shadow-[3px_3px_0_#12382F] transition hover:-translate-y-0.5"
+          >
+            <MessageCircle className="h-4 w-4" />
+            Envoyer check-in WhatsApp
+          </a>
+        </div>
       </section>
     </>
   );
@@ -184,7 +261,7 @@ function Metric({
   detail: string;
 }) {
   return (
-    <article className="border-2 border-ink bg-white p-4 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-600">{label}</p>
         {icon}
@@ -197,7 +274,7 @@ function Metric({
 
 function Info({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
   return (
-    <div className="border-2 border-line bg-paper p-3">
+    <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
       <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-stone-500">
         {icon}
         {label}
@@ -209,7 +286,7 @@ function Info({ label, value, icon }: { label: string; value: string; icon?: Rea
 
 function AdminShortcut({ href, label, detail }: { href: string; label: string; detail: string }) {
   return (
-    <Link href={href} className="border-2 border-ink bg-white p-3 text-ink hover:bg-paper">
+    <Link href={href} className="border border-[#dedad2] bg-white p-3 text-ink hover:bg-[#f8f7f2]">
       <span className="flex items-center justify-between gap-3 text-sm font-black uppercase">
         {label}
         <ExternalLink className="h-4 w-4" />
@@ -221,10 +298,10 @@ function AdminShortcut({ href, label, detail }: { href: string; label: string; d
 
 function QuickActionForm({ businessId, disabled }: { businessId: string; disabled: boolean }) {
   return (
-    <form action={createCommercialAction} className="border-2 border-ink bg-white p-5 shadow-soft">
+    <form action={createCommercialAction} className="border border-[#dedad2] bg-white p-5 shadow-sm">
       <input type="hidden" name="businessId" value={businessId} />
       <div className="flex items-start gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center border-2 border-ink bg-blue text-white">
+        <span className="grid h-10 w-10 shrink-0 place-items-center border border-[#dedad2] bg-[#12382F] text-white">
           <Plus className="h-5 w-5" />
         </span>
         <div>
@@ -258,7 +335,7 @@ function QuickActionForm({ businessId, disabled }: { businessId: string; disable
       </div>
 
       <button
-        className="mt-5 w-full border-2 border-ink bg-acid px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-5 w-full border border-[#dedad2] bg-[#f0faf5] px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
         disabled={disabled}
         title={disabled ? "Activez Supabase pour creer des actions reelles" : undefined}
         type="submit"
@@ -271,10 +348,10 @@ function QuickActionForm({ businessId, disabled }: { businessId: string; disable
 
 function QuickContentForm({ businessId, disabled }: { businessId: string; disabled: boolean }) {
   return (
-    <form action={createContentItem} className="border-2 border-ink bg-white p-5 shadow-soft">
+    <form action={createContentItem} className="border border-[#dedad2] bg-white p-5 shadow-sm">
       <input type="hidden" name="businessId" value={businessId} />
       <div className="flex items-start gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center border-2 border-ink bg-blue text-white">
+        <span className="grid h-10 w-10 shrink-0 place-items-center border border-[#dedad2] bg-[#12382F] text-white">
           <ImagePlus className="h-5 w-5" />
         </span>
         <div>
@@ -301,7 +378,7 @@ function QuickContentForm({ businessId, disabled }: { businessId: string; disabl
       </div>
 
       <button
-        className="mt-5 w-full border-2 border-ink bg-acid px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-5 w-full border border-[#dedad2] bg-[#f0faf5] px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
         disabled={disabled}
         title={disabled ? "Activez Supabase pour creer des contenus reels" : undefined}
         type="submit"
@@ -329,7 +406,7 @@ function QuickField({
     <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
       {label}
       <input
-        className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
+        className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
         name={name}
         placeholder={placeholder}
         required={required}
@@ -354,7 +431,7 @@ function QuickTextArea({
     <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
       {label}
       <textarea
-        className="min-h-24 border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case leading-6 tracking-normal text-ink outline-none focus:bg-acid"
+        className="min-h-24 border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case leading-6 tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
         name={name}
         placeholder={placeholder}
         required={required}
@@ -368,7 +445,7 @@ function QuickSelect({ label, name, options }: { label: string; name: string; op
     <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
       {label}
       <select
-        className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
+        className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
         name={name}
       >
         {options.map((option) => (
@@ -383,7 +460,7 @@ function QuickSelect({ label, name, options }: { label: string; name: string; op
 
 function Panel({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <article className="border-2 border-ink bg-white p-5 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="text-3xl font-black uppercase leading-none text-ink">{title}</h2>
         {icon}
@@ -395,47 +472,76 @@ function Panel({ title, icon, children }: { title: string; icon: React.ReactNode
 
 function ActionRow({ action }: { action: CommercialAction }) {
   return (
-    <div className="border-2 border-line bg-paper p-3">
+    <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h3 className="text-sm font-black uppercase leading-5 text-ink">{action.title}</h3>
         <StatusBadge status={action.status} />
       </div>
       <p className="mt-2 text-sm font-semibold leading-5 text-stone-600">{action.description}</p>
-      <p className="mt-3 text-xs font-black uppercase text-blue">{action.channel} / {action.estimatedValue}</p>
+      <p className="mt-3 text-xs font-black uppercase text-[#E85D2A]">{action.channel} / {action.estimatedValue}</p>
     </div>
   );
 }
 
 function ContentRow({ item }: { item: ContentItem }) {
   return (
-    <div className="border-2 border-line bg-paper p-3">
+    <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h3 className="text-sm font-black uppercase leading-5 text-ink">{item.title}</h3>
         <StatusBadge status={item.status} />
       </div>
       <p className="mt-2 text-sm font-semibold leading-5 text-stone-600">{item.caption ?? item.assetBrief ?? item.objective}</p>
-      <p className="mt-3 text-xs font-black uppercase text-blue">{item.channel} / {item.plannedDate ?? "A planifier"}</p>
+      <p className="mt-3 text-xs font-black uppercase text-[#E85D2A]">{item.channel} / {item.plannedDate ?? "A planifier"}</p>
     </div>
   );
 }
 
 function ContactRow({ contact }: { contact: CustomerContact }) {
   return (
-    <div className="border-2 border-line bg-paper p-3">
+    <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h3 className="text-sm font-black uppercase leading-5 text-ink">{contact.name}</h3>
         <StatusBadge status={contact.status} />
       </div>
       <p className="mt-2 text-sm font-semibold leading-5 text-stone-600">{contact.nextAction}</p>
-      <p className="mt-3 text-xs font-black uppercase text-blue">{contact.channel} / {contact.value}</p>
+      <p className="mt-3 text-xs font-black uppercase text-[#E85D2A]">{contact.channel} / {contact.value}</p>
     </div>
   );
 }
 
 function EmptyState({ text }: { text: string }) {
-  return <div className="border-2 border-line bg-paper p-4 text-sm font-black uppercase text-stone-600">{text}</div>;
+  return <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-4 text-sm font-black uppercase text-stone-600">{text}</div>;
 }
 
 function SuccessRule({ text }: { text: string }) {
-  return <div className="border-2 border-line bg-paper p-3 text-sm font-black uppercase leading-5 text-ink">{text}</div>;
+  return <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3 text-sm font-black uppercase leading-5 text-ink">{text}</div>;
+}
+
+function RoadmapPhase({
+  num,
+  label,
+  color,
+  items
+}: {
+  num: string;
+  label: string;
+  color: string;
+  items: string[];
+}) {
+  return (
+    <div className="border border-[#dedad2] bg-[#f8f7f2]">
+      <div className={`${color} px-4 py-3`}>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">Mois {num}</p>
+        <p className="mt-0.5 text-lg font-black uppercase leading-none text-white">{label}</p>
+      </div>
+      <ul className="grid gap-2 p-4">
+        {items.map((item) => (
+          <li key={item} className="flex items-start gap-2 text-sm font-semibold leading-5 text-stone-600">
+            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#E85D2A]" aria-hidden="true" />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

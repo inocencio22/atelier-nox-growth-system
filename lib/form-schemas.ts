@@ -14,6 +14,8 @@ const emailField = z.string().trim().email("Email invalide").max(254, "Email tro
 
 const optionalUrlOrText = z.string().trim().max(240, "Valeur trop longue").transform(emptyToNull);
 
+const optionalPhone = z.string().trim().max(30).transform(emptyToNull);
+
 const businessIdField = z.string().trim().uuid().catch(DEMO_BUSINESS_ID);
 
 export const onboardingSubmissionSchema = z.object({
@@ -24,6 +26,7 @@ export const onboardingSubmissionSchema = z.object({
   niche: textField.max(80).transform((value) => value || "Coiffure"),
   website: optionalUrlOrText,
   instagramHandle: optionalUrlOrText,
+  ownerPhone: optionalPhone,
   mainObjective: z
     .enum(["rendez_vous", "instagram", "relancer_contacts", "avis_google", "plus_clients"])
     .catch("plus_clients"),
@@ -38,6 +41,7 @@ export const onboardingSubmissionSchema = z.object({
 
 export const contactSchema = z.object({
   name: requiredText.max(120),
+  phone: optionalPhone,
   channel: z.enum(["Instagram", "WhatsApp", "Email", "Téléphone"]).catch("Instagram"),
   lastInteraction: textField.max(120).transform((value) => value || "Aujourd'hui"),
   nextAction: requiredText.max(240),

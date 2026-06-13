@@ -14,7 +14,7 @@ export default async function PropositionsPage() {
         description="Brouillons d'abonnement pour transformer un diagnostic gratuit en client mensuel Atelier Nox."
       />
       {isDemo ? (
-        <section className="mb-6 border-2 border-ink bg-yellow p-4">
+        <section className="mb-6 border border-[#dedad2] bg-[#fffbeb] p-4">
           <p className="text-sm font-black uppercase text-ink">Mode démo</p>
           <p className="mt-1 text-sm font-semibold leading-6 text-ink">
             Les propositions affichées sont des exemples. Après Supabase + migration 004, les diagnostics sauvegardés

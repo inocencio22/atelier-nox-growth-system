@@ -6,6 +6,7 @@ import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 import type { Database } from "@/lib/supabase.types";
 import { formValue, onboardingSubmissionSchema } from "@/lib/form-schemas";
 import { generateSubmissionDiagnostic, getOnboardingSubmissionById, type OnboardingStatus } from "@/lib/onboarding";
+import { buildNewDemandeEmail, sendEmail } from "@/lib/resend";
 
 type OnboardingInsert = Database["public"]["Tables"]["onboarding_submissions"]["Insert"];
 type OnboardingUpdate = Database["public"]["Tables"]["onboarding_submissions"]["Update"];
@@ -54,6 +55,7 @@ export async function createOnboardingSubmission(formData: FormData) {
     mainObjective: formValue(formData, "mainObjective", "plus_clients"),
     desiredPlan: formValue(formData, "desiredPlan", "essentiel"),
     notes: formValue(formData, "notes"),
+    ownerPhone: formValue(formData, "ownerPhone"),
     returnPath: formValue(formData, "returnPath", "/onboarding")
   });
   const safeReturnPath = parsed.success ? parsed.data.returnPath : "/onboarding";
@@ -62,6 +64,7 @@ export async function createOnboardingSubmission(formData: FormData) {
     redirect(`${safeReturnPath}?status=missing`);
   }
 
+  const phonePrefix = parsed.data.ownerPhone ? `📱 ${parsed.data.ownerPhone}\n\n` : "";
   const submission: OnboardingInsert = {
     business_name: parsed.data.businessName,
     owner_email: parsed.data.ownerEmail,
@@ -72,7 +75,7 @@ export async function createOnboardingSubmission(formData: FormData) {
     instagram_handle: parsed.data.instagramHandle,
     main_objective: parsed.data.mainObjective,
     desired_plan: parsed.data.desiredPlan,
-    notes: parsed.data.notes,
+    notes: parsed.data.notes ? `${phonePrefix}${parsed.data.notes}` : (phonePrefix || null),
     status: "new"
   };
 
@@ -104,6 +107,19 @@ export async function createOnboardingSubmission(formData: FormData) {
     });
     redirect(`${safeReturnPath}?status=error`);
   }
+
+  // Notify admin by email (non-blocking — failure does not affect user flow)
+  void sendEmail(
+    buildNewDemandeEmail({
+      businessName: parsed.data.businessName,
+      ownerEmail: parsed.data.ownerEmail,
+      ownerPhone: parsed.data.ownerPhone ?? null,
+      city: parsed.data.city,
+      niche: parsed.data.niche,
+      mainObjective: parsed.data.mainObjective,
+      desiredPlan: parsed.data.desiredPlan
+    })
+  );
 
   redirect(`${safeReturnPath}?status=ok`);
 }

@@ -101,8 +101,8 @@ export default function InfraPage() {
       </section>
 
       <section className="mb-6 grid gap-6 xl:grid-cols-[1fr_1.15fr]">
-        <article className="border-2 border-ink bg-white p-5 shadow-soft">
-          <GitBranch className="h-8 w-8 text-blue" />
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
+          <GitBranch className="h-8 w-8 text-[#E85D2A]" />
           <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Depot & deploy</h2>
           <div className="mt-5 grid gap-3">
             {deployStatus.map((item) => (
@@ -111,21 +111,21 @@ export default function InfraPage() {
           </div>
         </article>
 
-        <article className="border-2 border-ink bg-paper p-5 shadow-soft">
+        <article className="border border-[#dedad2] bg-[#f8f7f2] p-5 shadow-sm">
           <TerminalSquare className="h-8 w-8 text-green" />
           <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Raccourcis operationnels</h2>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {quickLinks.map((link) => (
               <a
                 key={link.href}
-                className="group border-2 border-ink bg-white p-4 transition hover:bg-acid"
+                className="group border border-[#dedad2] bg-white p-4 transition hover:bg-[#e8f5ee]"
                 href={link.href}
                 rel="noreferrer"
                 target="_blank"
               >
                 <span className="flex items-center justify-between gap-3 text-sm font-black uppercase text-ink">
                   {link.label}
-                  <ExternalLink className="h-4 w-4 text-blue transition group-hover:text-ink" />
+                  <ExternalLink className="h-4 w-4 text-[#E85D2A] transition group-hover:text-ink" />
                 </span>
                 <span className="mt-2 block text-sm font-semibold leading-5 text-stone-600">{link.detail}</span>
               </a>
@@ -135,7 +135,7 @@ export default function InfraPage() {
       </section>
 
       <section className="mb-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <article className="border-2 border-ink bg-acid p-5 shadow-soft">
+        <article className="border border-[#dedad2] bg-[#f0faf5] p-5 shadow-sm">
           <Cloud className="h-8 w-8 text-ink" />
           <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">Objectif</h2>
           <p className="mt-4 text-sm font-semibold leading-6 text-ink">
@@ -144,8 +144,8 @@ export default function InfraPage() {
           </p>
         </article>
 
-        <article className="border-2 border-ink bg-white p-5 shadow-soft">
-          <Database className="h-8 w-8 text-blue" />
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
+          <Database className="h-8 w-8 text-[#E85D2A]" />
           <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Variables d&apos;environnement</h2>
           <div className="mt-5 grid gap-3">
             {status.map((item) => (
@@ -156,10 +156,10 @@ export default function InfraPage() {
       </section>
 
       <section className="mb-6 grid gap-6 xl:grid-cols-2">
-        <article className="border-2 border-ink bg-white p-5 shadow-soft">
-          <KeyRound className="h-8 w-8 text-blue" />
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
+          <KeyRound className="h-8 w-8 text-[#E85D2A]" />
           <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Supabase SQL</h2>
-          <div className="mt-5 border-2 border-ink bg-acid p-4">
+          <div className="mt-5 border border-[#dedad2] bg-[#f0faf5] p-4">
             <div className="flex items-start gap-3">
               <FileCode2 className="mt-1 h-5 w-5 shrink-0 text-ink" />
               <div>
@@ -173,21 +173,21 @@ export default function InfraPage() {
           </div>
           <div className="mt-5 grid gap-2">
             {migrationFiles.map((file, index) => (
-              <div key={file} className="flex items-center justify-between gap-3 border-2 border-line bg-paper p-3">
+              <div key={file} className="flex items-center justify-between gap-3 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
                 <span className="text-sm font-black text-ink">{file}</span>
-                <span className="text-xs font-black uppercase text-blue">Etape {index + 1}</span>
+                <span className="text-xs font-black uppercase text-[#E85D2A]">Etape {index + 1}</span>
               </div>
             ))}
           </div>
         </article>
 
-        <article className="border-2 border-ink bg-white p-5 shadow-soft">
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
           <ShieldCheck className="h-8 w-8 text-green" />
           <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Sequence production</h2>
           <div className="mt-5 grid gap-3">
             {productionSteps.map((step, index) => (
-              <div key={step.title} className="border-2 border-line bg-paper p-3">
-                <p className="text-[11px] font-black uppercase tracking-[0.12em] text-blue">Etape {index + 1}</p>
+              <div key={step.title} className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
+                <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#E85D2A]">Etape {index + 1}</p>
                 <h3 className="mt-1 text-sm font-black uppercase leading-5 text-ink">{step.title}</h3>
                 <p className="mt-1 text-sm font-semibold leading-5 text-stone-600">{step.detail}</p>
               </div>
@@ -196,26 +196,26 @@ export default function InfraPage() {
         </article>
       </section>
 
-      <section className="mb-6 border-2 border-ink bg-white p-5 shadow-soft">
-        <TerminalSquare className="h-8 w-8 text-blue" />
+      <section className="mb-6 border border-[#dedad2] bg-white p-5 shadow-sm">
+        <TerminalSquare className="h-8 w-8 text-[#E85D2A]" />
         <h2 className="mt-4 text-3xl font-black uppercase leading-none text-ink">Commandes utiles</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           {setupCommands.map((command) => (
-            <code key={command} className="block border-2 border-line bg-ink p-3 text-sm font-bold text-white">
+            <code key={command} className="block border-2 border-[#e8e5dd] bg-ink p-3 text-sm font-bold text-white">
               {command}
             </code>
           ))}
         </div>
       </section>
 
-      <section className="border-2 border-ink bg-white p-5 shadow-soft">
+      <section className="border border-[#dedad2] bg-white p-5 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Deploy cible</p>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Deploy cible</p>
             <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">Vercel + Supabase + domaine</h2>
           </div>
           <a
-            className="inline-flex items-center gap-2 border-2 border-ink bg-acid px-4 py-3 text-sm font-black uppercase text-ink"
+            className="inline-flex items-center gap-2 border border-[#dedad2] bg-[#f0faf5] px-4 py-3 text-sm font-black uppercase text-ink"
             href="https://vercel.com"
             rel="noreferrer"
             target="_blank"
@@ -231,14 +231,14 @@ export default function InfraPage() {
 
 function DeployRow({ item }: { item: ReturnType<typeof getDeployStatus>[number] }) {
   return (
-    <div className="flex items-start gap-3 border-2 border-line bg-paper p-3">
+    <div className="flex items-start gap-3 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
       {item.configured ? (
         <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green" />
       ) : (
-        <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-coral" />
+        <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#dc2626]" />
       )}
       <div>
-        <p className="text-xs font-black uppercase tracking-[0.12em] text-blue">{item.label}</p>
+        <p className="text-xs font-black uppercase tracking-[0.12em] text-[#E85D2A]">{item.label}</p>
         <p className="mt-1 break-words text-sm font-black uppercase leading-5 text-ink">{item.value}</p>
         <p className="mt-1 text-sm font-semibold leading-5 text-stone-600">{item.detail}</p>
       </div>
@@ -248,7 +248,7 @@ function DeployRow({ item }: { item: ReturnType<typeof getDeployStatus>[number] 
 
 function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <article className="border-2 border-ink bg-white p-4 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-4 shadow-sm">
       <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-600">{label}</p>
       <strong className="mt-2 block text-4xl font-black text-ink">{value}</strong>
       <p className="mt-1 text-sm font-semibold text-stone-600">{detail}</p>
@@ -258,16 +258,16 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
 
 function StatusRow({ item }: { item: ReturnType<typeof getInfraStatus>[number] }) {
   return (
-    <div className="flex items-start gap-3 border-2 border-line bg-paper p-3">
+    <div className="flex items-start gap-3 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
       {item.configured ? (
         <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green" />
       ) : (
-        <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-coral" />
+        <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#dc2626]" />
       )}
       <div>
         <p className="text-sm font-black uppercase leading-5 text-ink">{item.label}</p>
         <p className="mt-1 text-sm font-semibold leading-5 text-stone-600">{item.detail}</p>
-        <p className="mt-2 text-xs font-black uppercase leading-5 text-blue">{item.nextStep}</p>
+        <p className="mt-2 text-xs font-black uppercase leading-5 text-[#E85D2A]">{item.nextStep}</p>
       </div>
     </div>
   );

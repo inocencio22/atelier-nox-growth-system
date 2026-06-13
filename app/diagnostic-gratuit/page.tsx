@@ -104,6 +104,7 @@ export default async function DiagnosticGratuitPage({ searchParams }: Diagnostic
           <div className="mt-6 flex flex-col gap-4">
             <Field label="Nom de votre activité" name="businessName" placeholder="Votre commerce" required />
             <Field label="Email" name="ownerEmail" placeholder="contact@business.ch" type="email" required />
+            <Field label="WhatsApp / Téléphone" name="ownerPhone" placeholder="+41 79 000 00 00" type="tel" />
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Ville" name="city" placeholder="Lausanne" defaultValue="Lausanne" />
               <Field label="Instagram" name="instagramHandle" placeholder="@monbusiness" />

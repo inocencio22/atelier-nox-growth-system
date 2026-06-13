@@ -13,10 +13,10 @@ type ProposalPreviewProps = {
 
 export function ProposalPreview({ proposal }: ProposalPreviewProps) {
   return (
-    <article className="border-2 border-ink bg-white p-4 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <span className="grid h-10 w-10 shrink-0 place-items-center border-2 border-ink bg-blue text-white">
+          <span className="grid h-10 w-10 shrink-0 place-items-center border border-[#dedad2] bg-[#12382F] text-white">
             <FileText className="h-5 w-5" aria-hidden="true" />
           </span>
           <div>

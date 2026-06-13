@@ -29,6 +29,7 @@ type ClientBusinessQueryClient = {
 };
 
 const now = new Date().toISOString();
+const sixteenDaysAgo = new Date(Date.now() - 16 * 86400000).toISOString();
 
 const demoClientBusinesses: ClientBusiness[] = [
   {
@@ -54,8 +55,8 @@ const demoClientBusinesses: ClientBusiness[] = [
     instagramHandle: "@bellerivehair",
     plan: "growth",
     status: "active",
-    createdAt: now,
-    updatedAt: now
+    createdAt: sixteenDaysAgo,
+    updatedAt: sixteenDaysAgo
   },
   {
     id: "demo-business-003",
@@ -162,7 +163,7 @@ export function formatClientStatus(status: ClientBusinessStatus) {
 
 export function getClientNextStep(client: ClientBusiness) {
   if (client.status === "trial") {
-    return "Transformer l'essai en plan mensuel avec une preuve claire.";
+    return "Transformer l\u2019essai en plan mensuel avec une preuve claire.";
   }
 
   if (client.status === "paused") {
@@ -170,7 +171,7 @@ export function getClientNextStep(client: ClientBusiness) {
   }
 
   if (!client.website || !client.instagramHandle) {
-    return "Completer les actifs de base avant le prochain plan d'action.";
+    return "Completer les actifs de base avant le prochain plan d\u2019action.";
   }
 
   if (client.plan === "essentiel") {

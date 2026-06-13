@@ -61,7 +61,7 @@ export default async function DemandesPage() {
       />
 
       {isDemo ? (
-        <section className="mb-6 border-2 border-ink bg-yellow p-4">
+        <section className="mb-6 border border-[#dedad2] bg-[#fffbeb] p-4">
           <p className="text-sm font-black uppercase text-ink">Mode démo</p>
           <p className="mt-1 text-sm font-semibold leading-6 text-ink">
             Supabase n&apos;est pas encore configuré ou la table n&apos;est pas disponible. Les demandes affichées sont
@@ -77,10 +77,10 @@ export default async function DemandesPage() {
         <Metric label="Gagnées" value={wonCount.toString()} detail="Abonnement ou setup" />
       </section>
 
-      <section className="mb-6 border-2 border-ink bg-white p-5 shadow-soft">
+      <section className="mb-6 border border-[#dedad2] bg-white p-5 shadow-sm">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Méthode de vente</p>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Méthode de vente</p>
             <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">
               Transformer une demande en client.
             </h2>
@@ -91,8 +91,8 @@ export default async function DemandesPage() {
         </div>
         <div className="mt-5 grid gap-3 md:grid-cols-4">
           {conversionSteps.map((step, index) => (
-            <article key={step.title} className="border-2 border-line bg-paper p-4">
-              <span className="text-xs font-black uppercase tracking-[0.14em] text-coral">Étape {index + 1}</span>
+            <article key={step.title} className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-4">
+              <span className="text-xs font-black uppercase tracking-[0.14em] text-[#dc2626]">Étape {index + 1}</span>
               <h3 className="mt-3 text-xl font-black uppercase leading-none text-ink">{step.title}</h3>
               <p className="mt-3 text-sm font-semibold leading-6 text-stone-700">{step.detail}</p>
             </article>
@@ -101,7 +101,7 @@ export default async function DemandesPage() {
       </section>
 
       <section className="mb-6 grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">
-        <article className="border-2 border-ink bg-acid p-5 shadow-soft">
+        <article className="border border-[#dedad2] bg-[#f0faf5] p-5 shadow-sm">
           <Sparkles className="h-8 w-8 text-ink" />
           <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">Règle du service</h2>
           <p className="mt-4 text-sm font-semibold leading-6 text-ink">
@@ -110,7 +110,7 @@ export default async function DemandesPage() {
           </p>
           <Link
             href="/onboarding"
-            className="mt-5 inline-flex items-center gap-2 border-2 border-ink bg-white px-4 py-3 text-sm font-black uppercase text-ink"
+            className="mt-5 inline-flex items-center gap-2 border border-[#dedad2] bg-white px-4 py-3 text-sm font-black uppercase text-ink"
           >
             Voir le formulaire client
             <ArrowRight className="h-4 w-4" />
@@ -129,7 +129,7 @@ export default async function DemandesPage() {
 
 function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <article className="border-2 border-ink bg-white p-4 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-4 shadow-sm">
       <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-600">{label}</p>
       <strong className="mt-2 block text-4xl font-black text-ink">{value}</strong>
       <p className="mt-1 text-sm font-semibold text-stone-600">{detail}</p>
@@ -139,7 +139,7 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
 
 function SubmissionCard({ submission, isDemo }: { submission: OnboardingSubmission; isDemo: boolean }) {
   return (
-    <article className="border-2 border-ink bg-white p-5 shadow-soft">
+    <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -148,7 +148,7 @@ function SubmissionCard({ submission, isDemo }: { submission: OnboardingSubmissi
           </div>
           <p className="mt-2 text-sm font-black text-stone-600">{submission.niche}</p>
         </div>
-        <div className="grid h-12 w-12 place-items-center border-2 border-ink bg-blue text-white">
+        <div className="grid h-12 w-12 place-items-center border border-[#dedad2] bg-[#12382F] text-white">
           <Mail className="h-6 w-6" />
         </div>
       </div>
@@ -163,13 +163,13 @@ function SubmissionCard({ submission, isDemo }: { submission: OnboardingSubmissi
       </div>
 
       {submission.notes ? (
-        <p className="mt-4 border-2 border-line bg-paper p-3 text-sm font-semibold leading-6 text-stone-700">
+        <p className="mt-4 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3 text-sm font-semibold leading-6 text-stone-700">
           {submission.notes}
         </p>
       ) : null}
 
-      <div className="mt-4 flex items-start gap-3 border-2 border-ink bg-paper p-3">
-        <CalendarClock className="mt-0.5 h-5 w-5 shrink-0 text-blue" />
+      <div className="mt-4 flex items-start gap-3 border border-[#dedad2] bg-[#f8f7f2] p-3">
+        <CalendarClock className="mt-0.5 h-5 w-5 shrink-0 text-[#E85D2A]" />
         <div>
           <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-600">Prochaine action</p>
           <p className="mt-1 text-sm font-black leading-5 text-ink">{nextActions[submission.status]}</p>
@@ -179,7 +179,7 @@ function SubmissionCard({ submission, isDemo }: { submission: OnboardingSubmissi
       <div className="mt-4 flex flex-wrap gap-2">
         <Link
           href={`/demandes/${submission.id}`}
-          className="inline-flex items-center gap-2 border-2 border-ink bg-acid px-3 py-2 text-xs font-black uppercase text-ink"
+          className="inline-flex items-center gap-2 border border-[#dedad2] bg-[#f0faf5] px-3 py-2 text-xs font-black uppercase text-ink"
         >
           Créer diagnostic
           <ArrowRight className="h-4 w-4" />
@@ -189,7 +189,7 @@ function SubmissionCard({ submission, isDemo }: { submission: OnboardingSubmissi
             <input type="hidden" name="id" value={submission.id} />
             <input type="hidden" name="status" value={button.value} />
             <button
-              className="border-2 border-ink bg-white px-3 py-2 text-xs font-black uppercase text-ink hover:bg-acid disabled:cursor-not-allowed disabled:border-line disabled:text-stone-400"
+              className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-black uppercase text-ink hover:bg-[#e8f5ee] disabled:cursor-not-allowed disabled:border-[#e8e5dd] disabled:text-stone-400"
               disabled={isDemo || submission.status === button.value}
               title={isDemo ? "Activez Supabase pour modifier les statuts" : undefined}
               type="submit"
@@ -205,7 +205,7 @@ function SubmissionCard({ submission, isDemo }: { submission: OnboardingSubmissi
 
 function Info({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
   return (
-    <div className="border-2 border-line bg-paper p-3">
+    <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
       <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-stone-500">
         {icon}
         {label}

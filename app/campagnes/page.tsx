@@ -22,7 +22,7 @@ export default function CampagnesPage() {
         <div>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-2xl font-black uppercase text-ink">Campagnes prêtes</h2>
-            <span className="border-2 border-ink bg-yellow px-2 py-1 text-xs font-black uppercase">
+            <span className="border border-[#dedad2] bg-[#fffbeb] px-2 py-1 text-xs font-black uppercase">
               Sans envoi auto
             </span>
           </div>
@@ -33,8 +33,8 @@ export default function CampagnesPage() {
           </div>
         </div>
 
-        <form className="border-2 border-ink bg-white p-5 shadow-soft">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Campaign builder</p>
+        <form className="border border-[#dedad2] bg-white p-5 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Campaign builder</p>
           <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">Créer une relance</h2>
           <div className="mt-5 grid gap-3">
             <Select label="Segment" options={contactSegments.map((segment) => segment.name)} />
@@ -43,16 +43,16 @@ export default function CampagnesPage() {
             <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
               Message proposé
               <textarea
-                className="min-h-40 border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
+                className="min-h-40 border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
                 defaultValue={messageTemplates[0].body}
               />
             </label>
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <button className="border-2 border-ink bg-acid px-4 py-3 text-sm font-black uppercase" type="button">
+            <button className="border border-[#dedad2] bg-[#f0faf5] px-4 py-3 text-sm font-black uppercase" type="button">
               Préparer campagne
             </button>
-            <button className="border-2 border-ink bg-white px-4 py-3 text-sm font-black uppercase" type="button">
+            <button className="border border-[#dedad2] bg-white px-4 py-3 text-sm font-black uppercase" type="button">
               Copier message
             </button>
           </div>
@@ -70,7 +70,7 @@ function Select({ label, options }: { label: string; options: string[] }) {
   return (
     <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
       {label}
-      <select className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid">
+      <select className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee]">
         {options.map((option) => (
           <option key={option}>{option}</option>
         ))}
