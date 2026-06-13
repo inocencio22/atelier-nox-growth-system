@@ -1,19 +1,18 @@
 import {
   BarChart3,
   Clapperboard,
-  ContactRound,
   CreditCard,
   FileText,
   Home,
   Inbox,
   Layers3,
-  LogIn,
+  Info,
   ListChecks,
   Mail,
   Megaphone,
   MonitorCheck,
   ShieldCheck,
-  UsersRound,
+  Users,
   type LucideIcon
 } from "lucide-react";
 import type { WorkspaceAccess } from "@/lib/auth-model";
@@ -30,7 +29,7 @@ export const publicNavItems: NavItem[] = [
   { href: "/", label: "Notre approche", icon: Home },
   { href: "/services", label: "Services", icon: Layers3 },
   { href: "/abonnement", label: "Tarifs", icon: CreditCard },
-  { href: "/a-propos", label: "À propos", icon: LogIn }
+  { href: "/a-propos", label: "À propos", icon: Info }
 ];
 
 export const clientNavItems: NavItem[] = [
@@ -43,11 +42,11 @@ export const clientNavItems: NavItem[] = [
 
 export const adminNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
-  { href: "/clients", label: "Clients", icon: UsersRound },
+  { href: "/clients", label: "Clients", icon: Users },
   { href: "/demandes", label: "Demandes", icon: Inbox },
   { href: "/actions", label: "Actions", icon: ListChecks },
   { href: "/contenus", label: "Contenus", icon: Clapperboard },
-  { href: "/contacts", label: "Contacts", icon: ContactRound },
+  { href: "/contacts", label: "Contacts", icon: Users },
   { href: "/campagnes", label: "Campagnes", icon: Megaphone },
   { href: "/messages", label: "Messages", icon: Mail },
   { href: "/rapports", label: "Rapports", icon: FileText },
@@ -64,7 +63,8 @@ const publicPrefixes = [
   "/login",
   "/mentions-legales",
   "/politique-de-confidentialite",
-  "/a-propos"
+  "/a-propos",
+  "/notre-histoire"
 ];
 
 export function isPublicPath(pathname: string) {
