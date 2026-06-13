@@ -12,7 +12,6 @@ import {
   Mail,
   Megaphone,
   MonitorCheck,
-  Rocket,
   ShieldCheck,
   UsersRound,
   type LucideIcon
@@ -30,9 +29,8 @@ export type NavMode = "public" | "client" | "admin";
 export const publicNavItems: NavItem[] = [
   { href: "/", label: "Notre approche", icon: Home },
   { href: "/services", label: "Services", icon: Layers3 },
-  { href: "/#experience", label: "Notre expérience", icon: Rocket },
   { href: "/abonnement", label: "Tarifs", icon: CreditCard },
-  { href: "/#apropos", label: "À propos", icon: LogIn }
+  { href: "/a-propos", label: "À propos", icon: LogIn }
 ];
 
 export const clientNavItems: NavItem[] = [
@@ -56,7 +54,18 @@ export const adminNavItems: NavItem[] = [
   { href: "/infra", label: "Infra", icon: ShieldCheck }
 ];
 
-const publicPrefixes = ["/", "/services", "/diagnostic-gratuit", "/abonnement", "/onboarding", "/diagnostic", "/login"];
+const publicPrefixes = [
+  "/",
+  "/services",
+  "/diagnostic-gratuit",
+  "/abonnement",
+  "/onboarding",
+  "/diagnostic",
+  "/login",
+  "/mentions-legales",
+  "/politique-de-confidentialite",
+  "/a-propos"
+];
 
 export function isPublicPath(pathname: string) {
   return publicPrefixes.some((prefix) => pathname === prefix || (prefix !== "/" && pathname.startsWith(`${prefix}/`)));

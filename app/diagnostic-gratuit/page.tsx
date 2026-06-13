@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, CircleDot, FileSearch, ShieldCheck } from "lucide-react";
-import { BrandMark } from "@/components/BrandMark";
+import { ArrowRight, FileSearch, ShieldCheck } from "lucide-react";
 import { createOnboardingSubmission } from "@/lib/onboarding-actions";
 
 type DiagnosticLandingProps = {
@@ -18,184 +17,193 @@ const deliverables = [
   ["04", "Plan conseillé", "La formule adaptée : Local Clarity, Managed Growth ou Done For You Local."]
 ];
 
-const proofPoints = [
-  "Pas seulement des posts ou des likes.",
-  "Un service géré, pas une plateforme à apprendre.",
-  "Une première lecture avant tout abonnement."
-];
-
 export default async function DiagnosticGratuitPage({ searchParams }: DiagnosticLandingProps) {
   const params = await searchParams;
   const status = params?.status;
 
   return (
-    <div className="space-y-10">
-      <section className="grid gap-6 lg:grid-cols-[1.02fr_0.98fr]">
-        <article className="border border-[#12382F] bg-[#fffaf0] px-5 py-6 shadow-[8px_8px_0_rgba(18,56,47,0.16)] md:px-8 md:py-9">
-          <div className="flex flex-wrap items-start justify-between gap-5">
-            <div className="flex items-start gap-4">
-              <BrandMark />
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#E85D2A]">Diagnostic gratuit</p>
-                <p className="mt-2 max-w-sm text-sm font-black uppercase leading-5 text-[#12382F]">
-                  Une conversation claire pour comprendre votre situation locale.
-                </p>
-              </div>
-            </div>
-            <span className="border border-[#12382F] bg-[#F5F1E8] px-3 py-2 text-xs font-black uppercase text-[#12382F]">
-              Dès CHF 190/mois
-            </span>
+    <div className="space-y-0">
+
+      {/* ── Hero + Formulaire ─────────────────────────────── */}
+      <section className="grid gap-0 border border-[#12382F] shadow-[8px_8px_0_rgba(18,56,47,0.10)] lg:grid-cols-[1fr_1fr]">
+
+        {/* Gauche */}
+        <div className="flex flex-col justify-between bg-[#fffaf0] p-8 lg:p-12">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-[#E85D2A]">Diagnostic gratuit</p>
+            <h1 className="mt-4 text-5xl font-black leading-[0.92] text-[#101820] lg:text-6xl">
+              Parlons de votre commerce pendant 30 minutes.
+            </h1>
+            <p className="mt-5 max-w-md text-base font-semibold leading-7 text-[#12382F]/70">
+              Nous regardons votre visibilité locale, vos contenus, vos avis Google et les actions simples à préparer en priorité.
+            </p>
           </div>
 
-          <div className="mt-10 grid gap-5 lg:grid-cols-[0.72fr_0.28fr]">
+          <div className="mt-10 space-y-6">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#E85D2A]">Premier échange</p>
-              <h1 className="mt-4 max-w-4xl text-5xl font-black leading-[0.94] text-[#101820] md:text-7xl">
-                Parlons de votre commerce pendant 30 minutes.
-              </h1>
-              <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-[#12382F]">
-                Nous regardons votre visibilité locale, vos contenus, vos avis Google, vos relances possibles et les
-                actions simples à préparer en priorité.
-              </p>
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#12382F]/40">Ce que nous analysons</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {signals.map((signal) => (
+                  <span
+                    key={signal}
+                    className="border border-[#12382F]/20 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.08em] text-[#12382F]"
+                  >
+                    {signal}
+                  </span>
+                ))}
+              </div>
             </div>
 
-            <div className="grid content-start gap-2">
-              {signals.map((signal) => (
-                <div key={signal} className="flex items-center gap-2 border border-[#D9D3C7] bg-[#F5F1E8] px-3 py-2">
-                  <CircleDot className="h-3.5 w-3.5 text-[#E85D2A]" />
-                  <span className="text-xs font-black uppercase text-[#12382F]">{signal}</span>
+            <div className="space-y-2 border-t border-[#12382F]/10 pt-5">
+              {[
+                "Pas seulement des posts ou des likes.",
+                "Un service géré, pas une plateforme à apprendre.",
+                "Une première lecture avant tout abonnement."
+              ].map((point) => (
+                <div key={point} className="flex items-start gap-2.5">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#E85D2A]" />
+                  <p className="text-sm font-semibold text-[#12382F]/60">{point}</p>
                 </div>
               ))}
             </div>
           </div>
+        </div>
 
-          <div className="mt-8 grid gap-3 md:grid-cols-3">
-            {proofPoints.map((point) => (
-              <div key={point} className="flex items-start gap-2 border border-[#D9D3C7] bg-[#F5F1E8] p-3">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#E85D2A]" />
-                <span className="text-sm font-black leading-5 text-[#12382F]">{point}</span>
-              </div>
-            ))}
-          </div>
-        </article>
-
+        {/* Droite — Formulaire */}
         <form
           action={createOnboardingSubmission}
-          className="border border-[#12382F] bg-[#12382F] p-5 text-white shadow-[8px_8px_0_#E85D2A] md:p-6"
+          className="flex flex-col bg-[#12382F] p-8 lg:p-12"
         >
           <input name="returnPath" type="hidden" value="/diagnostic-gratuit" />
           <input name="desiredPlan" type="hidden" value="pas_encore" />
 
-          <div className="flex items-start justify-between gap-4 border-b border-[#F5F1E8]/30 pb-5">
+          <div className="flex items-center justify-between border-b border-white/10 pb-6">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#E85D2A]">Recevoir l&apos;analyse</p>
-              <h2 className="mt-2 text-3xl font-black leading-none">Votre demande</h2>
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E85D2A]">Recevoir l&apos;analyse</p>
+              <h2 className="mt-1.5 text-2xl font-black text-white">Votre demande</h2>
             </div>
-            <span className="grid h-11 w-11 shrink-0 place-items-center border border-[#F5F1E8]/40 bg-[#F5F1E8] text-[#12382F]">
-              <FileSearch className="h-5 w-5" />
-            </span>
+            <div className="flex h-10 w-10 items-center justify-center border border-white/15 bg-white/5">
+              <FileSearch className="h-5 w-5 text-white/50" />
+            </div>
           </div>
 
           {status === "ok" ? (
-            <div className="mt-5 border border-[#F5F1E8] bg-[#F5F1E8] p-3 text-sm font-black uppercase text-[#12382F]">
-              Votre demande a bien été envoyée. Nous vous répondrons sous 24–48h ouvrables.
+            <div className="mt-5 border border-white/20 bg-white/10 p-4 text-sm font-bold text-white">
+              ✓ Votre demande a bien été envoyée. Nous vous répondrons sous 24–48h ouvrables.
             </div>
           ) : null}
 
-          {status === "error" ? (
-            <div className="mt-5 border border-[#F5F1E8] bg-[#E85D2A] p-3 text-sm font-black uppercase text-white">
-              Nous n’avons pas pu enregistrer votre demande. Veuillez réessayer ou nous contacter directement.
+          {status === "error" || status === "missing" ? (
+            <div className="mt-5 border border-[#E85D2A]/50 bg-[#E85D2A]/15 p-4 text-sm font-bold text-white">
+              {status === "missing"
+                ? "Merci de compléter le nom du business et l'email."
+                : "Nous n'avons pas pu enregistrer votre demande. Veuillez réessayer."}
             </div>
           ) : null}
 
-          {status === "missing" ? (
-            <div className="mt-5 border border-[#F5F1E8] bg-[#E85D2A] p-3 text-sm font-black uppercase text-white">
-              Merci de compléter le nom du business et l&apos;email.
-            </div>
-          ) : null}
-
-          <div className="mt-5 grid gap-3">
+          <div className="mt-6 flex flex-col gap-4">
             <Field label="Nom de votre activité" name="businessName" placeholder="Votre commerce" required />
             <Field label="Email" name="ownerEmail" placeholder="contact@business.ch" type="email" required />
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Ville" name="city" placeholder="Lausanne" defaultValue="Lausanne" />
               <Field label="Instagram" name="instagramHandle" placeholder="@monbusiness" />
             </div>
             <Field label="Site web" name="website" placeholder="https://..." />
 
-            <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-[#F5F1E8]">
+            <label className="grid gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/50">
               Objectif prioritaire
               <select
-                className="border border-[#F5F1E8]/40 bg-[#F5F1E8] px-3 py-3 text-sm font-bold normal-case tracking-normal text-[#101820] outline-none focus:border-[#E85D2A]"
+                className="border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold normal-case tracking-normal text-white outline-none focus:border-[#E85D2A]"
                 name="mainObjective"
                 defaultValue="rendez_vous"
               >
-                <option value="rendez_vous">Plus de rendez-vous</option>
-                <option value="instagram">Réseaux sociaux qui inspirent confiance</option>
-                <option value="relancer_contacts">Réactiver d’anciens clients</option>
-                <option value="avis_google">Plus d&apos;avis Google</option>
-                <option value="plus_clients">Plus de clients</option>
+                <option value="rendez_vous" className="bg-[#12382F]">Plus de rendez-vous</option>
+                <option value="instagram" className="bg-[#12382F]">Réseaux sociaux qui inspirent confiance</option>
+                <option value="relancer_contacts" className="bg-[#12382F]">Réactiver d&apos;anciens clients</option>
+                <option value="avis_google" className="bg-[#12382F]">Plus d&apos;avis Google</option>
+                <option value="plus_clients" className="bg-[#12382F]">Plus de clients</option>
               </select>
             </label>
 
-            <button className="mt-2 flex w-full items-center justify-center gap-2 border border-[#F5F1E8] bg-[#E85D2A] px-4 py-3 text-sm font-black uppercase text-white hover:bg-[#d94f21]">
+            <button className="mt-1 flex w-full items-center justify-center gap-2 bg-[#E85D2A] px-4 py-4 text-sm font-black uppercase text-white transition hover:bg-[#d44e22]">
               Demander le diagnostic
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>
 
-          <p className="mt-4 text-xs font-bold leading-5 text-[#D9D3C7]">
+          <p className="mt-5 text-xs font-semibold leading-5 text-white/30">
             Aucun engagement. Le diagnostic gratuit sert à comprendre votre situation avant toute proposition.
           </p>
+          <div className="mt-5 border-t border-white/10 pt-5">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/30">Ou directement sur</p>
+            <a
+              href="https://wa.me/41792844918"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex w-full items-center justify-center gap-2 border border-white/15 bg-white/8 px-4 py-3 text-sm font-black uppercase text-white transition hover:bg-white/15"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.856L0 24l6.336-1.508A11.934 11.934 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.213-3.727.887.924-3.618-.234-.372A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/>
+              </svg>
+              WhatsApp — +41 79 284 49 18
+            </a>
+          </div>
         </form>
       </section>
 
-      <section className="grid gap-3 md:grid-cols-4">
-        {deliverables.map(([number, title, detail]) => (
-          <article
-            key={title}
-            className="border border-[#12382F] bg-[#fffaf0] p-4 shadow-[4px_4px_0_rgba(18,56,47,0.12)]"
-          >
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#E85D2A]">{number}</p>
-            <h3 className="mt-4 text-xl font-black leading-none text-[#101820]">{title}</h3>
-            <p className="mt-3 text-sm font-semibold leading-6 text-[#12382F]">{detail}</p>
-          </article>
-        ))}
+      {/* ── Ce que vous recevez ───────────────────────────── */}
+      <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#0d1a14] px-4 py-14 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E85D2A]">Ce que vous recevez</p>
+          <h2 className="mt-3 text-3xl font-black text-white">En 30 minutes, vous repartez avec :</h2>
+          <div className="mt-8 grid gap-px bg-white/8 sm:grid-cols-2 lg:grid-cols-4">
+            {deliverables.map(([number, title, detail]) => (
+              <article
+                key={title}
+                className="group bg-[#0d1a14] p-7 transition hover:bg-[#12382F]"
+              >
+                <span className="block text-4xl font-black leading-none text-[#E85D2A]/20 transition group-hover:text-[#E85D2A]/35">
+                  {number}
+                </span>
+                <h3 className="mt-5 text-lg font-black text-white">{title}</h3>
+                <div className="mt-3 h-px w-6 bg-[#E85D2A]" />
+                <p className="mt-4 text-sm font-semibold leading-6 text-white/45">{detail}</p>
+              </article>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <article className="border border-[#12382F] bg-[#fffaf0] p-6">
-          <ShieldCheck className="h-8 w-8 text-[#E85D2A]" />
-          <h2 className="mt-4 text-4xl font-black leading-none text-[#101820]">
+      {/* ── Promesse ──────────────────────────────────────── */}
+      <section className="grid gap-4 pt-8 lg:grid-cols-2">
+        <article className="border border-[#12382F]/20 bg-[#fffaf0] p-8">
+          <ShieldCheck className="h-7 w-7 text-[#E85D2A]" />
+          <h2 className="mt-5 text-3xl font-black leading-tight text-[#101820]">
             Une stratégie au-delà des réseaux sociaux.
           </h2>
-          <p className="mt-4 text-sm font-semibold leading-6 text-[#12382F]">
+          <p className="mt-4 text-sm font-semibold leading-7 text-[#12382F]/65">
             Atelier Nox relie contenus, relances, avis Google et actions commerciales. Le but n&apos;est pas de publier
             plus, mais de créer un suivi régulier et compréhensible.
           </p>
         </article>
 
-        <article className="border border-[#12382F] bg-[#12382F] p-6 text-white">
-          <h2 className="text-3xl font-black leading-none">Nous avançons avec vous.</h2>
-          <p className="mt-4 text-sm font-semibold leading-6 text-[#F5F1E8]">
+        <article className="border border-[#12382F] bg-[#12382F] p-8">
+          <h2 className="text-3xl font-black leading-tight text-white">Nous avançons avec vous.</h2>
+          <p className="mt-4 text-sm font-semibold leading-7 text-white/60">
             L&apos;IA reste un soutien discret pour préparer et organiser. La relation avec vos clients, la validation
             des messages et les décisions importantes restent humaines.
           </p>
+          <Link
+            href="/abonnement"
+            className="mt-6 inline-flex items-center gap-2 border border-white/20 px-5 py-3 text-xs font-black uppercase text-white transition hover:border-white/40"
+          >
+            Voir les abonnements
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </article>
       </section>
 
-      <section className="flex flex-wrap items-center justify-between gap-4 border border-[#12382F] bg-[#12382F] px-5 py-5 text-white">
-        <p className="max-w-2xl text-xl font-black leading-tight">
-          Un premier échange pour voir ce qui peut être clarifié, préparé et suivi.
-        </p>
-        <Link
-          href="/abonnement"
-          className="inline-flex items-center gap-2 border border-[#F5F1E8] bg-[#E85D2A] px-4 py-3 text-sm font-black uppercase text-white"
-        >
-          Voir les abonnements
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </section>
     </div>
   );
 }
@@ -216,10 +224,10 @@ function Field({
   type?: string;
 }) {
   return (
-    <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-[#F5F1E8]">
+    <label className="grid gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/50">
       {label}
       <input
-        className="border border-[#F5F1E8]/40 bg-[#F5F1E8] px-3 py-3 text-sm font-bold normal-case tracking-normal text-[#101820] outline-none focus:border-[#E85D2A]"
+        className="border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold normal-case tracking-normal text-white outline-none placeholder:text-white/25 focus:border-[#E85D2A] focus:bg-white/15"
         defaultValue={defaultValue}
         name={name}
         placeholder={placeholder}

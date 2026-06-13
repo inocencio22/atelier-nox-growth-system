@@ -178,7 +178,7 @@ export default function AbonnementPage() {
           {faqItems.map((item) => (
             <article key={item.question} className="border border-[#D9D3C7] bg-[#fffaf0] p-4">
               <h3 className="text-base font-black text-[#101820]">{item.question}</h3>
-              <p className="mt-3 text-sm font-semibold leading-6 text-[#12382F]">{item.answer}</p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-[#12382F]">{item.answer}</p>
             </article>
           ))}
         </div>

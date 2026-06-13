@@ -15,13 +15,12 @@ export function BrandMark({
 
   if (variant === "horizontal") {
     return (
-      <div className={clsx("inline-flex items-center", className)}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo local: direct rendering is more reliable than image optimization. */}
-        <img
-          src="/brand/atelier-nox-logo-horizontal-light.svg"
-          alt="Atelier Nox - Croissance locale gérée"
-          className="h-16 w-auto sm:h-20"
-        />
+      <div className={clsx("inline-flex items-center gap-4", className)} aria-label="Atelier Nox Growth System">
+        {symbol}
+        <div className="leading-none">
+          <p className="text-lg font-black uppercase tracking-[0.2em] text-[#123047] sm:text-xl">Atelier Nox</p>
+          <p className="mt-1.5 text-[10px] font-black uppercase tracking-[0.48em] text-[#123047]/70">Growth System</p>
+        </div>
       </div>
     );
   }
@@ -30,23 +29,17 @@ export function BrandMark({
 }
 
 function BrandSymbol({ compact }: { compact: boolean }) {
-  const sizeClass = compact ? "h-12 w-12" : "h-20 w-20";
+  const sizeClass = compact ? "h-9 w-9" : "h-12 w-12";
 
   return (
-    <div
-      className={clsx(
-        "grid place-items-center overflow-hidden border border-[#12382F] bg-[#F5F1E8] shadow-[3px_3px_0_rgba(18,56,47,0.12)]",
-        sizeClass
-      )}
-      aria-label="Atelier Nox"
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element -- SVG symbol local: direct rendering keeps favicon-style details crisp. */}
-      <img
-        src="/brand/atelier-nox-symbol-light.svg"
-        alt=""
-        aria-hidden="true"
-        className={clsx(compact ? "h-12 w-12" : "h-20 w-20")}
-      />
+    <div className={clsx("grid place-items-center text-[#123047]", sizeClass)} aria-label="Atelier Nox">
+      <svg viewBox="0 0 96 72" role="img" aria-label="Atelier Nox">
+        <path d="M7 61 47 9l42 52H73L47 29 22 61H7Z" fill="currentColor" />
+        <path d="M31 44 43 34l8 8 11-12 16 19-12-5-12 6-10-7-12 8-10-3 9-4Z" fill="#F5FAFD" />
+        <path d="M17 61h32L33 40 17 61Z" fill="currentColor" />
+        <path d="M55 61h34L72 40 55 61Z" fill="currentColor" />
+        <path d="M18 66c9-4 17 3 26 0s17 3 26 0" fill="none" stroke="#1FA2A1" strokeLinecap="round" strokeWidth="4" />
+      </svg>
     </div>
   );
 }

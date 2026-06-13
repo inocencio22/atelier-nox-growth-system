@@ -1,5 +1,4 @@
 import { LockKeyhole, ShieldCheck } from "lucide-react";
-import { BrandMark } from "@/components/BrandMark";
 import { loginWithAccessCode, loginWithSupabase } from "@/lib/access-actions";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
@@ -21,129 +20,133 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <section className="grid min-h-[calc(100vh-4rem)] place-items-center py-10">
-      <div className="grid w-full max-w-5xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <article className="border-2 border-ink bg-acid p-6 shadow-soft">
-          <BrandMark />
-          <p className="mt-6 text-xs font-black uppercase tracking-[0.16em] text-blue">Accès privé</p>
-          <h1 className="mt-3 text-5xl font-black uppercase leading-[0.9] text-ink">
-            Espace réservé Atelier Nox.
-          </h1>
-          <p className="mt-5 text-sm font-semibold leading-6 text-ink">
-            Accès sécurisé pour le suivi client, les livrables, les validations et les rapports de croissance locale.
-          </p>
-        </article>
+      <div className="grid w-full max-w-4xl gap-0 overflow-hidden border border-[#12382F] shadow-[8px_8px_0_rgba(18,56,47,0.12)] lg:grid-cols-[1fr_1.2fr]">
 
-        <div className="grid gap-4 border-2 border-ink bg-white p-6 shadow-soft">
-          <div className="flex items-start gap-3">
-            <span className="grid h-11 w-11 shrink-0 place-items-center border-2 border-ink bg-blue text-white">
-              <LockKeyhole className="h-5 w-5" />
-            </span>
+        {/* ── Panneau gauche ─────────────────────────── */}
+        <div className="flex flex-col justify-between bg-[#12382F] p-8 lg:p-10">
+          <div>
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Atelier Nox</p>
-              <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">Connexion</h2>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-[#E85D2A]">Atelier Nox</p>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-white/40">Growth System</p>
+            </div>
+            <h1 className="mt-8 text-4xl font-black leading-[1.0] text-white lg:text-5xl">
+              Votre espace client.
+            </h1>
+            <p className="mt-4 text-sm font-semibold leading-6 text-white/55">
+              Accès sécurisé pour suivre vos actions, valider vos contenus et consulter vos rapports de croissance.
+            </p>
+          </div>
+          <div className="mt-10 space-y-3">
+            {[
+              "Actions en cours et à valider",
+              "Contenus préparés pour vous",
+              "Rapports mensuels clairs",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-3">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#E85D2A]" />
+                <p className="text-xs font-semibold text-white/50">{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Panneau droit ──────────────────────────── */}
+        <div className="bg-[#fffaf0] p-8 lg:p-10">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center bg-[#12382F]">
+              <LockKeyhole className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#12382F]/40">Connexion</p>
+              <p className="text-lg font-black uppercase leading-none text-[#101820]">Espace client</p>
             </div>
           </div>
 
           {hasAuthError ? (
-            <div className="border-2 border-ink bg-coral p-3 text-sm font-black uppercase text-ink">
-              Connexion impossible. Vérifiez l&apos;email, le mot de passe ou la configuration Supabase.
+            <div className="mt-5 border border-red-300 bg-red-50 p-3 text-xs font-bold text-red-700">
+              Email ou mot de passe incorrect. Vérifiez vos identifiants.
             </div>
           ) : null}
 
           {showAccessGate && hasCodeError ? (
-            <div className="border-2 border-ink bg-coral p-3 text-sm font-black uppercase text-ink">
-              Code incorrect. Vérifiez le mot de passe d&apos;accès.
+            <div className="mt-5 border border-red-300 bg-red-50 p-3 text-xs font-bold text-red-700">
+              Code incorrect. Vérifiez le code d&apos;accès.
             </div>
           ) : null}
 
-          <form action={loginWithSupabase} className="border-2 border-line bg-paper p-4">
+          <form action={loginWithSupabase} className="mt-6 space-y-4">
             <input name="next" type="hidden" value={nextPath} />
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Compte client</p>
 
-            <div className="mt-4 grid gap-3">
-              <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
-                Email
-                <input
-                  autoComplete="email"
-                  className="border-2 border-ink bg-white px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
-                  name="email"
-                  placeholder="client@entreprise.ch"
-                  type="email"
-                  required
-                />
-              </label>
+            <label className="block">
+              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[#12382F]/50">Email</span>
+              <input
+                autoComplete="email"
+                className="mt-1.5 w-full border border-[#12382F]/25 bg-white px-4 py-3 text-sm font-semibold text-[#101820] outline-none placeholder:text-[#12382F]/30 focus:border-[#12382F] focus:ring-0"
+                name="email"
+                placeholder="votre@email.ch"
+                type="email"
+                required
+              />
+            </label>
 
-              <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
-                Mot de passe
-                <input
-                  autoComplete="current-password"
-                  className="border-2 border-ink bg-white px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
-                  name="password"
-                  placeholder="Mot de passe"
-                  type="password"
-                  required
-                />
-              </label>
-            </div>
+            <label className="block">
+              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[#12382F]/50">Mot de passe</span>
+              <input
+                autoComplete="current-password"
+                className="mt-1.5 w-full border border-[#12382F]/25 bg-white px-4 py-3 text-sm font-semibold text-[#101820] outline-none placeholder:text-[#12382F]/30 focus:border-[#12382F] focus:ring-0"
+                name="password"
+                placeholder="••••••••"
+                type="password"
+                required
+              />
+            </label>
 
             <button
-              className="mt-4 flex w-full items-center justify-center gap-2 border-2 border-ink bg-ink px-4 py-3 text-sm font-black uppercase text-white disabled:cursor-not-allowed disabled:border-line disabled:bg-stone-300 disabled:text-stone-600"
+              className="mt-2 flex w-full items-center justify-center gap-2 bg-[#12382F] px-4 py-3.5 text-sm font-black uppercase text-white transition hover:bg-[#0d2820] disabled:cursor-not-allowed disabled:bg-[#12382F]/40"
               type="submit"
               disabled={!isSupabaseConfigured}
             >
-              Entrer dans mon espace
               <ShieldCheck className="h-4 w-4" />
+              Accéder à mon espace
             </button>
 
             {!isSupabaseConfigured ? (
-              <p className="mt-3 text-xs font-bold leading-5 text-stone-500">
-                Supabase n&apos;est pas encore configuré dans `.env.local`. Utilisez le code temporaire ci-dessous.
+              <p className="text-xs font-semibold leading-5 text-[#12382F]/40">
+                Supabase non configuré. Utilisez le code temporaire ci-dessous.
               </p>
             ) : null}
           </form>
 
+          <p className="mt-6 border-t border-[#12382F]/10 pt-5 text-[11px] font-semibold leading-5 text-[#12382F]/35">
+            Vos accès vous sont transmis directement par Atelier Nox lors du démarrage de votre accompagnement.
+          </p>
+
           {showAccessGate ? (
-            <>
-              <form action={loginWithAccessCode} className="border-2 border-line bg-white p-4">
-                <input name="next" type="hidden" value={nextPath} />
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-stone-500">Accès MVP temporaire</p>
-
-                <label className="mt-4 grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
-                  Code d&apos;accès
-                  <input
-                    autoComplete="current-password"
-                    className="border-2 border-ink bg-paper px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-acid"
-                    name="password"
-                    placeholder="Code privé"
-                    type="password"
-                    required
-                  />
-                </label>
-
-                <button
-                  className="mt-4 flex w-full items-center justify-center gap-2 border-2 border-ink bg-white px-4 py-3 text-sm font-black uppercase text-ink hover:bg-acid disabled:cursor-not-allowed disabled:border-line disabled:bg-stone-300 disabled:text-stone-600"
-                  type="submit"
-                  disabled={!isAccessGateAvailable}
-                >
-                  Entrer avec le code
-                  <ShieldCheck className="h-4 w-4" />
-                </button>
-
-                {!isAccessGateAvailable ? (
-                  <p className="mt-3 text-xs font-bold leading-5 text-stone-500">
-                    Code temporaire désactivé en production. Activez Supabase Auth ou configurez l&apos;accès temporaire
-                    côté serveur.
-                  </p>
-                ) : null}
-              </form>
-
-              <p className="text-xs font-bold leading-5 text-stone-500">
-                Version opérationnelle: Supabase Auth sépare les comptes admin et client. Le code reste seulement pour
-                tester le MVP localement.
-              </p>
-            </>
+            <form action={loginWithAccessCode} className="mt-5 space-y-3 border-t border-[#12382F]/10 pt-5">
+              <input name="next" type="hidden" value={nextPath} />
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#12382F]/40">Accès temporaire</p>
+              <label className="block">
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[#12382F]/50">Code d&apos;accès</span>
+                <input
+                  autoComplete="current-password"
+                  className="mt-1.5 w-full border border-[#12382F]/25 bg-white px-4 py-3 text-sm font-semibold text-[#101820] outline-none focus:border-[#12382F]"
+                  name="password"
+                  placeholder="Code privé"
+                  type="password"
+                  required
+                />
+              </label>
+              <button
+                className="flex w-full items-center justify-center gap-2 border border-[#12382F]/30 bg-white px-4 py-3 text-xs font-black uppercase text-[#12382F] transition hover:bg-[#12382F]/5 disabled:cursor-not-allowed disabled:opacity-40"
+                type="submit"
+                disabled={!isAccessGateAvailable}
+              >
+                Entrer avec le code
+              </button>
+            </form>
           ) : null}
         </div>
+
       </div>
     </section>
   );

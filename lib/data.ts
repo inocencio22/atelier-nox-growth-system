@@ -272,7 +272,7 @@ export const officialServices = [
   {
     title: "Visibilité locale",
     detail:
-      "Clarifier les points de contact qui comptent vraiment: Google, site, réseaux sociaux, recommandations et demandes entrantes.",
+      "Clarifier les points de contact qui comptent vraiment : Google, site, réseaux sociaux, recommandations et demandes entrantes.",
     scope: "Diagnostic, priorités, visibilité de proximité et cohérence des informations publiques."
   },
   {
@@ -313,7 +313,7 @@ export const officialServices = [
   },
   {
     title: "Suivi régulier & portail client",
-    detail: "Rendre le travail visible: actions préparées, validations, priorités, résultats et prochaines étapes.",
+    detail: "Rendre le travail visible : actions préparées, validations, priorités, résultats et prochaines étapes.",
     scope: "Portail client, rapport mensuel, suivi des actions et décisions claires."
   }
 ];
@@ -496,3 +496,105 @@ export const reportRows = [
   { label: "Messages préparés", value: "37", icon: Mail },
   { label: "Rendez-vous estimés", value: "11", icon: Sparkles }
 ];
+
+// ─── Services page: Terrain vs Digital ────────────────────────────────────────
+
+export const terrainServices = [
+  {
+    title: "Shooting photo & vidéo sur place",
+    detail:
+      "Nous venons chez vous. Nous filmons le vrai : votre espace, votre équipe, vos clients, vos moments. Des visuels authentiques qu'aucun outil ne peut générer depuis un bureau.",
+    scope: "Reels, stories, photos Google Business, portraits équipe, ambiance commerce.",
+    badge: "TERRAIN"
+  },
+  {
+    title: "Présence événements & lancements",
+    detail:
+      "Pour les moments qui comptent — ouverture, promotion saisonnière, collab locale — nous sommes physiquement présents pour créer du contenu en temps réel et amplifier l'impact.",
+    scope: "Couverture photo/vidéo live, posts immédiats, stories, relance du lendemain.",
+    badge: "TERRAIN"
+  },
+  {
+    title: "Formation équipe sur place",
+    detail:
+      "Nous apprenons à votre équipe : comment photographier vos produits avec un téléphone, répondre à un avis Google, utiliser WhatsApp Business et publier sans stress.",
+    scope: "Session courte sur place, guide simple, modèles prêts à l'emploi.",
+    badge: "TERRAIN"
+  },
+  {
+    title: "Réseau local & partenariats Lausanne",
+    detail:
+      "Nous connaissons le tissu local. Nous identifions les commerces complémentaires, les événements du quartier et les opportunités de cross-promotion qui génèrent des contacts réels.",
+    scope: "Cartographie locale, introductions, partenariats simples, visibilité croisée.",
+    badge: "TERRAIN"
+  }
+];
+
+export const digitalServices = [
+  {
+    title: "Visibilité locale",
+    detail:
+      "Clarifier les points de contact qui comptent vraiment : Google, site, réseaux sociaux, recommandations et demandes entrantes.",
+    scope: "Diagnostic, priorités, cohérence des informations publiques."
+  },
+  {
+    title: "Google Business & avis clients",
+    detail:
+      "Améliorer la présence Google, préparer les demandes d'avis et organiser les réponses avec un ton professionnel.",
+    scope: "Fiche Google, avis, réputation locale et signaux de confiance."
+  },
+  {
+    title: "Contenus locaux et humains",
+    detail:
+      "Préparer des sujets, angles, textes et idées de publications proches de la réalité du commerce — avec ou sans shooting.",
+    scope: "Posts, stories, briefs, messages et calendrier simple."
+  },
+  {
+    title: "Relances clients & suivi commercial",
+    detail:
+      "Organiser les contacts, préparer des messages de relance et suivre les conversations utiles sans automatisation agressive.",
+    scope: "Clients dormants, demandes de prix, avis à demander, opportunités."
+  },
+  {
+    title: "Campagnes locales Meta & Google",
+    detail:
+      "Préparer et accompagner des campagnes simples pour tester une offre locale. Budget publicitaire toujours séparé.",
+    scope: "Brief, ciblage local, suivi et recommandations."
+  },
+  {
+    title: "Landing pages locales",
+    detail:
+      "Créer ou ajuster des pages simples pour présenter une offre, rassurer le visiteur et faciliter la prise de contact.",
+    scope: "Page locale, message clair, CTA, structure mobile-first."
+  },
+  {
+    title: "Gestion de crise réputation",
+    detail:
+      "Quand un avis négatif grave ou une situation délicate apparaît, nous gérons avec méthode et tact — pas avec un bot.",
+    scope: "Analyse, réponse calibrée, stratégie de rétablissement, suivi."
+  },
+  {
+    title: "Suivi régulier & portail client",
+    detail: "Rendre le travail visible : actions préparées, validations, priorités, résultats et prochaines étapes.",
+    scope: "Portail client, rapport mensuel, décisions claires."
+  }
+];
+
+export const humanPillars = [
+  {
+    number: "01",
+    title: "Présence physique",
+    detail: "Nous venons. Nous voyons la réalité de votre commerce, pas une version filtrée par un écran."
+  },
+  {
+    number: "02",
+    title: "Connaissance locale",
+    detail: "Lausanne, ses rues, ses saisons, ses habitudes. Une IA ne connaît pas votre quartier."
+  },
+  {
+    number: "03",
+    title: "Relation de confiance",
+    detail: "Un prénom. Un numéro. Une responsabilité. Pas un ticket de support."
+  }
+];
+

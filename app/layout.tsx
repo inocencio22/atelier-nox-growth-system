@@ -1,25 +1,32 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 import { getWorkspaceAccess } from "@/lib/auth-model";
 import { getNavModeForWorkspace, isPublicPath, type NavMode } from "@/lib/navigation";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap"
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://atelier-nox-growth-system.vercel.app"),
   title: {
-    default: "Atelier Nox - Croissance locale gérée à Lausanne",
+    default: "Atelier Nox - Croissance locale g\u00e9r\u00e9e \u00e0 Lausanne",
     template: "%s | Atelier Nox"
   },
   description:
-    "Service humain, clair et mesurable pour aider les PME de Suisse romande à piloter leur croissance locale.",
+    "Service humain, clair et mesurable pour aider les PME de Suisse romande \u00e0 piloter leur croissance locale.",
   keywords: [
     "Atelier Nox",
     "marketing local Suisse romande",
     "croissance locale Lausanne",
     "coiffure Lausanne",
     "Google Business",
-    "réseaux sociaux PME"
+    "r\u00e9seaux sociaux PME"
   ],
   applicationName: "Atelier Nox Growth System",
   authors: [{ name: "Atelier Nox" }],
@@ -30,7 +37,7 @@ export const metadata: Metadata = {
     apple: "/brand/apple-touch-icon.png"
   },
   openGraph: {
-    title: "Atelier Nox - Croissance locale gérée à Lausanne",
+    title: "Atelier Nox - Croissance locale g\u00e9r\u00e9e \u00e0 Lausanne",
     description: "Nous pilotons votre croissance locale, avec vous.",
     url: "/",
     siteName: "Atelier Nox",
@@ -47,7 +54,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Atelier Nox - Croissance locale gérée à Lausanne",
+    title: "Atelier Nox - Croissance locale g\u00e9r\u00e9e \u00e0 Lausanne",
     description: "Nous pilotons votre croissance locale, avec vous.",
     images: ["/brand/og-image.png"]
   },
@@ -79,7 +86,7 @@ async function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const isAdmin = workspace ? workspace.mode !== "supabase_auth" || workspace.profile?.role === "admin" : false;
 
   return (
-    <html lang="fr">
+    <html lang="fr" className={inter.variable}>
       <body>
         <AppShell
           navMode={navMode}
