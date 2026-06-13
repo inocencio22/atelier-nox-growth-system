@@ -1,92 +1,282 @@
 import Link from "next/link";
-import { ContactCard } from "@/components/ContactCard";
+import { ArrowRight, CheckCircle2, ClipboardList, Clock, FileText, Inbox, ListChecks } from "lucide-react";
 import { MetricCard } from "@/components/MetricCard";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
-import { getWorkspaceAccess } from "@/lib/auth-model";
+import { getClientBusinesses, getClientNextStep } from "@/lib/clients";
 import { getCommercialActions } from "@/lib/commercial-actions";
-import { getContacts } from "@/lib/contacts";
-import { contactSegments, growthMetrics } from "@/lib/data";
+import { getContentItems } from "@/lib/content-items";
+import { getOnboardingSubmissions } from "@/lib/onboarding";
 
 export default async function DashboardPage() {
-  const workspace = await getWorkspaceAccess();
-  const business = workspace.business;
-  const { contacts } = await getContacts(business.id);
-  const { actions } = await getCommercialActions(business.id);
-  const priorityActions = actions.filter((action) => action.status !== "done").slice(0, 4);
+  const { clients } = await getClientBusinesses();
+  const { submissions } = await getOnboardingSubmissions();
+  const focusClient = clients.find((client) => client.status === "active") ?? clients[0] ?? null;
+  const { actions } = await getCommercialActions(focusClient?.id);
+  const { contentItems } = await getContentItems(focusClient?.id);
+
+  const openSubmissions = submissions.filter((submission) => submission.status === "new");
+  const diagnosticsReady = submissions.filter((submission) => submission.status === "diagnostic_ready");
+  const waitingActions = actions.filter((action) => action.status === "waiting_approval");
+  const waitingContent = contentItems.filter((item) => item.status === "waiting_approval");
+  const urgentActions = actions.filter((action) => action.status !== "done").slice(0, 4);
+  const activeClients = clients.filter((client) => client.status === "active");
+  const validationsCount = waitingActions.length + waitingContent.length;
+
+  const metrics = [
+    {
+      label: "Demandes ouvertes",
+      value: openSubmissions.length.toString(),
+      detail: "Diagnostics à préparer",
+      trend: diagnosticsReady.length ? `${diagnosticsReady.length} prêts` : "Pipeline"
+    },
+    {
+      label: "Clients actifs",
+      value: activeClients.length.toString(),
+      detail: "Service en cours",
+      trend: `${clients.length} total`
+    },
+    {
+      label: "Validations",
+      value: validationsCount.toString(),
+      detail: "Client doit approuver",
+      trend: waitingContent.length ? "Contenus" : "Actions"
+    },
+    {
+      label: "Actions ouvertes",
+      value: urgentActions.length.toString(),
+      detail: focusClient ? focusClient.name : "Client à choisir",
+      trend: "Cette semaine"
+    }
+  ];
+
+  const todayPriorities = [
+    {
+      title: "Traiter les nouvelles demandes",
+      detail: openSubmissions.length
+        ? `${openSubmissions.length} diagnostic(s) à préparer avant contact.`
+        : "Aucune nouvelle demande prioritaire.",
+      href: "/demandes",
+      cta: "Voir demandes",
+      icon: Inbox
+    },
+    {
+      title: "Faire avancer les validations",
+      detail: validationsCount
+        ? `${validationsCount} élément(s) attendent une décision client.`
+        : "Aucune validation urgente côté client.",
+      href: focusClient ? `/actions?businessId=${focusClient.id}` : "/clients",
+      cta: "Voir travail",
+      icon: CheckCircle2
+    },
+    {
+      title: "Préparer la preuve du service",
+      detail: "Chaque client doit voir actions, contenus, résultats et prochaine étape.",
+      href: focusClient ? `/clients/${focusClient.id}` : "/clients",
+      cta: "Voir client",
+      icon: FileText
+    }
+  ];
 
   return (
     <>
       <PageHeader
-        eyebrow="Espace client"
-        title="Dashboard de croissance"
-        description={`Vue claire pour ${business.name}: contacts, relances, signaux Instagram et actions à exécuter cette semaine.`}
+        eyebrow="Studio admin"
+        title="Cockpit opérationnel"
+        description="Vue interne pour savoir quoi vendre, quoi livrer, quoi faire valider et où prouver la valeur du service."
       />
+
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {growthMetrics.map((metric) => (
+        {metrics.map((metric) => (
           <MetricCard key={metric.label} metric={metric} />
         ))}
       </section>
-      <section className="mt-8 grid gap-6 xl:grid-cols-[1fr_0.85fr]">
-        <div>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-2xl font-black uppercase text-ink">Plan d&apos;action</h2>
-            <Link href="/actions" className="border-2 border-ink bg-acid px-2 py-1 text-xs font-black uppercase">
-              Voir actions
+
+      <section className="mt-8 grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+        <article className="border-2 border-ink bg-acid p-5 shadow-soft">
+          <ClipboardList className="h-8 w-8 text-ink" />
+          <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">À faire aujourd&apos;hui</h2>
+          <p className="mt-4 text-sm font-semibold leading-6 text-ink">
+            Le cockpit doit rester simple: transformer les demandes en clients, faire avancer les livrables et montrer
+            la preuve du travail.
+          </p>
+          <div className="mt-5 grid gap-3">
+            {todayPriorities.map((priority) => {
+              const Icon = priority.icon;
+
+              return (
+                <Link
+                  key={priority.title}
+                  href={priority.href}
+                  className="group flex items-start gap-3 border-2 border-ink bg-white p-3 text-ink transition hover:-translate-y-0.5"
+                >
+                  <span className="grid h-10 w-10 shrink-0 place-items-center border-2 border-ink bg-paper">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <strong className="block text-sm font-black uppercase leading-5">{priority.title}</strong>
+                    <span className="mt-1 block text-sm font-semibold leading-5 text-stone-600">{priority.detail}</span>
+                    <span className="mt-2 inline-flex items-center gap-1 text-xs font-black uppercase text-blue">
+                      {priority.cta}
+                      <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
+                    </span>
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </article>
+
+        <section className="grid gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Client de référence</p>
+              <h2 className="mt-1 text-2xl font-black uppercase leading-none text-ink">
+                {focusClient ? focusClient.name : "Aucun client"}
+              </h2>
+            </div>
+            <Link
+              href="/clients"
+              className="border-2 border-ink bg-white px-3 py-2 text-xs font-black uppercase text-ink"
+            >
+              Tous les clients
             </Link>
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {priorityActions.map((action) => (
-              <article key={action.id} className="border-2 border-ink bg-white p-4 shadow-soft">
-                <div className="flex items-start justify-between gap-3">
-                  <p className="text-xs font-black uppercase tracking-[0.12em] text-blue">{action.estimatedValue}</p>
-                  <StatusBadge status={action.status} />
+
+          {focusClient ? (
+            <article className="border-2 border-ink bg-white p-5 shadow-soft">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm font-black uppercase text-blue">{focusClient.city}</p>
+                  <h3 className="mt-2 text-3xl font-black uppercase leading-none text-ink">{focusClient.name}</h3>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-stone-600">
+                    {getClientNextStep(focusClient)}
+                  </p>
                 </div>
-                <h3 className="mt-3 text-xl font-black leading-none text-ink">{action.title}</h3>
-                <p className="mt-3 text-sm font-semibold leading-6 text-stone-600">{action.description}</p>
-                <div className="mt-4 flex items-center justify-between border-t border-stone-100 pt-3 text-xs font-black uppercase text-stone-500">
-                  <span>{action.channel}</span>
-                  <span>{action.dueDate ?? "À planifier"}</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-        <div>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-2xl font-black uppercase text-ink">Contacts chauds</h2>
-            <span className="text-sm font-black text-blue">{contacts.length} priorités</span>
-          </div>
-          <div className="grid gap-3">
-            {contacts.slice(0, 3).map((contact) => (
-              <ContactCard key={contact.id} contact={contact} />
-            ))}
-          </div>
-        </div>
+                <StatusBadge status={focusClient.status} />
+              </div>
+              <div className="mt-5 grid gap-3 md:grid-cols-3">
+                <Info
+                  label="Actions ouvertes"
+                  value={actions.filter((action) => action.status !== "done").length.toString()}
+                />
+                <Info label="Contenus à valider" value={waitingContent.length.toString()} />
+                <Info label="Actions à valider" value={waitingActions.length.toString()} />
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link
+                  href={`/clients/${focusClient.id}`}
+                  className="inline-flex items-center gap-2 border-2 border-ink bg-acid px-3 py-2 text-xs font-black uppercase text-ink"
+                >
+                  Fiche client
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href={`/contenus?businessId=${focusClient.id}`}
+                  className="inline-flex items-center gap-2 border-2 border-ink bg-white px-3 py-2 text-xs font-black uppercase text-ink"
+                >
+                  Contenus
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href={`/actions?businessId=${focusClient.id}`}
+                  className="inline-flex items-center gap-2 border-2 border-ink bg-white px-3 py-2 text-xs font-black uppercase text-ink"
+                >
+                  Actions
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </article>
+          ) : (
+            <article className="border-2 border-ink bg-white p-5 shadow-soft">
+              <p className="text-sm font-black uppercase text-ink">
+                Créez ou gagnez un premier client pour activer ce cockpit.
+              </p>
+            </article>
+          )}
+        </section>
       </section>
 
-      <section className="mt-8 border-2 border-ink bg-white p-5 shadow-soft">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Segments</p>
-            <h2 className="mt-1 text-2xl font-black uppercase leading-none text-ink">Où agir maintenant</h2>
-          </div>
-          <a className="border-2 border-ink bg-acid px-3 py-2 text-xs font-black uppercase" href="/campagnes">
-            Créer campagne
-          </a>
-        </div>
-        <div className="grid gap-3 md:grid-cols-3">
-          {contactSegments.map((segment) => (
-            <article key={segment.name} className="border-2 border-ink bg-paper p-4">
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-lg font-black uppercase leading-none text-ink">{segment.name}</h3>
-                <strong className="text-3xl font-black text-blue">{segment.count}</strong>
-              </div>
-              <p className="mt-3 text-sm font-bold leading-5 text-stone-600">{segment.recommendedAction}</p>
-            </article>
-          ))}
-        </div>
+      <section className="mt-8 grid gap-6 lg:grid-cols-2">
+        <WorkQueue
+          href="/demandes"
+          icon={<Inbox className="h-6 w-6" />}
+          title="Demandes à convertir"
+          items={submissions.slice(0, 4).map((submission) => ({
+            id: submission.id,
+            title: submission.businessName,
+            detail: `${submission.city} / ${submission.niche}`,
+            status: submission.status
+          }))}
+        />
+        <WorkQueue
+          href={focusClient ? `/actions?businessId=${focusClient.id}` : "/actions"}
+          icon={<ListChecks className="h-6 w-6" />}
+          title="Actions à piloter"
+          items={urgentActions.map((action) => ({
+            id: action.id,
+            title: action.title,
+            detail: action.dueDate ?? "À planifier",
+            status: action.status
+          }))}
+        />
       </section>
     </>
+  );
+}
+
+function Info({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border-2 border-line bg-paper p-3">
+      <p className="text-[11px] font-black uppercase tracking-[0.12em] text-stone-500">{label}</p>
+      <p className="mt-1 text-xl font-black text-ink">{value}</p>
+    </div>
+  );
+}
+
+function WorkQueue({
+  title,
+  href,
+  icon,
+  items
+}: {
+  title: string;
+  href: string;
+  icon: React.ReactNode;
+  items: Array<{ id: string; title: string; detail: string; status: string }>;
+}) {
+  return (
+    <article className="border-2 border-ink bg-white p-5 shadow-soft">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="grid h-11 w-11 place-items-center border-2 border-ink bg-paper">{icon}</span>
+          <h2 className="text-2xl font-black uppercase leading-none text-ink">{title}</h2>
+        </div>
+        <Link href={href} className="text-xs font-black uppercase text-blue">
+          Ouvrir
+        </Link>
+      </div>
+      <div className="grid gap-3">
+        {items.length ? (
+          items.map((item) => (
+            <div
+              key={item.id}
+              className="flex flex-wrap items-start justify-between gap-3 border-2 border-line bg-paper p-3"
+            >
+              <div>
+                <p className="text-sm font-black uppercase leading-5 text-ink">{item.title}</p>
+                <p className="mt-1 text-xs font-black uppercase text-stone-500">{item.detail}</p>
+              </div>
+              <StatusBadge status={item.status} />
+            </div>
+          ))
+        ) : (
+          <div className="border-2 border-line bg-paper p-4">
+            <Clock className="h-5 w-5 text-blue" />
+            <p className="mt-2 text-sm font-black uppercase text-ink">Rien d&apos;urgent pour le moment.</p>
+          </div>
+        )}
+      </div>
+    </article>
   );
 }

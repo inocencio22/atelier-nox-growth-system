@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { CalendarDays, CheckCircle2, Clapperboard, ImagePlus } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
-import { formatClientPlan, getClientBusinessById } from "@/lib/clients";
+import { formatClientPlan, getClientBusinessById, getClientBusinesses } from "@/lib/clients";
 import { createContentItem, updateContentStatus } from "@/lib/content-item-actions";
 import {
   formatContentStatus,
@@ -28,8 +29,10 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
   const params = await searchParams;
   const selectedBusinessId = params?.businessId;
   const selectedClient = selectedBusinessId ? (await getClientBusinessById(selectedBusinessId)).client : null;
+  const { clients } = await getClientBusinesses();
   const { contentItems, source } = await getContentItems(selectedClient?.id);
   const isDemo = source === "mock";
+  const canCreate = Boolean(selectedClient) && !isDemo;
   const waitingCount = contentItems.filter((item) => item.status === "waiting_approval").length;
   const publishedCount = contentItems.filter((item) => item.status === "published").length;
   const draftCount = contentItems.filter((item) => item.status === "draft" || item.status === "idea").length;
@@ -71,7 +74,17 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
             </a>
           </div>
         </section>
-      ) : null}
+      ) : (
+        <ClientPicker
+          clients={clients.map((client) => ({
+            id: client.id,
+            name: client.name,
+            detail: `${formatClientPlan(client.plan)} / ${client.city}`
+          }))}
+          currentPath="/contenus"
+          title="Sélectionnez un client avant de créer un contenu."
+        />
+      )}
 
       <section className="mb-6 grid gap-3 md:grid-cols-4">
         <Metric label="En préparation" value={draftCount.toString()} detail="Idées + brouillons" />
@@ -109,11 +122,23 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
               <Field label="Titre" name="title" placeholder="Reel avant/après couleur naturelle" required />
               <Field label="Objectif" name="objective" placeholder="Créer des demandes de rendez-vous" required />
               <div className="grid gap-3 sm:grid-cols-2">
-                <Select label="Type" name="contentType" options={["post", "reel", "story", "photo", "video", "google_post"]} />
-                <Select label="Canal" name="channel" options={["Instagram", "TikTok", "Google Business", "Facebook", "LinkedIn", "Assets"]} />
+                <Select
+                  label="Type"
+                  name="contentType"
+                  options={["post", "reel", "story", "photo", "video", "google_post"]}
+                />
+                <Select
+                  label="Canal"
+                  name="channel"
+                  options={["Instagram", "TikTok", "Google Business", "Facebook", "LinkedIn", "Assets"]}
+                />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Select label="Status" name="status" options={["idea", "draft", "waiting_approval", "approved", "published"]} />
+                <Select
+                  label="Status"
+                  name="status"
+                  options={["idea", "draft", "waiting_approval", "approved", "published"]}
+                />
                 <Field label="Date prévue" name="plannedDate" placeholder="2026-06-15" type="date" />
               </div>
               <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600">
@@ -139,8 +164,14 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
             </div>
             <button
               className="mt-5 w-full border-2 border-ink bg-acid px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={isDemo}
-              title={isDemo ? "Activez Supabase pour créer des contenus réels" : undefined}
+              disabled={!canCreate}
+              title={
+                isDemo
+                  ? "Activez Supabase pour créer des contenus réels"
+                  : !selectedClient
+                    ? "Sélectionnez d'abord un client"
+                    : undefined
+              }
               type="submit"
             >
               Enregistrer le contenu
@@ -155,6 +186,39 @@ export default async function ContenusPage({ searchParams }: ContenusPageProps) 
         </section>
       </section>
     </>
+  );
+}
+
+function ClientPicker({
+  clients,
+  currentPath,
+  title
+}: {
+  clients: Array<{ id: string; name: string; detail: string }>;
+  currentPath: string;
+  title: string;
+}) {
+  return (
+    <section className="mb-6 border-2 border-ink bg-white p-4 shadow-soft">
+      <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Contexte obligatoire</p>
+      <h2 className="mt-2 text-2xl font-black uppercase leading-none text-ink">{title}</h2>
+      <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-stone-600">
+        Les contenus sont liés à un business précis pour que le client voie uniquement ses publications, validations et
+        preuves de travail.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {clients.map((client) => (
+          <Link
+            key={client.id}
+            href={`${currentPath}?businessId=${client.id}`}
+            className="border-2 border-ink bg-paper px-3 py-2 text-xs font-black uppercase text-ink hover:bg-acid"
+          >
+            {client.name}
+            <span className="ml-2 text-stone-500">{client.detail}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -207,9 +271,7 @@ function ContentCard({ item, isDemo }: { item: ContentItem; isDemo: boolean }) {
       ) : null}
 
       {item.result ? (
-        <div className="mt-4 border-2 border-ink bg-paper p-3 text-sm font-black leading-5 text-ink">
-          {item.result}
-        </div>
+        <div className="mt-4 border-2 border-ink bg-paper p-3 text-sm font-black leading-5 text-ink">{item.result}</div>
       ) : null}
 
       <div className="mt-4 flex flex-wrap gap-2">

@@ -42,7 +42,7 @@ async function loginAndGetPath(page: import("@playwright/test").Page, credential
   await page.goto(loginPath);
   await page.getByLabel(/email/i).fill(credentials.email);
   await page.getByLabel(/mot de passe/i).fill(credentials.password);
-  await page.getByRole("button", { name: /entrer dans mon espace/i }).click();
+  await page.getByRole("button", { name: /acc.der . mon espace|acceder a mon espace/i }).click();
   await page.waitForURL((url) => !url.pathname.startsWith("/login"), { timeout: 15_000 }).catch(() => {});
   await page.waitForLoadState("networkidle").catch(() => {});
 
@@ -58,16 +58,16 @@ test("public home loads Atelier Nox promise", async ({ page }) => {
 
 test("login page loads Supabase account form without temporary access gate", async ({ page }) => {
   await page.goto("/login");
-  await expect(page.getByRole("heading", { name: /connexion/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /espace client/i })).toBeVisible();
   await expect(page.getByLabel(/email/i)).toBeVisible();
   await expect(page.getByLabel(/mot de passe/i)).toBeVisible();
-  await expect(page.getByText(/accès mvp temporaire/i)).toHaveCount(0);
+  await expect(page.getByText(/acc.s mvp temporaire|acc.s temporaire/i)).toHaveCount(0);
 });
 
 test("diagnostic gratuit page loads lead capture form", async ({ page }) => {
   await page.goto("/diagnostic-gratuit");
   await expect(page.getByRole("heading", { name: /parlons de votre commerce/i })).toBeVisible();
-  await expect(page.getByLabel(/nom de votre activité/i)).toBeVisible();
+  await expect(page.getByLabel(/nom de votre activit/i)).toBeVisible();
   await expect(page.getByRole("button", { name: /demander le diagnostic/i })).toBeVisible();
 });
 

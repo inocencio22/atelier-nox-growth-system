@@ -26,6 +26,25 @@ const statusButtons: Array<{ value: OnboardingStatus; label: string }> = [
   { value: "lost", label: "Perdu" }
 ];
 
+const conversionSteps = [
+  {
+    title: "Qualifier",
+    detail: "Vérifier ville, activité, site, Instagram et objectif prioritaire."
+  },
+  {
+    title: "Préparer",
+    detail: "Créer le diagnostic court avec score, risques, actions 7 jours et plan recommandé."
+  },
+  {
+    title: "Contacter",
+    detail: "Envoyer un message manuel clair puis proposer un appel de 30 minutes."
+  },
+  {
+    title: "Convertir",
+    detail: "Transformer la demande gagnée en business client avec plan et premières actions."
+  }
+];
+
 export default async function DemandesPage() {
   const { submissions, source } = await getOnboardingSubmissions();
   const isDemo = source === "mock";
@@ -56,6 +75,29 @@ export default async function DemandesPage() {
         <Metric label="À préparer" value={newCount.toString()} detail="Diagnostic à créer" />
         <Metric label="Prêtes" value={readyCount.toString()} detail="À contacter" />
         <Metric label="Gagnées" value={wonCount.toString()} detail="Abonnement ou setup" />
+      </section>
+
+      <section className="mb-6 border-2 border-ink bg-white p-5 shadow-soft">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Méthode de vente</p>
+            <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">
+              Transformer une demande en client.
+            </h2>
+          </div>
+          <p className="max-w-md text-sm font-semibold leading-6 text-stone-600">
+            Cette page sert à passer d&apos;une curiosité gratuite à une conversation commerciale structurée.
+          </p>
+        </div>
+        <div className="mt-5 grid gap-3 md:grid-cols-4">
+          {conversionSteps.map((step, index) => (
+            <article key={step.title} className="border-2 border-line bg-paper p-4">
+              <span className="text-xs font-black uppercase tracking-[0.14em] text-coral">Étape {index + 1}</span>
+              <h3 className="mt-3 text-xl font-black uppercase leading-none text-ink">{step.title}</h3>
+              <p className="mt-3 text-sm font-semibold leading-6 text-stone-700">{step.detail}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="mb-6 grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">

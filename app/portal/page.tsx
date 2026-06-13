@@ -5,6 +5,8 @@ import { getWorkspaceAccess } from "@/lib/auth-model";
 import { getCommercialActions } from "@/lib/commercial-actions";
 import { getContentItems } from "@/lib/content-items";
 
+const clientStatusFlow = ["À préparer", "En cours", "À approuver", "Approuvé", "Publié", "Terminé"];
+
 export default async function PortalPage() {
   const workspace = await getWorkspaceAccess();
   const business = workspace.business;
@@ -17,6 +19,29 @@ export default async function PortalPage() {
   const doneActions = visibleActions.filter((action) => action.status === "done");
   const waitingActions = visibleActions.filter((action) => action.status === "waiting_approval");
   const activeActions = visibleActions.filter((action) => action.status !== "done");
+  const approvalsCount = contentToApprove.length + waitingActions.length;
+  const trackedResults = [
+    {
+      label: "Actions terminées",
+      value: doneActions.length.toString(),
+      detail: "Travail déjà réalisé"
+    },
+    {
+      label: "Contenus prêts",
+      value: publishedContent.length.toString(),
+      detail: "Approuvés ou publiés"
+    },
+    {
+      label: "Validations",
+      value: approvalsCount.toString(),
+      detail: "Décisions demandées"
+    },
+    {
+      label: "Potentiel suivi",
+      value: extractPotentialValue(visibleActions),
+      detail: "Lecture commerciale"
+    }
+  ];
   const isDemo = source === "mock";
 
   return (
@@ -50,19 +75,77 @@ export default async function PortalPage() {
         <Metric label="Contenus" value={visibleContent.length.toString()} detail="Posts + assets" />
       </section>
 
+      <section className="mb-6 border-2 border-ink bg-white p-5 shadow-soft">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Centre de validation</p>
+            <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">Ce qui attend votre accord.</h2>
+          </div>
+          <p className="max-w-md text-sm font-semibold leading-6 text-stone-600">
+            Vous ne gérez pas le marketing ici. Vous validez seulement les décisions qui ont un impact public,
+            commercial ou budgétaire.
+          </p>
+        </div>
+        <div className="mt-5 grid gap-3 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="grid gap-3">
+            {contentToApprove.length || waitingActions.length ? (
+              <>
+                {contentToApprove.map((item) => (
+                  <ClientAction
+                    key={item.id}
+                    title={item.title}
+                    detail={item.caption ?? item.assetBrief ?? item.objective}
+                  />
+                ))}
+                {waitingActions.map((action) => (
+                  <ClientAction key={action.id} title={action.title} detail={action.result ?? action.description} />
+                ))}
+              </>
+            ) : (
+              <ClientAction
+                title="Aucune validation urgente"
+                detail="Atelier Nox continue les actions prévues. Vous recevrez une demande seulement si une décision est nécessaire."
+              />
+            )}
+          </div>
+          <div className="border-2 border-line bg-paper p-4">
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-stone-500">Statuts utilisés</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {clientStatusFlow.map((status) => (
+                <span
+                  key={status}
+                  className="border border-ink bg-white px-2.5 py-1 text-[11px] font-black uppercase text-ink"
+                >
+                  {status}
+                </span>
+              ))}
+            </div>
+            <p className="mt-4 text-sm font-semibold leading-6 text-stone-600">
+              Les campagnes, contenus et relances sensibles passent par validation avant diffusion ou dépense.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="mb-6 grid gap-6 lg:grid-cols-[0.86fr_1.14fr]">
         <article className="border-2 border-ink bg-acid p-5 shadow-soft">
           <TrendingUp className="h-8 w-8 text-ink" />
           <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">Ce mois-ci</h2>
           <p className="mt-4 text-sm font-semibold leading-6 text-ink">
-            Atelier Nox organise les relances, les messages, les opportunités Instagram/Google et les prochaines
-            actions commerciales. Vous voyez ici le service, sans devoir gérer l&apos;outil.
+            Atelier Nox organise les relances, les messages, les opportunités Instagram/Google et les prochaines actions
+            commerciales. Vous voyez ici le service, sans devoir gérer l&apos;outil.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             <Highlight label="Potentiel suivi" value={extractPotentialValue(visibleActions)} />
             <Highlight
               label="Priorité"
-              value={contentToApprove.length ? "Valider contenus" : waitingActions.length ? "Valider messages" : "Relances clients"}
+              value={
+                contentToApprove.length
+                  ? "Valider contenus"
+                  : waitingActions.length
+                    ? "Valider messages"
+                    : "Relances clients"
+              }
             />
           </div>
         </article>
@@ -84,7 +167,11 @@ export default async function PortalPage() {
             {contentToApprove.length || waitingActions.length ? (
               <>
                 {contentToApprove.map((item) => (
-                  <ClientAction key={item.id} title={item.title} detail={item.caption ?? item.assetBrief ?? item.objective} />
+                  <ClientAction
+                    key={item.id}
+                    title={item.title}
+                    detail={item.caption ?? item.assetBrief ?? item.objective}
+                  />
                 ))}
                 {waitingActions.map((action) => (
                   <ClientAction key={action.id} title={action.title} detail={action.result ?? action.description} />
@@ -98,6 +185,24 @@ export default async function PortalPage() {
             )}
           </div>
         </article>
+      </section>
+
+      <section className="mb-6 border-2 border-ink bg-white p-5 shadow-soft">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Résultats suivis</p>
+            <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">Les chiffres restent simples.</h2>
+          </div>
+          <p className="max-w-md text-sm font-semibold leading-6 text-stone-600">
+            Données mises à jour par Atelier Nox lors du suivi hebdomadaire ou mensuel. L&apos;objectif est la clarté,
+            pas un tableau de bord compliqué.
+          </p>
+        </div>
+        <div className="mt-5 grid gap-3 md:grid-cols-4">
+          {trackedResults.map((result) => (
+            <Metric key={result.label} label={result.label} value={result.value} detail={result.detail} />
+          ))}
+        </div>
       </section>
 
       <section className="mb-6 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
@@ -302,9 +407,7 @@ function EmptyState({ title, detail }: { title: string; detail: string }) {
 }
 
 function extractPotentialValue(actions: Array<{ estimatedValue: string }>) {
-  const moneyValues = actions
-    .map((action) => action.estimatedValue)
-    .filter((value) => value.startsWith("CHF"));
+  const moneyValues = actions.map((action) => action.estimatedValue).filter((value) => value.startsWith("CHF"));
 
   return moneyValues.length ? moneyValues.join(" + ") : "Opportunités suivies";
 }

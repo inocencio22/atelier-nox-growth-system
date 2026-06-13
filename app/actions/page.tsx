@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { CalendarClock, CheckCircle2, CircleAlert, Eye, Plus, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { createCommercialAction, updateCommercialActionStatus } from "@/lib/commercial-action-actions";
-import { formatClientPlan, getClientBusinessById } from "@/lib/clients";
+import { formatClientPlan, getClientBusinessById, getClientBusinesses } from "@/lib/clients";
 import {
   formatCommercialActionPriority,
   formatCommercialActionStatus,
@@ -28,8 +29,10 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
   const params = await searchParams;
   const selectedBusinessId = params?.businessId;
   const selectedClient = selectedBusinessId ? (await getClientBusinessById(selectedBusinessId)).client : null;
+  const { clients } = await getClientBusinesses();
   const { actions, source } = await getCommercialActions(selectedClient?.id);
   const isDemo = source === "mock";
+  const canCreate = Boolean(selectedClient) && !isDemo;
   const todoCount = actions.filter((action) => action.status === "todo").length;
   const waitingCount = actions.filter((action) => action.status === "waiting_approval").length;
   const doneCount = actions.filter((action) => action.status === "done").length;
@@ -71,7 +74,17 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
             </a>
           </div>
         </section>
-      ) : null}
+      ) : (
+        <ClientPicker
+          clients={clients.map((client) => ({
+            id: client.id,
+            name: client.name,
+            detail: `${formatClientPlan(client.plan)} / ${client.city}`
+          }))}
+          currentPath="/actions"
+          title="Sélectionnez un client avant de créer une action."
+        />
+      )}
 
       <section className="mb-6 grid gap-3 md:grid-cols-4">
         <Metric label="À faire" value={todoCount.toString()} detail="Actions ouvertes" />
@@ -116,7 +129,11 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
                 />
               </label>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Select label="Canal" name="channel" options={["WhatsApp", "Instagram", "Email", "Google Business", "Téléphone"]} />
+                <Select
+                  label="Canal"
+                  name="channel"
+                  options={["WhatsApp", "Instagram", "Email", "Google Business", "Téléphone"]}
+                />
                 <Select label="Priorité" name="priority" options={["high", "medium", "low"]} />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -125,13 +142,19 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
               </div>
               <label className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.08em] text-ink">
                 <input className="h-4 w-4 accent-[#c6ff00]" name="visibleToClient" type="checkbox" defaultChecked />
-                Visible dans le futur portail client
+                Visible dans le portail client
               </label>
             </div>
             <button
               className="mt-5 w-full border-2 border-ink bg-acid px-4 py-3 text-sm font-black uppercase text-ink disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={isDemo}
-              title={isDemo ? "Activez Supabase pour créer des actions réelles" : undefined}
+              disabled={!canCreate}
+              title={
+                isDemo
+                  ? "Activez Supabase pour créer des actions réelles"
+                  : !selectedClient
+                    ? "Sélectionnez d'abord un client"
+                    : undefined
+              }
               type="submit"
             >
               Enregistrer l&apos;action
@@ -146,6 +169,39 @@ export default async function ActionsPage({ searchParams }: ActionsPageProps) {
         </section>
       </section>
     </>
+  );
+}
+
+function ClientPicker({
+  clients,
+  currentPath,
+  title
+}: {
+  clients: Array<{ id: string; name: string; detail: string }>;
+  currentPath: string;
+  title: string;
+}) {
+  return (
+    <section className="mb-6 border-2 border-ink bg-white p-4 shadow-soft">
+      <p className="text-xs font-black uppercase tracking-[0.14em] text-blue">Contexte obligatoire</p>
+      <h2 className="mt-2 text-2xl font-black uppercase leading-none text-ink">{title}</h2>
+      <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-stone-600">
+        Les actions sont liées à un business précis pour apparaître correctement dans le portail client et dans la fiche
+        opérationnelle.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {clients.map((client) => (
+          <Link
+            key={client.id}
+            href={`${currentPath}?businessId=${client.id}`}
+            className="border-2 border-ink bg-paper px-3 py-2 text-xs font-black uppercase text-ink hover:bg-acid"
+          >
+            {client.name}
+            <span className="ml-2 text-stone-500">{client.detail}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 
