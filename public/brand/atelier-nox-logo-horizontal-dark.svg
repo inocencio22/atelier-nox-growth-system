@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 180" role="img" aria-labelledby="title desc">
+  <title id="title">Atelier Nox logo horizontal dark</title>
+  <desc id="desc">Logo horizontal Atelier Nox en version sombre.</desc>
+  <rect width="720" height="180" fill="#12382F"/>
+  <g transform="translate(26 24) scale(.26)">
+    <rect width="512" height="512" rx="84" fill="#101820"/>
+    <path d="M88 170 132 88l42 82" fill="none" stroke="#F5F1E8" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M128 92v252" fill="none" stroke="#F5F1E8" stroke-width="18" stroke-linecap="round"/>
+    <path d="M208 158 348 378V158" fill="none" stroke="#F5F1E8" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M221 161h62l42 67v78z" fill="#E55D24"/>
+    <path d="M170 122 236 64l44 64 20-28 84 64" fill="none" stroke="#D4AF37" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M120 390c38-20 73 20 111 0s73 20 111 0" fill="none" stroke="#1FA2A1" stroke-width="10" stroke-linecap="round"/>
+    <path d="M150 424c32-15 64 15 96 0s64 15 96 0" fill="none" stroke="#1FA2A1" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+  </g>
+  <path d="M190 36v108" stroke="#D4AF37" stroke-width="3"/>
+  <text x="225" y="76" fill="#F5F1E8" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="13">ATELIER NOX</text>
+  <text x="228" y="118" fill="#D4AF37" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="8">CROISSANCE LOCALE GÉRÉE</text>
+  <text x="228" y="146" fill="#1FA2A1" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="5">LAUSANNE · SUISSE ROMANDE</text>
+</svg>

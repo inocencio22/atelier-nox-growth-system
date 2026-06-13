@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Atelier Nox symbol light</title>
+  <desc id="desc">Monogramme AN avec montagnes et lignes du lac Léman sur fond crème.</desc>
+  <rect width="512" height="512" rx="84" fill="#F5F1E8"/>
+  <circle cx="256" cy="256" r="214" fill="none" stroke="#D9D3C7" stroke-width="10"/>
+  <path d="M88 170 132 88l42 82" fill="none" stroke="#12382F" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M128 92v252" fill="none" stroke="#12382F" stroke-width="18" stroke-linecap="round"/>
+  <path d="M208 158v220" fill="none" stroke="#12382F" stroke-width="18" stroke-linecap="round"/>
+  <path d="M208 158 348 378V158" fill="none" stroke="#12382F" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M221 161h62l42 67v78z" fill="#E55D24"/>
+  <path d="M170 122 236 64l44 64 20-28 84 64" fill="none" stroke="#D4AF37" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M120 390c38-20 73 20 111 0s73 20 111 0" fill="none" stroke="#1FA2A1" stroke-width="10" stroke-linecap="round"/>
+  <path d="M150 424c32-15 64 15 96 0s64 15 96 0" fill="none" stroke="#1FA2A1" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+</svg>

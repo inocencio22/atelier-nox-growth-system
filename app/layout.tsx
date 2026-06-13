@@ -8,7 +8,7 @@ import { getNavModeForWorkspace, isPublicPath, type NavMode } from "@/lib/naviga
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://atelier-nox-growth-system.vercel.app"),
   title: {
-    default: "Atelier Nox Growth System",
+    default: "Atelier Nox - Croissance locale gérée à Lausanne",
     template: "%s | Atelier Nox"
   },
   description:
@@ -25,13 +25,31 @@ export const metadata: Metadata = {
   authors: [{ name: "Atelier Nox" }],
   creator: "Atelier Nox",
   publisher: "Atelier Nox",
+  icons: {
+    icon: "/brand/favicon.svg",
+    apple: "/brand/apple-touch-icon.png"
+  },
   openGraph: {
-    title: "Atelier Nox - Croissance locale pour PME",
+    title: "Atelier Nox - Croissance locale gérée à Lausanne",
     description: "Nous pilotons votre croissance locale, avec vous.",
     url: "/",
     siteName: "Atelier Nox",
     locale: "fr_CH",
-    type: "website"
+    type: "website",
+    images: [
+      {
+        url: "/brand/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Atelier Nox - Nous pilotons votre croissance locale, avec vous."
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Atelier Nox - Croissance locale gérée à Lausanne",
+    description: "Nous pilotons votre croissance locale, avec vous.",
+    images: ["/brand/og-image.png"]
   },
   robots: {
     index: true,
