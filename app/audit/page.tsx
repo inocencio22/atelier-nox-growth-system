@@ -1,5 +1,6 @@
-import { Star, Globe, Phone, MapPin, Image, Clock, TrendingUp, ExternalLink, Search } from "lucide-react";
+import { Star, Globe, Phone, MapPin, Image, Clock, TrendingUp, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
+import { AuditSearchForm } from "@/components/AuditSearchForm";
 import { searchBusinessAudit, type PlaceAuditResult } from "@/lib/audit-actions";
 
 type AuditPageProps = {
@@ -8,7 +9,7 @@ type AuditPageProps = {
 
 export default async function AuditPage({ searchParams }: AuditPageProps) {
   const sp = await searchParams;
-  const q = sp?.q?.trim() ?? "";
+  const q    = sp?.q?.trim() ?? "";
   const city = sp?.city?.trim() ?? "";
 
   let result: PlaceAuditResult | null = null;
@@ -24,57 +25,23 @@ export default async function AuditPage({ searchParams }: AuditPageProps) {
       <PageHeader
         eyebrow="Outil prospection"
         title="Audit Google Business"
-        description="Analysez la présence Google d'un prospect en quelques secondes avant votre rendez-vous."
+        description="Analysez la presence Google d'un prospect en quelques secondes avant votre rendez-vous."
       />
 
-      {/* Search form */}
-      <form method="GET" className="mb-8 border border-[#dedad2] bg-white p-5 shadow-sm">
-        <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
-          <label className="grid gap-1.5 text-xs font-black uppercase tracking-[0.1em] text-stone-500">
-            Nom du business
-            <input
-              name="q"
-              defaultValue={q}
-              placeholder="Ex: Salon Lumière"
-              className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold text-ink outline-none placeholder:font-normal placeholder:text-stone-400 focus:border-[#12382F] focus:bg-[#e8f5ee]"
-              autoComplete="off"
-              required
-            />
-          </label>
-          <label className="grid gap-1.5 text-xs font-black uppercase tracking-[0.1em] text-stone-500">
-            Ville
-            <input
-              name="city"
-              defaultValue={city}
-              placeholder="Ex: Lausanne"
-              className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold text-ink outline-none placeholder:font-normal placeholder:text-stone-400 focus:border-[#12382F] focus:bg-[#e8f5ee]"
-              autoComplete="off"
-              required
-            />
-          </label>
-          <button
-            type="submit"
-            className="flex items-center gap-2 self-end border border-[#12382F] bg-[#12382F] px-6 py-3 text-sm font-black uppercase text-white transition hover:bg-[#0d1a14]"
-          >
-            <Search className="h-4 w-4" />
-            Analyser
-          </button>
-        </div>
-      </form>
+      <AuditSearchForm defaultQ={q} defaultCity={city} />
 
       {result && !result.found && (
-        <div className="border border-[#fca5a5] bg-[#fee2e2] p-5 text-sm font-black uppercase text-red-800">
-          {result.error}
+        <div className="mb-6 border border-[#fca5a5] bg-[#fee2e2] p-5 text-sm font-bold leading-6 text-red-800">
+          <span className="font-black uppercase">Resultat :</span> {result.error}
         </div>
       )}
 
       {result && result.found && <AuditCard result={result} query={q} city={city} />}
 
       {!result && (
-        <div className="border border-[#dedad2] bg-white p-10 text-center">
-          <Search className="mx-auto h-10 w-10 text-stone-300" />
-          <p className="mt-3 text-sm font-black uppercase text-stone-400">
-            Saisissez un nom de business et une ville pour lancer l&apos;analyse.
+        <div className="border border-[#dedad2] bg-[#f8f7f2] p-10 text-center">
+          <p className="text-sm font-black uppercase text-stone-400">
+            Tapez un nom de business pour voir les suggestions, ou saisissez et cliquez Analyser.
           </p>
         </div>
       )}
@@ -87,9 +54,7 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-      {/* Main card */}
       <div className="space-y-5">
-        {/* Header */}
         <div className="border border-[#dedad2] bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -112,15 +77,14 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
           </div>
         </div>
 
-        {/* KPIs */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <KpiCard
             icon={<Star className="h-5 w-5" />}
             label="Note Google"
-            value={result.rating !== null ? `${result.rating.toFixed(1)} / 5` : "—"}
+            value={result.rating !== null ? `${result.rating.toFixed(1)} / 5` : "-"}
             sub={result.rating !== null
-              ? result.rating >= 4.3 ? "Bonne note" : result.rating >= 3.5 ? "Note moyenne" : "Note faible — opportunité"
-              : "Pas de note — compte vide"
+              ? result.rating >= 4.3 ? "Bonne note" : result.rating >= 3.5 ? "Note moyenne" : "Note faible - opportunite"
+              : "Pas de note - compte vide"
             }
             accent={result.rating !== null && result.rating < 4.0 ? "border-orange-200 bg-orange-50" : undefined}
           />
@@ -128,21 +92,21 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
             icon={<TrendingUp className="h-5 w-5" />}
             label="Avis clients"
             value={String(result.reviewCount)}
-            sub={result.reviewCount < 10 ? "Très peu — forte opportunité" : result.reviewCount < 30 ? "Quelques avis" : result.reviewCount < 80 ? "Bon volume" : "Volume élevé"}
+            sub={result.reviewCount < 10 ? "Tres peu - forte opportunite" : result.reviewCount < 30 ? "Quelques avis" : result.reviewCount < 80 ? "Bon volume" : "Volume eleve"}
             accent={result.reviewCount < 10 ? "border-orange-200 bg-orange-50" : undefined}
           />
           <KpiCard
-            icon={<Image className="h-5 w-5" />}
+            icon={<Image className="h-5 w-5" alt="" />}
             label="Photos"
             value={result.photoCount > 0 ? `${result.photoCount}+` : "Aucune"}
-            sub={result.photoCount < 5 ? "Peu de visuels — à améliorer" : "Photos présentes"}
+            sub={result.photoCount < 5 ? "Peu de visuels - a ameliorer" : "Photos presentes"}
             accent={result.photoCount < 5 ? "border-orange-200 bg-orange-50" : undefined}
           />
           <KpiCard
             icon={<Globe className="h-5 w-5" />}
             label="Site web"
             value={result.hasWebsite ? "Oui" : "Non"}
-            sub={result.hasWebsite ? result.website ?? "Lien présent" : "Pas de site — opportunité"}
+            sub={result.hasWebsite ? result.website ?? "Lien present" : "Pas de site - opportunite"}
             accent={!result.hasWebsite ? "border-orange-200 bg-orange-50" : undefined}
             href={result.website ?? undefined}
           />
@@ -150,21 +114,20 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
             icon={<Clock className="h-5 w-5" />}
             label="Horaires"
             value={result.hasHours ? "Complets" : "Absents"}
-            sub={result.hasHours ? "Horaires renseignés" : "Horaires manquants — à compléter"}
+            sub={result.hasHours ? "Horaires renseignes" : "Horaires manquants - a completer"}
             accent={!result.hasHours ? "border-orange-200 bg-orange-50" : undefined}
           />
           <KpiCard
             icon={<Phone className="h-5 w-5" />}
-            label="Téléphone"
+            label="Telephone"
             value={result.phone ?? "Absent"}
-            sub={result.phone ? "Numéro présent" : "Pas de téléphone"}
+            sub={result.phone ? "Numero present" : "Pas de telephone"}
             accent={!result.phone ? "border-orange-200 bg-orange-50" : undefined}
           />
         </div>
 
-        {/* Social links to check manually */}
         <div className="border border-[#dedad2] bg-white p-5 shadow-sm">
-          <h3 className="text-xs font-black uppercase tracking-[0.14em] text-stone-500">Vérifier manuellement</h3>
+          <h3 className="text-xs font-black uppercase tracking-[0.14em] text-stone-500">Verifier manuellement</h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <a
               href={`https://www.instagram.com/${query.toLowerCase().replace(/\s+/g, "")}/`}
@@ -172,7 +135,7 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 border border-[#dedad2] py-3 text-sm font-black uppercase text-ink transition hover:border-pink-400 hover:bg-pink-50 hover:text-pink-700"
             >
-              Instagram →
+              Instagram &rarr;
             </a>
             <a
               href={`https://www.facebook.com/search/pages/?q=${encodedSearch}`}
@@ -180,7 +143,7 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 border border-[#dedad2] py-3 text-sm font-black uppercase text-ink transition hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
             >
-              Facebook →
+              Facebook &rarr;
             </a>
             <a
               href={`https://www.tiktok.com/search?q=${encodedSearch}`}
@@ -188,16 +151,15 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 border border-[#dedad2] py-3 text-sm font-black uppercase text-ink transition hover:border-gray-400 hover:bg-gray-50"
             >
-              TikTok →
+              TikTok &rarr;
             </a>
           </div>
         </div>
       </div>
 
-      {/* Score sidebar */}
       <div className="space-y-5">
         <div className="border border-[#dedad2] bg-white p-6 shadow-sm">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-stone-500">Score d&apos;opportunité</p>
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-stone-500">Score d&apos;opportunite</p>
           <div className="mt-3 flex items-end gap-2">
             <strong className="text-7xl font-black leading-none" style={{ color: result.opportunityColor }}>
               {result.opportunityScore}
@@ -205,7 +167,7 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
             <span className="pb-2 text-2xl font-black text-stone-300">/100</span>
           </div>
           <p className="mt-3 text-base font-black uppercase" style={{ color: result.opportunityColor }}>
-            Opportunité {result.opportunityLabel}
+            Opportunite {result.opportunityLabel}
           </p>
           <div className="mt-4 h-2 w-full bg-[#e8e5dd]">
             <div
@@ -214,42 +176,42 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
             />
           </div>
           <p className="mt-4 text-xs font-semibold leading-5 text-stone-500">
-            Score calculé sur : avis Google, note, présence web, photos et horaires.
-            Plus le score est élevé, plus le potentiel de progression est fort.
+            Score calcule sur : avis Google, note, presence web, photos et horaires.
+            Plus le score est eleve, plus le potentiel de progression est fort.
           </p>
         </div>
 
         <div className="border border-[#dedad2] bg-[#f0faf5] p-5 shadow-sm">
-          <h3 className="text-xs font-black uppercase tracking-[0.14em] text-ink">Actions recommandées</h3>
+          <h3 className="text-xs font-black uppercase tracking-[0.14em] text-ink">Actions recommandees</h3>
           <ul className="mt-3 space-y-2">
             {result.reviewCount < 15 && (
               <li className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-bold text-ink">
-                → Campagne avis Google (objectif : 30+ avis)
+                &rarr; Campagne avis Google (objectif : 30+ avis)
               </li>
             )}
             {!result.hasWebsite && (
               <li className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-bold text-ink">
-                → Landing page locale incluse dans le forfait
+                &rarr; Landing page locale incluse dans le forfait
               </li>
             )}
             {!result.hasHours && (
               <li className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-bold text-ink">
-                → Compléter la fiche Google (horaires, photos)
+                &rarr; Completer la fiche Google (horaires, photos)
               </li>
             )}
             {result.photoCount < 5 && (
               <li className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-bold text-ink">
-                → Ajouter photos professionnelles à la fiche
+                &rarr; Ajouter photos professionnelles a la fiche
               </li>
             )}
             {result.rating !== null && result.rating < 4.0 && (
               <li className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-bold text-ink">
-                → Plan de gestion réputation + relances clients
+                &rarr; Plan de gestion reputation + relances clients
               </li>
             )}
             {result.reviewCount >= 15 && result.hasWebsite && result.hasHours && result.photoCount >= 5 && (
               <li className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-bold text-ink">
-                → Fiche bien complète. Focus sur contenus locaux et campagnes.
+                &rarr; Fiche bien complete. Focus sur contenus locaux et campagnes.
               </li>
             )}
           </ul>
@@ -259,7 +221,7 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
           href={`/demandes?prefill=${encodeURIComponent(result.name)}`}
           className="flex w-full items-center justify-center gap-2 border border-[#12382F] bg-ink px-4 py-3 text-sm font-black uppercase text-white transition hover:bg-[#0d1a14]"
         >
-          Créer une demande →
+          Creer une demande &rarr;
         </a>
       </div>
     </div>

@@ -14,13 +14,8 @@ import {
 } from "@/lib/onboarding";
 
 type DemandeDetailPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-  searchParams?: Promise<{
-    client?: string;
-    saved?: string;
-  }>;
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ client?: string; saved?: string }>;
 };
 
 export default async function DemandeDetailPage({ params, searchParams }: DemandeDetailPageProps) {
@@ -35,12 +30,11 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
   const diagnostic = generateSubmissionDiagnostic(submission);
   const isDemo = source === "mock";
 
-  // Extract phone from notes if stored as "📱 +41..." prefix
-  const phoneMatch = submission.notes?.match(/^📱\s*([^\n]+)/);
-  const ownerPhone = phoneMatch ? phoneMatch[1].trim() : null;
+  const phonePrefix = submission.notes?.match(/^📱\s*([^\n]+)/);
+  const ownerPhoneClean = phonePrefix ? phonePrefix[1].trim() : null;
   const notesWithoutPhone = submission.notes?.replace(/^📱[^\n]+\n\n?/, "") || null;
-  const waLink = ownerPhone
-    ? `https://wa.me/${ownerPhone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(diagnostic.outreachScript)}`
+  const waLink = ownerPhoneClean
+    ? `https://wa.me/${ownerPhoneClean.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(diagnostic.outreachScript)}`
     : null;
 
   return (
@@ -54,40 +48,65 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
       </Link>
 
       <PageHeader
-        eyebrow={isDemo ? "Diagnostic démo" : "Diagnostic client"}
+        eyebrow={isDemo ? "Diagnostic demo" : "Diagnostic client"}
         title={diagnostic.title}
-        description="Page de travail interne: transformer les données du formulaire en diagnostic commercial, proposition et message de contact."
+        description="Page de travail interne: transformer les donnees du formulaire en diagnostic commercial, proposition et message de contact."
       />
 
-      {query?.saved === "ok" ? (
+      {/* Saved messages */}
+      {query?.saved === "ok" && (
         <div className="mb-6 border border-[#dedad2] bg-[#f0faf5] p-4 text-sm font-black uppercase text-ink">
-          Diagnostic et proposition sauvegardés. La demande est maintenant prête à contacter.
+          Diagnostic et proposition sauvegardes. La demande est maintenant prete a contacter.
         </div>
-      ) : null}
-
-      {query?.saved === "demo" ? (
+      )}
+      {query?.saved === "demo" && (
         <div className="mb-6 border border-[#dedad2] bg-[#fffbeb] p-4 text-sm font-black uppercase text-ink">
-          Mode démo: activez Supabase et appliquez la migration 004 pour sauvegarder ce diagnostic.
+          Mode demo: activez Supabase et appliquez la migration 004 pour sauvegarder ce diagnostic.
         </div>
-      ) : null}
+      )}
 
-      {query?.client === "demo" ? (
-        <div className="mb-6 border border-[#dedad2] bg-[#fffbeb] p-4 text-sm font-black uppercase text-ink">
-          Mode demo: activez Supabase et connectez-vous en admin pour creer le business client.
+      {/* Client creation messages */}
+      {query?.client === "demo" && (
+        <div className="mb-6 border-2 border-amber-400 bg-amber-50 p-4">
+          <p className="text-sm font-black uppercase text-amber-900">Mode demo - donnees non reelles</p>
+          <p className="mt-1 text-sm font-semibold text-amber-800">
+            Cette demande vient des donnees exemple. Activez Supabase pour creer un vrai client.
+          </p>
         </div>
-      ) : null}
-
-      {query?.client === "error" ? (
-        <div className="mb-6 border border-[#dedad2] bg-[#fee2e2] p-4 text-sm font-black uppercase text-ink">
-          Impossible de creer le client. Verifiez Supabase Auth, RLS admin et la table businesses.
+      )}
+      {query?.client === "nokey" && (
+        <div className="mb-6 border-2 border-red-400 bg-red-50 p-4">
+          <p className="text-sm font-black uppercase text-red-900">
+            Cle manquante: SUPABASE_SERVICE_ROLE_KEY
+          </p>
+          <p className="mt-1 text-sm font-semibold text-red-800">
+            Allez dans Vercel / Settings / Environment Variables et ajoutez la variable SUPABASE_SERVICE_ROLE_KEY avec la cle de service de votre projet Supabase.
+            Puis redeploy.
+          </p>
         </div>
-      ) : null}
+      )}
+      {query?.client === "error" && (
+        <div className="mb-6 border-2 border-red-400 bg-red-50 p-4">
+          <p className="text-sm font-black uppercase text-red-900">Erreur lors de la creation du client</p>
+          <p className="mt-1 text-sm font-semibold text-red-800">
+            Verifiez les logs Vercel, les RLS admin et la table businesses dans Supabase.
+          </p>
+        </div>
+      )}
+      {query?.client === "ok" && (
+        <div className="mb-6 border-2 border-green-400 bg-green-50 p-4">
+          <p className="text-sm font-black uppercase text-green-900">Client cree avec succes</p>
+          <p className="mt-1 text-sm font-semibold text-green-800">
+            Un email d&apos;invitation Supabase et un email de bienvenue ont ete envoyes au client.
+          </p>
+        </div>
+      )}
 
       <section className="mb-6 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
         <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Demande reçue</p>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Demande recue</p>
               <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">{submission.businessName}</h2>
               <p className="mt-3 text-sm font-black text-stone-600">{submission.city} · {submission.niche}</p>
             </div>
@@ -96,21 +115,20 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
 
           <div className="mt-5 grid gap-3">
             <Info label="Email" value={submission.ownerEmail} />
-            {ownerPhone ? <Info label="WhatsApp / Tél." value={ownerPhone} /> : null}
+            {ownerPhoneClean && <Info label="WhatsApp / Tel." value={ownerPhoneClean} />}
             <Info label="Objectif" value={formatObjective(submission.mainObjective)} />
-            <Info label="Plan envisagé" value={formatDesiredPlan(submission.desiredPlan)} />
-            <Info label="Site" value={submission.website ?? "À compléter"} />
-            <Info label="Instagram" value={submission.instagramHandle ?? "À vérifier"} />
+            <Info label="Plan envisage" value={formatDesiredPlan(submission.desiredPlan)} />
+            <Info label="Site" value={submission.website ?? "A completer"} />
+            <Info label="Instagram" value={submission.instagramHandle ?? "A verifier"} />
           </div>
 
-          {notesWithoutPhone ? (
+          {notesWithoutPhone && (
             <div className="mt-4 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
               <p className="text-[11px] font-black uppercase tracking-[0.12em] text-stone-500">Notes client</p>
               <p className="mt-1 text-sm font-semibold leading-6 text-stone-700">{notesWithoutPhone}</p>
             </div>
-          ) : null}
+          )}
 
-          {/* WhatsApp quick contact */}
           {waLink ? (
             <a
               href={waLink}
@@ -124,14 +142,14 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
           ) : (
             <div className="mt-4 flex items-center gap-2 border-2 border-[#e8e5dd] bg-[#f8f7f2] px-4 py-3 text-sm font-semibold text-stone-500">
               <Phone className="h-4 w-4 shrink-0" />
-              Pas de numéro — contactez par email ou Instagram
+              Pas de numero - contactez par email ou Instagram
             </div>
           )}
         </article>
 
         <article className="border border-[#dedad2] bg-[#f0faf5] p-5 shadow-sm">
           <Sparkles className="h-8 w-8 text-ink" />
-          <p className="mt-4 text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Score visibilité</p>
+          <p className="mt-4 text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Score visibilite</p>
           <div className="mt-2 flex items-end gap-3">
             <strong className="text-7xl font-black leading-none text-ink">{diagnostic.score}</strong>
             <span className="pb-2 text-2xl font-black text-ink">/100</span>
@@ -164,7 +182,7 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
             <div>
               <h2 className="text-2xl font-black uppercase leading-none text-ink">Message de contact</h2>
               <p className="mt-2 text-sm font-semibold leading-6 text-stone-600">
-                Script manuel pour envoyer par email, Instagram ou WhatsApp après validation humaine.
+                Script manuel pour envoyer par email, Instagram ou WhatsApp apres validation humaine.
               </p>
             </div>
           </div>
@@ -180,9 +198,14 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
           <Database className="h-8 w-8 text-ink" />
           <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">Convertir en client</h2>
           <p className="mt-4 text-sm font-semibold leading-6 text-ink">
-            Quand la demande est gagnee, creez le business client. Il apparaitra dans Clients avec son plan, son statut
-            et sa fiche operationnelle.
+            Quand la demande est gagnee, creez le business client. Un email d&apos;invitation est envoye
+            automatiquement au client pour creer son acces au portail.
           </p>
+          {isDemo && (
+            <p className="mt-3 border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-800">
+              Mode demo actif - le bouton est desactive. Connectez-vous avec un vrai compte Supabase.
+            </p>
+          )}
         </article>
 
         <form action={createClientBusinessFromSubmission} className="border border-[#dedad2] bg-white p-5 shadow-sm">
@@ -220,10 +243,10 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
         <h2 className="text-3xl font-black uppercase leading-none text-ink">Checklist avant proposition</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-4">
           {[
-            "Vérifier Instagram",
-            "Vérifier site / réservation",
+            "Verifier Instagram",
+            "Verifier site / reservation",
             "Choisir le plan",
-            "Préparer appel de vente"
+            "Preparer appel de vente"
           ].map((item) => (
             <div key={item} className="flex items-start gap-2 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
               <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-green" />

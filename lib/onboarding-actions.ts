@@ -7,17 +7,15 @@ import { createAdminClient } from "@/lib/admin-client";
 import type { Database } from "@/lib/supabase.types";
 import { formValue, onboardingSubmissionSchema } from "@/lib/form-schemas";
 import { generateSubmissionDiagnostic, getOnboardingSubmissionById, type OnboardingStatus } from "@/lib/onboarding";
-import { buildNewDemandeEmail, sendEmail } from "@/lib/resend";
+import { buildNewDemandeEmail, buildClientWelcomeEmail, sendEmail } from "@/lib/resend";
 
 type OnboardingInsert = Database["public"]["Tables"]["onboarding_submissions"]["Insert"];
 type OnboardingUpdate = Database["public"]["Tables"]["onboarding_submissions"]["Update"];
 type DiagnosticInsert = Database["public"]["Tables"]["diagnostics"]["Insert"];
-type ProposalInsert = Database["public"]["Tables"]["proposals"]["Insert"];
-type BusinessInsert = Database["public"]["Tables"]["businesses"]["Insert"];
-type SupabaseWriteError = {
-  code?: string;
-  message?: string;
-};
+type ProposalInsert   = Database["public"]["Tables"]["proposals"]["Insert"];
+type BusinessInsert   = Database["public"]["Tables"]["businesses"]["Insert"];
+type SupabaseWriteError = { code?: string; message?: string };
+
 type OnboardingInsertClient = {
   insert: (value: OnboardingInsert) => Promise<{ error: SupabaseWriteError | null }>;
 };
@@ -44,20 +42,23 @@ type BusinessInsertClient = {
   };
 };
 
+// ─────────────────────────────────────────────────────────────────
+// Create submission (public form)
+// ─────────────────────────────────────────────────────────────────
 export async function createOnboardingSubmission(formData: FormData) {
   const parsed = onboardingSubmissionSchema.safeParse({
-    businessName: formValue(formData, "businessName"),
-    ownerEmail: formValue(formData, "ownerEmail"),
-    ownerName: formValue(formData, "ownerName"),
-    city: formValue(formData, "city", "Lausanne"),
-    niche: formValue(formData, "niche", "Coiffure"),
-    website: formValue(formData, "website"),
+    businessName:    formValue(formData, "businessName"),
+    ownerEmail:      formValue(formData, "ownerEmail"),
+    ownerName:       formValue(formData, "ownerName"),
+    city:            formValue(formData, "city", "Lausanne"),
+    niche:           formValue(formData, "niche", "Coiffure"),
+    website:         formValue(formData, "website"),
     instagramHandle: formValue(formData, "instagramHandle"),
-    mainObjective: formValue(formData, "mainObjective", "plus_clients"),
-    desiredPlan: formValue(formData, "desiredPlan", "essentiel"),
-    notes: formValue(formData, "notes"),
-    ownerPhone: formValue(formData, "ownerPhone"),
-    returnPath: formValue(formData, "returnPath", "/onboarding")
+    mainObjective:   formValue(formData, "mainObjective", "plus_clients"),
+    desiredPlan:     formValue(formData, "desiredPlan", "essentiel"),
+    notes:           formValue(formData, "notes"),
+    ownerPhone:      formValue(formData, "ownerPhone"),
+    returnPath:      formValue(formData, "returnPath", "/onboarding")
   });
   const safeReturnPath = parsed.success ? parsed.data.returnPath : "/onboarding";
 
@@ -67,75 +68,65 @@ export async function createOnboardingSubmission(formData: FormData) {
 
   const phonePrefix = parsed.data.ownerPhone ? `📱 ${parsed.data.ownerPhone}\n\n` : "";
   const submission: OnboardingInsert = {
-    business_name: parsed.data.businessName,
-    owner_email: parsed.data.ownerEmail,
-    owner_name: parsed.data.ownerName,
-    city: parsed.data.city,
-    niche: parsed.data.niche,
-    website: parsed.data.website,
+    business_name:    parsed.data.businessName,
+    owner_email:      parsed.data.ownerEmail,
+    owner_name:       parsed.data.ownerName,
+    city:             parsed.data.city,
+    niche:            parsed.data.niche,
+    website:          parsed.data.website,
     instagram_handle: parsed.data.instagramHandle,
-    main_objective: parsed.data.mainObjective,
-    desired_plan: parsed.data.desiredPlan,
-    notes: parsed.data.notes ? `${phonePrefix}${parsed.data.notes}` : (phonePrefix || null),
+    main_objective:   parsed.data.mainObjective,
+    desired_plan:     parsed.data.desiredPlan,
+    notes:            parsed.data.notes ? `${phonePrefix}${parsed.data.notes}` : (phonePrefix || null),
     status: "new"
   };
 
   const supabase = getSupabaseClient();
-
   if (!supabase || !isSupabaseConfigured) {
-    console.error("[onboarding] Supabase client is not configured; submission was not saved.");
+    console.error("[onboarding] Supabase not configured.");
     redirect(`${safeReturnPath}?status=error`);
   }
 
   let insertError: SupabaseWriteError | null = null;
-
   try {
-    const result = await (supabase.from("onboarding_submissions") as unknown as OnboardingInsertClient).insert(
-      submission
-    );
+    const result = await (supabase.from("onboarding_submissions") as unknown as OnboardingInsertClient).insert(submission);
     insertError = result.error;
   } catch (error) {
-    console.error("[onboarding] Unexpected submission failure.", {
-      name: error instanceof Error ? error.name : "unknown"
-    });
+    console.error("[onboarding] Unexpected submission failure.", { name: error instanceof Error ? error.name : "unknown" });
     redirect(`${safeReturnPath}?status=error`);
   }
 
   if (insertError) {
-    console.error("[onboarding] Failed to create submission.", {
-      code: insertError.code ?? "unknown",
-      message: insertError.message ?? "Supabase insert failed"
-    });
+    console.error("[onboarding] Insert failed.", { code: insertError.code, message: insertError.message });
     redirect(`${safeReturnPath}?status=error`);
   }
 
-  // Notify admin by email (non-blocking — failure does not affect user flow)
   void sendEmail(
     buildNewDemandeEmail({
-      businessName: parsed.data.businessName,
-      ownerEmail: parsed.data.ownerEmail,
-      ownerPhone: parsed.data.ownerPhone ?? null,
-      city: parsed.data.city,
-      niche: parsed.data.niche,
+      businessName:  parsed.data.businessName,
+      ownerEmail:    parsed.data.ownerEmail,
+      ownerPhone:    parsed.data.ownerPhone ?? null,
+      city:          parsed.data.city,
+      niche:         parsed.data.niche,
       mainObjective: parsed.data.mainObjective,
-      desiredPlan: parsed.data.desiredPlan
+      desiredPlan:   parsed.data.desiredPlan
     })
   );
 
   redirect(`${safeReturnPath}?status=ok`);
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Update status
+// ─────────────────────────────────────────────────────────────────
 export async function updateOnboardingStatus(formData: FormData) {
-  const id = String(formData.get("id") ?? "").trim();
+  const id     = String(formData.get("id") ?? "").trim();
   const status = String(formData.get("status") ?? "").trim() as OnboardingStatus;
-  const allowedStatuses: OnboardingStatus[] = ["new", "diagnostic_ready", "contacted", "won", "lost"];
+  const allowed: OnboardingStatus[] = ["new", "diagnostic_ready", "contacted", "won", "lost"];
 
-  if (!id || !allowedStatuses.includes(status)) {
-    return;
-  }
+  if (!id || !allowed.includes(status)) return;
 
   const supabase = getSupabaseClient();
-
   if (supabase && isSupabaseConfigured) {
     await (supabase.from("onboarding_submissions") as unknown as OnboardingUpdateClient)
       .update({ status, updated_at: new Date().toISOString() })
@@ -145,21 +136,17 @@ export async function updateOnboardingStatus(formData: FormData) {
   revalidatePath("/demandes");
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Save diagnostic
+// ─────────────────────────────────────────────────────────────────
 export async function saveGeneratedDiagnostic(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
-
-  if (!id) {
-    return;
-  }
+  if (!id) return;
 
   const { submission } = await getOnboardingSubmissionById(id);
-
-  if (!submission) {
-    return;
-  }
+  if (!submission) return;
 
   const supabase = getSupabaseClient();
-
   if (!supabase || !isSupabaseConfigured) {
     redirect(`/demandes/${id}?saved=demo`);
   }
@@ -168,12 +155,12 @@ export async function saveGeneratedDiagnostic(formData: FormData) {
 
   const diagnosticInsert: DiagnosticInsert = {
     onboarding_submission_id: id,
-    title: generated.title,
-    score: generated.score,
-    summary: generated.summary,
-    strengths: generated.strengths,
-    risks: generated.risks,
-    actions: generated.actions,
+    title:           generated.title,
+    score:           generated.score,
+    summary:         generated.summary,
+    strengths:       generated.strengths,
+    risks:           generated.risks,
+    actions:         generated.actions,
     outreach_script: generated.outreachScript
   };
 
@@ -185,10 +172,10 @@ export async function saveGeneratedDiagnostic(formData: FormData) {
   const proposalInsert: ProposalInsert = {
     onboarding_submission_id: id,
     diagnostic_id: data?.id ?? null,
-    title: generated.suggestedProposal.title,
-    lead: generated.suggestedProposal.lead,
-    price: generated.suggestedProposal.price,
-    status: "draft",
+    title:   generated.suggestedProposal.title,
+    lead:    generated.suggestedProposal.lead,
+    price:   generated.suggestedProposal.price,
+    status:  "draft",
     summary: generated.suggestedProposal.summary
   };
 
@@ -202,47 +189,54 @@ export async function saveGeneratedDiagnostic(formData: FormData) {
   redirect(`/demandes/${id}?saved=ok`);
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Create client / business — with Supabase invite + welcome email
+// ─────────────────────────────────────────────────────────────────
 export async function createClientBusinessFromSubmission(formData: FormData) {
-  const id = String(formData.get("id") ?? "").trim();
+  const id   = String(formData.get("id") ?? "").trim();
   const plan = String(formData.get("plan") ?? "essentiel").trim() as BusinessInsert["plan"];
 
-  if (!id) {
-    return;
-  }
+  if (!id) return;
 
-  const { submission } = await getOnboardingSubmissionById(id);
+  const { submission, source } = await getOnboardingSubmissionById(id);
 
-  if (!submission) {
-    return;
+  if (!submission || source === "mock") {
+    // Cannot create a real client from demo data
+    redirect(`/demandes/${id}?client=demo`);
   }
 
   const admin = createAdminClient();
-
   if (!admin) {
-    redirect(`/demandes/${id}?client=demo`);
+    // SUPABASE_SERVICE_ROLE_KEY not set in Vercel env vars
+    redirect(`/demandes/${id}?client=nokey`);
   }
 
   const allowedPlans: Array<BusinessInsert["plan"]> = ["essentiel", "growth", "pro_local", "partner"];
   const safePlan = allowedPlans.includes(plan) ? plan : "essentiel";
 
+  // 1. Create business record
   const { data, error } = await (admin.from("businesses") as unknown as BusinessInsertClient)
     .insert({
-      owner_email: submission.ownerEmail,
-      name: submission.businessName,
-      city: submission.city,
-      niche: submission.niche,
-      website: submission.website,
+      owner_email:      submission.ownerEmail,
+      name:             submission.businessName,
+      city:             submission.city,
+      niche:            submission.niche,
+      website:          submission.website,
       instagram_handle: submission.instagramHandle,
-      plan: safePlan,
-      status: "trial"
+      plan:             safePlan,
+      status:           "trial"
     })
     .select("id")
     .single();
 
   if (error || !data?.id) {
+    console.error("[create-client] businesses insert failed:", error);
     redirect(`/demandes/${id}?client=error`);
   }
 
+  const businessId = data.id;
+
+  // 2. Mark submission as won
   const supabase = getSupabaseClient();
   if (supabase && isSupabaseConfigured) {
     await (supabase.from("onboarding_submissions") as unknown as OnboardingUpdateClient)
@@ -250,8 +244,28 @@ export async function createClientBusinessFromSubmission(formData: FormData) {
       .eq("id", id);
   }
 
+  // 3. Invite user via Supabase Auth (sends magic-link email)
+  try {
+    await admin.auth.admin.inviteUserByEmail(submission.ownerEmail, {
+      redirectTo: "https://atelier-nox-growth-system.vercel.app/portal"
+    });
+  } catch (inviteErr) {
+    // Non-blocking: log and continue (user may already exist)
+    console.warn("[create-client] inviteUserByEmail failed:", inviteErr);
+  }
+
+  // 4. Send custom welcome email via Resend
+  void sendEmail(
+    buildClientWelcomeEmail({
+      businessName: submission.businessName,
+      ownerEmail:   submission.ownerEmail,
+      plan:         safePlan,
+      portalUrl:    "https://atelier-nox-growth-system.vercel.app/portal"
+    })
+  );
+
   revalidatePath("/clients");
   revalidatePath("/demandes");
   revalidatePath(`/demandes/${id}`);
-  redirect(`/clients/${data.id}`);
+  redirect(`/clients/${businessId}`);
 }

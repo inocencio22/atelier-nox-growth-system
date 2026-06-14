@@ -14,44 +14,38 @@ export type PlaceAuditResult = {
   hasHours: boolean;
   phone: string | null;
   opportunityScore: number;
-  opportunityLabel: "Très haute" | "Haute" | "Moyenne" | "Faible";
+  opportunityLabel: "Tres haute" | "Haute" | "Moyenne" | "Faible";
   opportunityColor: string;
   googleMapsUrl: string;
 } | { found: false; error: string };
 
 function calcOpportunity(reviewCount: number, rating: number | null, hasWebsite: boolean, photoCount: number) {
   let score = 0;
-
-  // Reviews (most important factor)
   if (reviewCount < 5)       score += 50;
   else if (reviewCount < 15) score += 38;
   else if (reviewCount < 30) score += 24;
   else if (reviewCount < 60) score += 12;
   else                        score += 4;
 
-  // Rating
   if (rating === null)        score += 20;
   else if (rating < 3.5)     score += 18;
   else if (rating < 4.0)     score += 12;
   else if (rating < 4.3)     score += 6;
 
-  // Website
   if (!hasWebsite)            score += 14;
 
-  // Photos
   if (photoCount < 2)        score += 10;
   else if (photoCount < 5)   score += 6;
   else if (photoCount < 10)  score += 2;
 
-  // Cap at 100
   score = Math.min(score, 100);
 
-  let label: "Très haute" | "Haute" | "Moyenne" | "Faible";
+  let label: "Tres haute" | "Haute" | "Moyenne" | "Faible";
   let color: string;
-  if (score >= 75) { label = "Très haute" as const; color = "#E85D2A"; }
-  else if (score >= 50) { label = "Haute" as const; color = "#d97706"; }
-  else if (score >= 30) { label = "Moyenne" as const; color = "#12382F"; }
-  else { label = "Faible" as const; color = "#6b7280"; }
+  if (score >= 75) { label = "Tres haute"; color = "#E85D2A"; }
+  else if (score >= 50) { label = "Haute"; color = "#d97706"; }
+  else if (score >= 30) { label = "Moyenne"; color = "#12382F"; }
+  else { label = "Faible"; color = "#6b7280"; }
 
   return { score, label, color };
 }
@@ -65,32 +59,36 @@ export async function searchBusinessAudit(formData: FormData): Promise<PlaceAudi
     return { found: false, error: "Nom et ville requis." };
   }
   if (!apiKey) {
-    return { found: false, error: "Clé Google Places API non configurée (GOOGLE_PLACES_API_KEY)." };
+    return { found: false, error: "Cle Google Places API non configuree (GOOGLE_PLACES_API_KEY)." };
   }
 
-  const query = encodeURIComponent(`${businessName} ${city} Suisse`);
+  // Without "Suisse" — region=ch already scopes results to Switzerland
+  const query = encodeURIComponent(`${businessName} ${city}`);
 
-  // Step 1: find the place
-  const searchRes = await fetch(
-    `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&language=fr&region=ch&key=${apiKey}`
-  );
-  const searchData = await searchRes.json() as {
-    status: string;
-    results: Array<{ place_id: string }>;
-  };
+  let searchData: { status: string; results: Array<{ place_id: string }> };
+  try {
+    const searchRes = await fetch(
+      `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&language=fr&region=ch&key=${apiKey}`
+    );
+    searchData = (await searchRes.json()) as typeof searchData;
+  } catch (err) {
+    return { found: false, error: `Erreur reseau Google Places: ${String(err)}` };
+  }
 
+  if (searchData.status === "REQUEST_DENIED") {
+    return { found: false, error: "Cle API Google refusee (REQUEST_DENIED). Verifiez les restrictions dans Google Cloud Console — supprimez la restriction HTTP referer si elle existe." };
+  }
+  if (searchData.status === "OVER_QUERY_LIMIT") {
+    return { found: false, error: "Quota Google Places depasse. Reessayez dans quelques minutes." };
+  }
   if (searchData.status !== "OK" || !searchData.results?.length) {
-    return { found: false, error: "Aucun résultat Google pour ce nom et cette ville." };
+    return { found: false, error: `Aucun resultat pour "${businessName}" a ${city} (status Google: ${searchData.status}). Essayez un nom plus court ou verifiez l'orthographe.` };
   }
 
   const placeId = searchData.results[0].place_id;
-
-  // Step 2: get details
   const fields = "name,rating,user_ratings_total,photos,website,opening_hours,formatted_phone_number,formatted_address,url";
-  const detailRes = await fetch(
-    `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&language=fr&key=${apiKey}`
-  );
-  const detailData = await detailRes.json() as {
+
+  let detailData: {
     status: string;
     result: {
       name: string;
@@ -104,9 +102,17 @@ export async function searchBusinessAudit(formData: FormData): Promise<PlaceAudi
       url?: string;
     };
   };
+  try {
+    const detailRes = await fetch(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&language=fr&key=${apiKey}`
+    );
+    detailData = (await detailRes.json()) as typeof detailData;
+  } catch (err) {
+    return { found: false, error: `Erreur reseau details: ${String(err)}` };
+  }
 
   if (detailData.status !== "OK") {
-    return { found: false, error: "Impossible de récupérer les détails Google." };
+    return { found: false, error: `Impossible de recuperer les details (status: ${detailData.status}).` };
   }
 
   const r = detailData.result;
