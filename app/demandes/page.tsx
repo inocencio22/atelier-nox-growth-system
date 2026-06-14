@@ -1,15 +1,25 @@
 import Link from "next/link";
-import { ArrowRight, CalendarClock, Mail, MapPin, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarClock, Mail, MapPin } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { updateOnboardingStatus } from "@/lib/onboarding-actions";
 import {
   formatDesiredPlan,
-  formatObjective,
   getOnboardingSubmissions,
   type OnboardingStatus,
   type OnboardingSubmission
 } from "@/lib/onboarding";
+
+const STATUS_ORDER: OnboardingStatus[] = ["new", "diagnostic_ready", "contacted", "won", "lost"];
+
+const STATUS_LABELS: Record<string, string> = {
+  all: "Toutes",
+  new: "À préparer",
+  diagnostic_ready: "Prêtes",
+  contacted: "Contactées",
+  won: "Gagnées",
+  lost: "Perdues"
+};
 
 const nextActions: Record<OnboardingStatus, string> = {
   new: "Préparer le diagnostic gratuit et vérifier Instagram / site web.",
@@ -19,198 +29,215 @@ const nextActions: Record<OnboardingStatus, string> = {
   lost: "Garder en suivi léger et proposer une nouvelle analyse dans 30 jours."
 };
 
-const statusButtons: Array<{ value: OnboardingStatus; label: string }> = [
-  { value: "diagnostic_ready", label: "Diagnostic prêt" },
+const quickStatusButtons: Array<{ value: OnboardingStatus; label: string }> = [
+  { value: "diagnostic_ready", label: "Prêt" },
   { value: "contacted", label: "Contacté" },
   { value: "won", label: "Gagné" },
   { value: "lost", label: "Perdu" }
 ];
 
-const conversionSteps = [
-  {
-    title: "Qualifier",
-    detail: "Vérifier ville, activité, site, Instagram et objectif prioritaire."
-  },
-  {
-    title: "Préparer",
-    detail: "Créer le diagnostic court avec score, risques, actions 7 jours et plan recommandé."
-  },
-  {
-    title: "Contacter",
-    detail: "Envoyer un message manuel clair puis proposer un appel de 30 minutes."
-  },
-  {
-    title: "Convertir",
-    detail: "Transformer la demande gagnée en business client avec plan et premières actions."
-  }
-];
-
-export default async function DemandesPage() {
+export default async function DemandesPage({
+  searchParams
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
+  const { status: rawStatus } = await searchParams;
   const { submissions, source } = await getOnboardingSubmissions();
   const isDemo = source === "mock";
-  const newCount = submissions.filter((submission) => submission.status === "new").length;
-  const readyCount = submissions.filter((submission) => submission.status === "diagnostic_ready").length;
-  const wonCount = submissions.filter((submission) => submission.status === "won").length;
+
+  const activeStatus = STATUS_ORDER.includes(rawStatus as OnboardingStatus) ? rawStatus! : "all";
+
+  const sorted = [...submissions].sort(
+    (a, b) => STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status)
+  );
+
+  const filtered =
+    activeStatus === "all" ? sorted : sorted.filter((s) => s.status === activeStatus);
+
+  const counts: Record<string, number> = { all: submissions.length };
+  for (const s of STATUS_ORDER) {
+    counts[s] = submissions.filter((sub) => sub.status === s).length;
+  }
 
   return (
     <>
       <PageHeader
         eyebrow="Pipeline"
         title="Demandes d'échantillon"
-        description="Espace interne pour suivre les entrepreneurs qui ont demandé une amostra gratuita, préparer le diagnostic et transformer la demande en abonnement."
+        description="Suivre les demandes entrantes, préparer les diagnostics et convertir en abonnement."
       />
 
-      {isDemo ? (
-        <section className="mb-6 border border-[#dedad2] bg-[#fffbeb] p-4">
-          <p className="text-sm font-black uppercase text-ink">Mode démo</p>
-          <p className="mt-1 text-sm font-semibold leading-6 text-ink">
-            Supabase n&apos;est pas encore configuré ou la table n&apos;est pas disponible. Les demandes affichées sont
-            des exemples pour visualiser le pipeline.
-          </p>
-        </section>
-      ) : null}
-
-      <section className="mb-6 grid gap-3 md:grid-cols-4">
-        <Metric label="Demandes" value={submissions.length.toString()} detail="Entrées onboarding" />
-        <Metric label="À préparer" value={newCount.toString()} detail="Diagnostic à créer" />
-        <Metric label="Prêtes" value={readyCount.toString()} detail="À contacter" />
-        <Metric label="Gagnées" value={wonCount.toString()} detail="Abonnement ou setup" />
-      </section>
-
-      <section className="mb-6 border border-[#dedad2] bg-white p-5 shadow-sm">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Méthode de vente</p>
-            <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">
-              Transformer une demande en client.
-            </h2>
-          </div>
-          <p className="max-w-md text-sm font-semibold leading-6 text-stone-600">
-            Cette page sert à passer d&apos;une curiosité gratuite à une conversation commerciale structurée.
+      {isDemo && (
+        <div className="mb-6 border border-[#dedad2] bg-[#fffbeb] p-4">
+          <p className="text-xs font-black uppercase tracking-[0.1em] text-stone-500">Mode démo</p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-stone-600">
+            Supabase non configuré — données exemples. Activez Supabase pour voir vos vraies demandes.
           </p>
         </div>
-        <div className="mt-5 grid gap-3 md:grid-cols-4">
-          {conversionSteps.map((step, index) => (
-            <article key={step.title} className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-4">
-              <span className="text-xs font-black uppercase tracking-[0.14em] text-[#dc2626]">Étape {index + 1}</span>
-              <h3 className="mt-3 text-xl font-black uppercase leading-none text-ink">{step.title}</h3>
-              <p className="mt-3 text-sm font-semibold leading-6 text-stone-700">{step.detail}</p>
-            </article>
+      )}
+
+      <section className="mb-6 grid gap-3 grid-cols-2 md:grid-cols-5">
+        <Metric label="Total" value={counts.all.toString()} />
+        <Metric label="À préparer" value={counts.new.toString()} accent />
+        <Metric label="Prêtes" value={counts.diagnostic_ready.toString()} />
+        <Metric label="Contactées" value={counts.contacted.toString()} />
+        <Metric label="Gagnées" value={counts.won.toString()} success />
+      </section>
+
+      <nav className="mb-4 flex flex-wrap gap-1 border-b border-[#dedad2]" aria-label="Filtrer par statut">
+        {(["all", ...STATUS_ORDER] as const).map((s) => {
+          const isActive = s === activeStatus;
+          return (
+            <Link
+              key={s}
+              href={s === "all" ? "/demandes" : `/demandes?status=${s}`}
+              className={[
+                "relative -mb-px px-4 py-2.5 text-xs font-black uppercase tracking-[0.1em] transition",
+                isActive
+                  ? "border-b-2 border-[#E85D2A] text-[#E85D2A]"
+                  : "text-stone-500 hover:text-ink"
+              ].join(" ")}
+            >
+              {STATUS_LABELS[s]}
+              {counts[s] > 0 && (
+                <span
+                  className={[
+                    "ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-black",
+                    isActive ? "bg-[#E85D2A] text-white" : "bg-[#e8e5dd] text-stone-600"
+                  ].join(" ")}
+                >
+                  {counts[s]}
+                </span>
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {filtered.length === 0 ? (
+        <div className="border border-[#dedad2] bg-[#f8f7f2] p-8 text-center">
+          <p className="text-sm font-black uppercase text-stone-500">Aucune demande dans cette catégorie.</p>
+        </div>
+      ) : (
+        <div className="grid gap-2">
+          {filtered.map((submission) => (
+            <SubmissionRow key={submission.id} submission={submission} isDemo={isDemo} />
           ))}
         </div>
-      </section>
-
-      <section className="mb-6 grid gap-6 lg:grid-cols-[0.72fr_1.28fr]">
-        <article className="border border-[#dedad2] bg-[#f0faf5] p-5 shadow-sm">
-          <Sparkles className="h-8 w-8 text-ink" />
-          <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">Règle du service</h2>
-          <p className="mt-4 text-sm font-semibold leading-6 text-ink">
-            Chaque demande doit produire une preuve utile: un diagnostic court, une recommandation concrète et une
-            proposition adaptée au budget. C&apos;est ce qui rend l&apos;offre sérieuse, claire et mesurable.
-          </p>
-          <Link
-            href="/onboarding"
-            className="mt-5 inline-flex items-center gap-2 border border-[#dedad2] bg-white px-4 py-3 text-sm font-black uppercase text-ink"
-          >
-            Voir le formulaire client
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </article>
-
-        <div className="grid gap-4">
-          {submissions.map((submission) => (
-            <SubmissionCard key={submission.id} submission={submission} isDemo={isDemo} />
-          ))}
-        </div>
-      </section>
+      )}
     </>
   );
 }
 
-function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return (
-    <article className="border border-[#dedad2] bg-white p-4 shadow-sm">
-      <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-600">{label}</p>
-      <strong className="mt-2 block text-4xl font-black text-ink">{value}</strong>
-      <p className="mt-1 text-sm font-semibold text-stone-600">{detail}</p>
-    </article>
-  );
-}
+function SubmissionRow({ submission, isDemo }: { submission: OnboardingSubmission; isDemo: boolean }) {
+  const formattedDate = new Date(submission.createdAt).toLocaleDateString("fr-CH", {
+    day: "2-digit",
+    month: "2-digit"
+  });
 
-function SubmissionCard({ submission, isDemo }: { submission: OnboardingSubmission; isDemo: boolean }) {
   return (
-    <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+    <article className="border border-[#dedad2] bg-white shadow-sm">
+      <div className="flex flex-wrap items-center gap-3 p-4">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-2xl font-black uppercase leading-none text-ink">{submission.businessName}</h2>
+            <span className="text-base font-black uppercase leading-none text-ink">
+              {submission.businessName}
+            </span>
             <StatusBadge status={submission.status} />
           </div>
-          <p className="mt-2 text-sm font-black text-stone-600">{submission.niche}</p>
+          <p className="mt-1 flex flex-wrap items-center gap-3 text-xs font-semibold text-stone-500">
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              {submission.city}
+            </span>
+            <span>{submission.niche}</span>
+            <span className="flex items-center gap-1">
+              <Mail className="h-3 w-3" />
+              {submission.ownerEmail}
+            </span>
+            <span className="text-stone-400">{formattedDate}</span>
+          </p>
         </div>
-        <div className="grid h-12 w-12 place-items-center border border-[#dedad2] bg-[#12382F] text-white">
-          <Mail className="h-6 w-6" />
+
+        <div className="hidden shrink-0 text-right md:block">
+          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-stone-400">Plan</p>
+          <p className="text-xs font-black text-ink">
+            {formatDesiredPlan(submission.desiredPlan).split(" - ")[0]}
+          </p>
         </div>
-      </div>
 
-      <div className="mt-5 grid gap-3 md:grid-cols-2">
-        <Info icon={<Mail className="h-4 w-4" />} label="Email" value={submission.ownerEmail} />
-        <Info icon={<MapPin className="h-4 w-4" />} label="Localisation" value={submission.city} />
-        <Info label="Objectif" value={formatObjective(submission.mainObjective)} />
-        <Info label="Plan envisagé" value={formatDesiredPlan(submission.desiredPlan)} />
-        <Info label="Site" value={submission.website ?? "À compléter"} />
-        <Info label="Instagram" value={submission.instagramHandle ?? "À vérifier"} />
-      </div>
-
-      {submission.notes ? (
-        <p className="mt-4 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3 text-sm font-semibold leading-6 text-stone-700">
-          {submission.notes}
-        </p>
-      ) : null}
-
-      <div className="mt-4 flex items-start gap-3 border border-[#dedad2] bg-[#f8f7f2] p-3">
-        <CalendarClock className="mt-0.5 h-5 w-5 shrink-0 text-[#E85D2A]" />
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.12em] text-stone-600">Prochaine action</p>
-          <p className="mt-1 text-sm font-black leading-5 text-ink">{nextActions[submission.status]}</p>
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-2">
         <Link
           href={`/demandes/${submission.id}`}
-          className="inline-flex items-center gap-2 border border-[#dedad2] bg-[#f0faf5] px-3 py-2 text-xs font-black uppercase text-ink"
+          className="shrink-0 inline-flex items-center gap-1.5 border border-[#dedad2] bg-[#f0faf5] px-3 py-1.5 text-xs font-black uppercase text-ink transition hover:-translate-y-0.5"
         >
-          Créer diagnostic
-          <ArrowRight className="h-4 w-4" />
+          Ouvrir
+          <ArrowRight className="h-3 w-3" />
         </Link>
-        {statusButtons.map((button) => (
-          <form key={button.value} action={updateOnboardingStatus}>
-            <input type="hidden" name="id" value={submission.id} />
-            <input type="hidden" name="status" value={button.value} />
-            <button
-              className="border border-[#dedad2] bg-white px-3 py-2 text-xs font-black uppercase text-ink hover:bg-[#e8f5ee] disabled:cursor-not-allowed disabled:border-[#e8e5dd] disabled:text-stone-400"
-              disabled={isDemo || submission.status === button.value}
-              title={isDemo ? "Activez Supabase pour modifier les statuts" : undefined}
-              type="submit"
-            >
-              {button.label}
-            </button>
-          </form>
-        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 border-t border-[#e8e5dd] bg-[#f8f7f2] px-4 py-2.5">
+        <div className="flex min-w-0 flex-1 items-start gap-2">
+          <CalendarClock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#E85D2A]" />
+          <p className="text-xs font-semibold leading-4 text-stone-600">{nextActions[submission.status]}</p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-1.5">
+          {quickStatusButtons.map((btn) => (
+            <form key={btn.value} action={updateOnboardingStatus}>
+              <input type="hidden" name="id" value={submission.id} />
+              <input type="hidden" name="status" value={btn.value} />
+              <button
+                className={[
+                  "px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.08em] transition",
+                  submission.status === btn.value
+                    ? "border border-[#12382F] bg-[#12382F] text-white cursor-default"
+                    : "border border-[#dedad2] bg-white text-stone-600 hover:border-[#12382F] hover:text-[#12382F]",
+                  isDemo ? "cursor-not-allowed opacity-40" : ""
+                ].join(" ")}
+                disabled={isDemo || submission.status === btn.value}
+                title={isDemo ? "Activez Supabase pour modifier les statuts" : undefined}
+                type="submit"
+              >
+                {btn.label}
+              </button>
+            </form>
+          ))}
+        </div>
       </div>
     </article>
   );
 }
 
-function Info({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
+function Metric({
+  label,
+  value,
+  accent,
+  success
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+  success?: boolean;
+}) {
   return (
-    <div className="border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
-      <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-stone-500">
-        {icon}
-        {label}
-      </p>
-      <p className="mt-1 break-words text-sm font-black text-ink">{value}</p>
-    </div>
+    <article
+      className={[
+        "border p-3 shadow-sm",
+        accent
+          ? "border-[#E85D2A]/40 bg-[#fff7f4]"
+          : success
+            ? "border-[#dedad2] bg-[#f0faf5]"
+            : "border-[#dedad2] bg-white"
+      ].join(" ")}
+    >
+      <p className="text-[10px] font-black uppercase tracking-[0.12em] text-stone-500">{label}</p>
+      <strong
+        className={[
+          "mt-1 block text-3xl font-black",
+          accent ? "text-[#E85D2A]" : success ? "text-[#12382F]" : "text-ink"
+        ].join(" ")}
+      >
+        {value}
+      </strong>
+    </article>
   );
 }
