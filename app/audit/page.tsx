@@ -1,17 +1,12 @@
-import { redirect } from "next/navigation";
 import { Star, Globe, Phone, MapPin, Image, Clock, TrendingUp, ExternalLink, Search } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { searchBusinessAudit, type PlaceAuditResult } from "@/lib/audit-actions";
-import { getAdminSession } from "@/lib/admin-session";
 
 type AuditPageProps = {
   searchParams?: Promise<{ q?: string; city?: string }>;
 };
 
 export default async function AuditPage({ searchParams }: AuditPageProps) {
-  const session = await getAdminSession();
-  if (!session) redirect("/login");
-
   const sp = await searchParams;
   const q = sp?.q?.trim() ?? "";
   const city = sp?.city?.trim() ?? "";

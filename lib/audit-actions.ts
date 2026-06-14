@@ -46,7 +46,7 @@ function calcOpportunity(reviewCount: number, rating: number | null, hasWebsite:
   // Cap at 100
   score = Math.min(score, 100);
 
-  let label: PlaceAuditResult extends { found: true } ? PlaceAuditResult["opportunityLabel"] : never;
+  let label: "Très haute" | "Haute" | "Moyenne" | "Faible";
   let color: string;
   if (score >= 75) { label = "Très haute" as const; color = "#E85D2A"; }
   else if (score >= 50) { label = "Haute" as const; color = "#d97706"; }

@@ -6,6 +6,17 @@ import { createAdminClient } from "@/lib/admin-client";
 import { sendEmail } from "@/lib/resend";
 import { inviteClient } from "@/lib/client-invite-actions";
 
+
+type InvoiceTable = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+};
+type InvoiceClient = {
+  select: (cols: string, opts?: object) => Promise<{ count: number | null }>;
+  insert: (row: object) => Promise<{ error: unknown }>;
+  update: (row: object) => { eq: (col: string, val: string) => Promise<{ error: unknown }> };
+};
+
 const IBAN = process.env.ATELIER_NOX_IBAN ?? "CH5700767000L56947920";
 
 const PLAN_PRICES: Record<string, number> = {
@@ -23,7 +34,7 @@ const PLAN_LABELS: Record<string, string> = {
 async function getNextInvoiceNumber(admin: ReturnType<typeof createAdminClient>): Promise<string> {
   if (!admin) return "NOX-2026-001";
   const year = new Date().getFullYear();
-  const { count } = await admin
+  const { count } = await (admin as unknown as { from: (t: string) => InvoiceClient })
     .from("invoices")
     .select("*", { count: "exact", head: true });
   const seq = String((count ?? 0) + 1).padStart(3, "0");
@@ -54,7 +65,7 @@ export async function generateAndSendInvoice(formData: FormData): Promise<void> 
     d.toLocaleDateString("fr-CH", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   // Guardar factura na base de dados
-  const { error: insertError } = await admin.from("invoices").insert({
+  const { error: insertError } = await (admin as unknown as { from: (t: string) => InvoiceClient }).from("invoices").insert({
     invoice_number: invoiceNumber,
     demande_id: demandeId || null,
     client_name: clientName,
