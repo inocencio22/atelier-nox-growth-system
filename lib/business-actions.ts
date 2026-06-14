@@ -42,3 +42,21 @@ export async function saveMonthlyResults(formData: FormData) {
   revalidatePath(`/clients/${businessId}`);
   revalidatePath("/portal");
 }
+
+export async function markContractSigned(formData: FormData) {
+  const businessId = String(formData.get("businessId") ?? "").trim();
+  if (!businessId) return;
+
+  const supabase = getSupabaseClient();
+  if (!supabase || !isSupabaseConfigured) return;
+
+  await (supabase.from("businesses") as unknown as BusinessUpdateClient)
+    .update({
+      contract_signed: true,
+      contract_signed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", businessId);
+
+  revalidatePath(`/clients/${businessId}`);
+}

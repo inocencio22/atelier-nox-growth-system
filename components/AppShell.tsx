@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { Instagram, LayoutDashboard, Users, Inbox, ListChecks, Clapperboard, Megaphone, Mail, FileText, ShieldCheck, LogOut } from "lucide-react";
+import { Instagram, LayoutDashboard, Users, Inbox, ListChecks, Clapperboard, Megaphone, Mail, FileText, ShieldCheck, LogOut, Search } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 import { Footer } from "@/components/Footer";
 import { logoutAccess } from "@/lib/access-actions";
@@ -54,6 +54,7 @@ const adminGroups = [
     items: [
       { href: "/rapports", label: "Rapports", icon: FileText },
       { href: "/infra", label: "Infra", icon: ShieldCheck },
+      { href: "/audit", label: "Audit", icon: Search },
     ],
   },
 ];

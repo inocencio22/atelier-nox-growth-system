@@ -1,33 +1,29 @@
 @echo off
-echo ============================================
-echo  Atelier Nox - Deploy para Vercel
-echo ============================================
-echo.
-cd /d "%~dp0"
-echo Pasta: %CD%
-echo.
+cd /d "C:\Users\Joao Pedro Vilar\Documents\MARKETING"
 
-echo [1/4] A remover lock files do git...
-if exist .git\HEAD.lock del /f .git\HEAD.lock && echo     OK: HEAD.lock removido || echo     (nao existia)
-if exist .git\refs\heads\main.lock del /f .git\refs\heads\main.lock && echo     OK: main.lock removido || echo     (nao existia)
-echo.
+echo === Limpando locks git ===
+if exist .git\HEAD.lock del /f .git\HEAD.lock
+if exist .git\refs\heads\main.lock del /f .git\refs\heads\main.lock
+if exist .git\index.lock del /f .git\index.lock
 
-echo [2/4] A adicionar todos os ficheiros...
-git add -A
-echo     OK
-echo.
+echo === Adicionando todos os ficheiros pendentes ===
+git add lib\invoice-actions.ts
+git add lib\business-actions.ts
+git add lib\onboarding-actions.ts
+git add "app\clients\[id]\page.tsx"
+git add supabase\migrations\010_create_invoices.sql
+git add supabase\migrations\011_add_contract_signed.sql
+git add public\contrat-atelier-nox-template.pdf
+git add lib\audit-actions.ts
+git add app\audit\page.tsx
+git add components\AppShell.tsx
+git add CLAUDE.md DEPLOY.bat
 
-echo [3/4] A fazer commit...
-git commit -m "feat: risk alerts, rapports reais, roadmap 30/60/90, WhatsApp check-in"
-echo.
+echo === Commit ===
+git commit -m "feat: facturas, contrato PDF, IBAN, fix RLS, pagina audit Google Business"
 
-echo [4/4] A fazer push para Vercel...
+echo === Push para main ===
 git push origin main
-echo.
 
-echo ============================================
-echo  CONCLUIDO! Vercel vai deploying em 1-2min.
-echo  https://atelier-nox-growth-system.vercel.app
-echo ============================================
-echo.
+echo === Feito! Vercel deploy em 1-2 minutos ===
 pause

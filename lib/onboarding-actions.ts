@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/admin-client";
 import type { Database } from "@/lib/supabase.types";
 import { formValue, onboardingSubmissionSchema } from "@/lib/form-schemas";
 import { generateSubmissionDiagnostic, getOnboardingSubmissionById, type OnboardingStatus } from "@/lib/onboarding";
@@ -215,16 +216,16 @@ export async function createClientBusinessFromSubmission(formData: FormData) {
     return;
   }
 
-  const supabase = getSupabaseClient();
+  const admin = createAdminClient();
 
-  if (!supabase || !isSupabaseConfigured) {
+  if (!admin) {
     redirect(`/demandes/${id}?client=demo`);
   }
 
   const allowedPlans: Array<BusinessInsert["plan"]> = ["essentiel", "growth", "pro_local", "partner"];
   const safePlan = allowedPlans.includes(plan) ? plan : "essentiel";
 
-  const { data, error } = await (supabase.from("businesses") as unknown as BusinessInsertClient)
+  const { data, error } = await (admin.from("businesses") as unknown as BusinessInsertClient)
     .insert({
       owner_email: submission.ownerEmail,
       name: submission.businessName,
@@ -233,7 +234,7 @@ export async function createClientBusinessFromSubmission(formData: FormData) {
       website: submission.website,
       instagram_handle: submission.instagramHandle,
       plan: safePlan,
-      status: "active"
+      status: "trial"
     })
     .select("id")
     .single();
@@ -242,9 +243,12 @@ export async function createClientBusinessFromSubmission(formData: FormData) {
     redirect(`/demandes/${id}?client=error`);
   }
 
-  await (supabase.from("onboarding_submissions") as unknown as OnboardingUpdateClient)
-    .update({ status: "won", updated_at: new Date().toISOString() })
-    .eq("id", id);
+  const supabase = getSupabaseClient();
+  if (supabase && isSupabaseConfigured) {
+    await (supabase.from("onboarding_submissions") as unknown as OnboardingUpdateClient)
+      .update({ status: "won", updated_at: new Date().toISOString() })
+      .eq("id", id);
+  }
 
   revalidatePath("/clients");
   revalidatePath("/demandes");

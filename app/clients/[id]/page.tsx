@@ -18,7 +18,10 @@ import {
   Send,
   ToggleLeft,
   ToggleRight,
-  BarChart3
+  BarChart3,
+  Receipt,
+  BadgeCheck,
+  FileCheck
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -35,7 +38,8 @@ import { createContentItem } from "@/lib/content-item-actions";
 import { getContentItems, type ContentItem } from "@/lib/content-items";
 import type { CustomerContact } from "@/lib/data";
 import { inviteClient } from "@/lib/client-invite-actions";
-import { toggleAutoApprove, saveMonthlyResults } from "@/lib/business-actions";
+import { toggleAutoApprove, saveMonthlyResults, markContractSigned } from "@/lib/business-actions";
+import { generateAndSendInvoice, markInvoicePaid } from "@/lib/invoice-actions";
 
 type ClientDetailPageProps = {
   params: Promise<{
@@ -51,11 +55,22 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
     notFound();
   }
 
-  const [{ contacts }, { actions }, { contentItems }] = await Promise.all([
+  const admin = (await import("@/lib/admin-client")).createAdminClient();
+  const [{ contacts }, { actions }, { contentItems }, invoiceResult, contractResult] = await Promise.all([
     getContacts(client.id),
     getCommercialActions(client.id),
-    getContentItems(client.id)
+    getContentItems(client.id),
+    admin
+      ? admin.from("invoices").select("*").eq("client_email", client.ownerEmail ?? "").order("created_at", { ascending: false }).limit(1).maybeSingle()
+      : Promise.resolve({ data: null }),
+    admin
+      ? admin.from("businesses").select("contract_signed,contract_signed_at").eq("id", client.id).single()
+      : Promise.resolve({ data: null })
   ]);
+  const latestInvoice = invoiceResult?.data as { invoice_number: string; plan: string; amount_chf: number; status: string; created_at: string } | null;
+  const contractData = contractResult?.data as { contract_signed: boolean; contract_signed_at: string | null } | null;
+  const contractSigned = contractData?.contract_signed ?? false;
+  const contractSignedAt = contractData?.contract_signed_at ?? null;
 
   const isDemo = source === "mock";
   const openActions = actions.filter((action) => action.status !== "done");
@@ -328,6 +343,157 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
               Sauvegarder les résultats
             </button>
           </form>
+        </article>
+      </section>
+
+      {/* CONTRAT */}
+      <section className="mb-6 grid gap-6 xl:grid-cols-2">
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
+          <FileCheck className="h-6 w-6 text-[#12382F]" />
+          <h2 className="mt-3 text-2xl font-black uppercase leading-none text-ink">Contrat</h2>
+
+          {contractSigned ? (
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center gap-2 border border-[#12382F]/20 bg-[#f0faf5] px-3 py-2">
+                <BadgeCheck className="h-4 w-4 text-[#12382F]" />
+                <p className="text-xs font-black uppercase text-[#12382F]">Contrat signé</p>
+              </div>
+              {contractSignedAt && (
+                <p className="text-xs font-semibold text-stone-500">
+                  Signé le {new Date(contractSignedAt).toLocaleDateString("fr-CH")}
+                </p>
+              )}
+              <p className="mt-2 text-xs font-semibold text-stone-500">
+                Contrat confirmé — vous pouvez générer la facture.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-4 space-y-3">
+              <p className="text-sm font-semibold leading-6 text-stone-600">
+                Envoyez le template de contrat au client. Obtenez sa signature par email ou PDF signé, puis confirmez ici avant de générer la facture.
+              </p>
+              <form action={markContractSigned}>
+                <input type="hidden" name="businessId" value={client.id} />
+                <button
+                  type="submit"
+                  disabled={isDemo}
+                  className="flex w-full items-center justify-center gap-2 border border-[#12382F] bg-[#12382F] px-4 py-2.5 text-xs font-black uppercase text-white transition hover:bg-[#0d2820] disabled:opacity-40"
+                >
+                  <FileCheck className="h-4 w-4" />
+                  Confirmer contrat signé
+                </button>
+              </form>
+            </div>
+          )}
+        </article>
+
+        <article className="border border-[#dedad2] bg-[#f8f7f2] p-5 shadow-sm">
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-stone-500">Processus de signature</p>
+          <h2 className="mt-2 text-2xl font-black uppercase leading-none text-ink">Flux contrat</h2>
+          <div className="mt-4 space-y-4">
+            <div className="flex gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-[#12382F] text-[10px] font-black text-white">1</span>
+              <p className="text-sm font-semibold leading-6 text-stone-600">Téléchargez le template, personnalisez avec le nom et le plan choisi.</p>
+            </div>
+            <div className="flex gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-[#12382F] text-[10px] font-black text-white">2</span>
+              <p className="text-sm font-semibold leading-6 text-stone-600">Envoyez par email. Le client répond par email ou signe électroniquement.</p>
+            </div>
+            <div className="flex gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-[#12382F] text-[10px] font-black text-white">3</span>
+              <p className="text-sm font-semibold leading-6 text-stone-600">Archivez le PDF signé et cliquez &ldquo;Confirmer&rdquo; ci-contre.</p>
+            </div>
+            <div className="flex gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center bg-[#E85D2A] text-[10px] font-black text-white">4</span>
+              <p className="text-sm font-semibold leading-6 text-stone-600">Générez ensuite la facture dans la section ci-dessous.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      {/* FACTURATION */}
+      <section className="mb-6 grid gap-6 xl:grid-cols-2">
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
+          <Receipt className="h-6 w-6 text-[#E85D2A]" />
+          <h2 className="mt-3 text-2xl font-black uppercase leading-none text-ink">Facturation</h2>
+
+          {latestInvoice ? (
+            <div className="mt-4 space-y-3">
+              <div className="flex items-center justify-between border border-[#dedad2] bg-[#f8f7f2] p-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.12em] text-stone-500">Derniere facture</p>
+                  <p className="mt-0.5 text-sm font-black text-ink">{latestInvoice.invoice_number}</p>
+                  <p className="text-xs font-semibold text-stone-500">{latestInvoice.plan} — CHF {Number(latestInvoice.amount_chf).toFixed(2)}</p>
+                </div>
+                <span className={[
+                  "px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em]",
+                  latestInvoice.status === "paid"
+                    ? "bg-[#f0faf5] text-[#12382F] border border-[#12382F]/20"
+                    : "bg-[#fff7f4] text-[#E85D2A] border border-[#E85D2A]/30"
+                ].join(" ")}>
+                  {latestInvoice.status === "paid" ? "Payee" : "En attente"}
+                </span>
+              </div>
+
+              {latestInvoice.status === "sent" && client.ownerEmail && (
+                <form action={markInvoicePaid}>
+                  <input type="hidden" name="invoiceNumber" value={latestInvoice.invoice_number} />
+                  <input type="hidden" name="businessId" value={client.id} />
+                  <input type="hidden" name="clientEmail" value={client.ownerEmail} />
+                  <input type="hidden" name="businessName" value={client.name} />
+                  <button
+                    type="submit"
+                    disabled={isDemo}
+                    className="flex w-full items-center justify-center gap-2 bg-[#12382F] px-4 py-2.5 text-xs font-black uppercase text-white transition hover:bg-[#0d2820] disabled:opacity-40"
+                  >
+                    <BadgeCheck className="h-4 w-4" />
+                    Pago — Invitar client
+                  </button>
+                </form>
+              )}
+
+              {latestInvoice.status === "paid" && (
+                <p className="text-xs font-semibold text-[#12382F]">Facture payee — invitation envoyee au client.</p>
+              )}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm font-semibold text-stone-500">Aucune facture generee.</p>
+          )}
+
+          {client.ownerEmail && (
+            <div className="mt-4 border-t border-[#e8e5dd] pt-4">
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-stone-500">Nouvelle facture</p>
+              <form action={generateAndSendInvoice} className="mt-2">
+                <input type="hidden" name="businessId" value={client.id} />
+                <input type="hidden" name="clientName" value={client.name} />
+                <input type="hidden" name="clientEmail" value={client.ownerEmail} />
+                <input type="hidden" name="plan" value={client.plan ?? "managed_growth"} />
+                <button
+                  type="submit"
+                  disabled={isDemo}
+                  className="inline-flex items-center gap-2 border border-[#E85D2A] bg-white px-4 py-2 text-xs font-black uppercase text-[#E85D2A] transition hover:bg-[#fff7f4] disabled:opacity-40"
+                >
+                  <Receipt className="h-3.5 w-3.5" />
+                  Envoyer facture par email
+                </button>
+              </form>
+            </div>
+          )}
+        </article>
+
+        <article className="border border-[#dedad2] bg-[#f8f7f2] p-5 shadow-sm">
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-stone-500">Info paiement</p>
+          <h2 className="mt-2 text-2xl font-black uppercase leading-none text-ink">Virement bancaire</h2>
+          <p className="mt-3 text-sm font-semibold leading-6 text-stone-600">
+            Le client recoit la facture par email. Une fois le virement confirme, cliquez
+            &quot;Pago — Invitar&quot; pour creer automatiquement son acces portail.
+          </p>
+          <div className="mt-4 space-y-2 border-t border-[#dedad2] pt-4">
+            <p className="text-xs font-black uppercase text-stone-500">Delai de paiement</p>
+            <p className="text-sm font-black text-ink">15 jours</p>
+            <p className="mt-2 text-xs font-black uppercase text-stone-500">Sans TVA</p>
+            <p className="text-sm font-semibold text-stone-600">En dessous de CHF 100k/an.</p>
+          </div>
         </article>
       </section>
 
