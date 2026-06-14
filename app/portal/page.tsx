@@ -1,4 +1,5 @@
-import { CheckCircle2, Clock, Eye, MessageSquare, TrendingUp } from "lucide-react";
+import { CheckCircle2, Clock, Eye, MessageSquare, ThumbsUp, TrendingUp, ToggleRight } from "lucide-react";
+import { approveContentItem, approveCommercialAction } from "@/lib/portal-actions";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getWorkspaceAccess } from "@/lib/auth-model";
@@ -61,6 +62,14 @@ export default async function PortalPage() {
           </p>
         </section>
       ) : null}
+
+      {/* Auto-approbation active */}
+      <div className="mb-6 flex items-center gap-2 border border-[#12382F]/20 bg-[#f0faf5] px-4 py-3">
+        <ToggleRight className="h-4 w-4 shrink-0 text-[#12382F]" />
+        <p className="text-xs font-black uppercase tracking-[0.1em] text-[#12382F]">
+          Approbation par confiance active — Atelier Nox peut publier sans demander validation à chaque étape.
+        </p>
+      </div>
 
       <section className="mb-6 grid gap-3 md:grid-cols-3">
         <AccountInfo label="Mode" value={workspace.mode === "supabase_auth" ? "Compte sécurisé" : "Accès MVP"} />
@@ -216,11 +225,13 @@ export default async function PortalPage() {
               contentToApprove.map((item) => (
                 <PortalContent
                   key={item.id}
+                  id={item.id}
                   channel={item.channel}
                   date={item.plannedDate}
                   detail={item.caption ?? item.assetBrief ?? item.objective}
                   status={item.status}
                   title={item.title}
+                  showApprove
                 />
               ))
             ) : (
@@ -239,6 +250,7 @@ export default async function PortalPage() {
               publishedContent.map((item) => (
                 <PortalContent
                   key={item.id}
+                  id={item.id}
                   channel={item.channel}
                   date={item.plannedDate}
                   detail={item.result ?? item.caption ?? item.objective}
@@ -300,17 +312,21 @@ export default async function PortalPage() {
 }
 
 function PortalContent({
+  id,
   title,
   channel,
   status,
   date,
-  detail
+  detail,
+  showApprove
 }: {
+  id: string;
   title: string;
   channel: string;
   status: string;
   date: string | null;
   detail: string;
+  showApprove?: boolean;
 }) {
   return (
     <article className="border-2 border-line bg-paper p-3">
@@ -322,9 +338,21 @@ function PortalContent({
         <StatusBadge status={status} />
       </div>
       <p className="mt-3 text-sm font-semibold leading-5 text-stone-600">{detail}</p>
-      <p className="mt-3 border-t border-stone-200 pt-3 text-xs font-black uppercase text-stone-500">
-        {date ?? "À planifier"}
-      </p>
+      <div className="mt-3 flex items-center justify-between border-t border-stone-200 pt-3">
+        <p className="text-xs font-black uppercase text-stone-500">{date ?? "À planifier"}</p>
+        {showApprove && status === "waiting_approval" && (
+          <form action={approveContentItem}>
+            <input type="hidden" name="id" value={id} />
+            <button
+              type="submit"
+              className="inline-flex items-center gap-1.5 border border-[#12382F] bg-[#12382F] px-3 py-1.5 text-[10px] font-black uppercase text-white transition hover:bg-[#0d2820]"
+            >
+              <ThumbsUp className="h-3 w-3" />
+              Approuver
+            </button>
+          </form>
+        )}
+      </div>
     </article>
   );
 }
@@ -370,6 +398,7 @@ function PortalAction({
   action
 }: {
   action: {
+    id: string;
     title: string;
     description: string;
     channel: string;
@@ -389,9 +418,23 @@ function PortalAction({
         <StatusBadge status={action.status} />
       </div>
       <p className="mt-3 text-sm font-semibold leading-5 text-stone-600">{action.result ?? action.description}</p>
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-stone-200 pt-3 text-xs font-black uppercase text-stone-500">
-        <span>{action.dueDate ?? "À planifier"}</span>
-        <span>{action.estimatedValue}</span>
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-stone-200 pt-3">
+        <span className="text-xs font-black uppercase text-stone-500">{action.dueDate ?? "À planifier"}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-black uppercase text-stone-500">{action.estimatedValue}</span>
+          {action.status === "waiting_approval" && (
+            <form action={approveCommercialAction}>
+              <input type="hidden" name="id" value={action.id} />
+              <button
+                type="submit"
+                className="inline-flex items-center gap-1.5 border border-[#12382F] bg-[#12382F] px-3 py-1.5 text-[10px] font-black uppercase text-white transition hover:bg-[#0d2820]"
+              >
+                <ThumbsUp className="h-3 w-3" />
+                Approuver
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     </article>
   );

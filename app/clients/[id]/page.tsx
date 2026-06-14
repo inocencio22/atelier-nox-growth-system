@@ -14,7 +14,11 @@ import {
   MessageCircle,
   MonitorCheck,
   Plus,
-  Route
+  Route,
+  Send,
+  ToggleLeft,
+  ToggleRight,
+  BarChart3
 } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -30,6 +34,8 @@ import { getContacts } from "@/lib/contacts";
 import { createContentItem } from "@/lib/content-item-actions";
 import { getContentItems, type ContentItem } from "@/lib/content-items";
 import type { CustomerContact } from "@/lib/data";
+import { inviteClient } from "@/lib/client-invite-actions";
+import { toggleAutoApprove, saveMonthlyResults } from "@/lib/business-actions";
 
 type ClientDetailPageProps = {
   params: Promise<{
@@ -113,6 +119,29 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
             <Info label="Business ID" value={client.id} />
             <Info label="Site" value={client.website ?? "A completer"} />
             <Info label="Reseau social" value={client.instagramHandle ?? "A connecter"} />
+          </div>
+
+          {/* Inviter le client */}
+          <div className="mt-4 border-t border-[#e8e5dd] pt-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.12em] text-stone-500">Accès portail client</p>
+            {client.ownerEmail ? (
+              <form action={inviteClient} className="mt-2 flex flex-wrap items-center gap-2">
+                <input type="hidden" name="businessId" value={client.id} />
+                <input type="hidden" name="businessName" value={client.name} />
+                <input type="hidden" name="email" value={client.ownerEmail} />
+                <p className="flex-1 text-xs font-semibold text-stone-600">{client.ownerEmail}</p>
+                <button
+                  type="submit"
+                  disabled={isDemo}
+                  className="inline-flex items-center gap-1.5 border border-[#12382F] bg-[#12382F] px-3 py-1.5 text-[10px] font-black uppercase text-white transition hover:bg-[#0d2820] disabled:opacity-40"
+                >
+                  <Send className="h-3 w-3" />
+                  Envoyer invitation
+                </button>
+              </form>
+            ) : (
+              <p className="mt-1 text-xs font-semibold text-[#E85D2A]">Ajoutez un email owner pour envoyer l&apos;invitation.</p>
+            )}
           </div>
         </article>
 
@@ -219,6 +248,87 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
             ]}
           />
         </div>
+      </section>
+
+      {/* AUTO-APPROBATION + RÉSULTATS MENSUELS */}
+      <section className="mb-6 grid gap-6 xl:grid-cols-2">
+        {/* Toggle auto-approbation */}
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
+          <div className="flex items-start gap-3">
+            <ToggleRight className="h-7 w-7 text-[#12382F]" />
+            <div>
+              <h2 className="text-3xl font-black uppercase leading-none text-ink">Auto-approbation</h2>
+              <p className="mt-3 text-sm font-semibold leading-6 text-stone-600">
+                Le client fait confiance à Atelier Nox pour publier sans valider chaque action.
+                Activez si le client a donné son accord de principe.
+              </p>
+            </div>
+          </div>
+          <div className="mt-5 grid gap-3">
+            <form action={toggleAutoApprove}>
+              <input type="hidden" name="businessId" value={client.id} />
+              <input type="hidden" name="autoApprove" value="true" />
+              <button
+                type="submit"
+                disabled={isDemo}
+                className="flex w-full items-center justify-between border border-[#12382F] bg-[#12382F] px-4 py-3 text-sm font-black uppercase text-white disabled:opacity-40"
+              >
+                <span className="flex items-center gap-2">
+                  <ToggleRight className="h-4 w-4" />
+                  Activer la confiance totale
+                </span>
+              </button>
+            </form>
+            <form action={toggleAutoApprove}>
+              <input type="hidden" name="businessId" value={client.id} />
+              <input type="hidden" name="autoApprove" value="false" />
+              <button
+                type="submit"
+                disabled={isDemo}
+                className="flex w-full items-center justify-between border border-[#dedad2] bg-[#f8f7f2] px-4 py-3 text-sm font-black uppercase text-ink disabled:opacity-40"
+              >
+                <span className="flex items-center gap-2">
+                  <ToggleLeft className="h-4 w-4" />
+                  Désactiver — validation manuelle
+                </span>
+              </button>
+            </form>
+            <p className="text-[10px] font-semibold text-stone-400">
+              Avec auto-approbation active, le contenu passe directement de &quot;prêt&quot; à &quot;publié&quot; sans demander validation.
+            </p>
+          </div>
+        </article>
+
+        {/* Résultats observés ce mois */}
+        <article className="border border-[#dedad2] bg-white p-5 shadow-sm">
+          <div className="flex items-start gap-3">
+            <BarChart3 className="h-7 w-7 text-[#E85D2A]" />
+            <div>
+              <h2 className="text-3xl font-black uppercase leading-none text-ink">Résultats observés</h2>
+              <p className="mt-3 text-sm font-semibold leading-6 text-stone-600">
+                Résumé mensuel visible par le client dans son portail. Soyez concret: chiffres, rendez-vous, avis.
+              </p>
+            </div>
+          </div>
+          <form action={saveMonthlyResults} className="mt-5">
+            <input type="hidden" name="businessId" value={client.id} />
+            <textarea
+              name="monthlyResults"
+              rows={5}
+              defaultValue={""}
+              placeholder={"+12 vues Google Business\n3 nouveaux avis Google\n2 rendez-vous via Instagram\n1 reel publié, 450 vues"}
+              className="w-full border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-semibold leading-6 text-ink outline-none placeholder:text-stone-400 focus:bg-[#e8f5ee]"
+            />
+            <button
+              type="submit"
+              disabled={isDemo}
+              className="mt-3 flex w-full items-center justify-center gap-2 border border-[#dedad2] bg-[#f0faf5] px-4 py-3 text-xs font-black uppercase text-ink disabled:opacity-40"
+            >
+              <BarChart3 className="h-4 w-4" />
+              Sauvegarder les résultats
+            </button>
+          </form>
+        </article>
       </section>
 
       {/* CHECK-IN MENSUEL WHATSAPP */}
