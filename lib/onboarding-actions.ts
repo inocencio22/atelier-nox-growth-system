@@ -285,15 +285,3 @@ export async function createClientBusinessFromSubmission(formData: FormData) {
   revalidatePath(`/demandes/${id}`);
   redirect(`/clients/${businessId}`);
 }
-nerEmail:   submission.ownerEmail,
-        plan:         safePlan as string,
-        portalUrl:    `${appUrl}/activation`
-      })
-    );
-  }
-
-  revalidatePath("/clients");
-  revalidatePath("/demandes");
-  revalidatePath(`/demandes/${id}`);
-  redirect(`/clients/${businessId}`);
-}
