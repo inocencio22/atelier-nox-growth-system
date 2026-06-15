@@ -61,7 +61,7 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
     getCommercialActions(client.id),
     getContentItems(client.id),
     admin
-      ? admin.from("invoices").select("*").eq("client_email", client.ownerEmail ?? "").order("created_at", { ascending: false }).limit(1).maybeSingle()
+      ? (admin as unknown as { from: (t: string) => { select: (f: string) => { eq: (k: string, v: string) => { order: (k: string, o: object) => { limit: (n: number) => { maybeSingle: () => Promise<{ data: unknown }> } } } } } }).from("invoices").select("*").eq("client_email", client.ownerEmail ?? "").order("created_at", { ascending: false }).limit(1).maybeSingle()
       : Promise.resolve({ data: null }),
     admin
       ? admin.from("businesses").select("contract_signed,contract_signed_at").eq("id", client.id).single()

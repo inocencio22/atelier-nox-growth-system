@@ -109,7 +109,7 @@ export async function markInvoicePaid(formData: FormData): Promise<void> {
     redirect(`/clients/${businessId}?invoice_error=no_service_key`);
   }
 
-  await admin
+  await (admin as unknown as { from: (t: string) => InvoiceClient })
     .from("invoices")
     .update({ status: "paid", paid_at: new Date().toISOString() })
     .eq("invoice_number", invoiceNumber);

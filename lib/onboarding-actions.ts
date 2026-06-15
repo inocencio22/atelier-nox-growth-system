@@ -101,15 +101,25 @@ export async function createOnboardingSubmission(formData: FormData) {
     redirect(`${safeReturnPath}?status=error`);
   }
 
+  const str = (key: string) => String(formData.get(key) ?? "").trim() || undefined;
+
   void sendEmail(
     buildNewDemandeEmail({
-      businessName:  parsed.data.businessName,
-      ownerEmail:    parsed.data.ownerEmail,
-      ownerPhone:    parsed.data.ownerPhone ?? null,
-      city:          parsed.data.city,
-      niche:         parsed.data.niche,
-      mainObjective: parsed.data.mainObjective,
-      desiredPlan:   parsed.data.desiredPlan
+      businessName:      parsed.data.businessName,
+      ownerEmail:        parsed.data.ownerEmail,
+      ownerPhone:        parsed.data.ownerPhone ?? null,
+      city:              parsed.data.city,
+      niche:             parsed.data.niche,
+      mainObjective:     parsed.data.mainObjective,
+      desiredPlan:       parsed.data.desiredPlan,
+      googleBusiness:    str("googleBusiness"),
+      placeRating:       str("placeRating"),
+      placeReviews:      str("placeReviews"),
+      placePhotos:       str("placePhotos"),
+      placeWebsite:      str("placeWebsite"),
+      placeAddress:      str("placeAddress"),
+      placePageSpeed:    str("placePageSpeed"),
+      placeTopCompetitor: str("placeTopCompetitor"),
     })
   );
 
@@ -259,7 +269,7 @@ export async function createClientBusinessFromSubmission(formData: FormData) {
     buildClientWelcomeEmail({
       businessName: submission.businessName,
       ownerEmail:   submission.ownerEmail,
-      plan:         safePlan,
+      plan:         safePlan as string,
       portalUrl:    "https://atelier-nox-growth-system.vercel.app/portal"
     })
   );

@@ -55,6 +55,14 @@ export function buildNewDemandeEmail(data: {
   niche: string;
   mainObjective: string;
   desiredPlan: string;
+  googleBusiness?: string;
+  placeRating?: string;
+  placeReviews?: string;
+  placePhotos?: string;
+  placeWebsite?: string;
+  placeAddress?: string;
+  placePageSpeed?: string;
+  placeTopCompetitor?: string;
 }): EmailPayload {
   const phoneRow = data.ownerPhone
     ? `<tr><td style="padding:4px 0;color:#555;font-size:13px;">Telephone</td><td style="padding:4px 0;font-size:13px;font-weight:700;">${data.ownerPhone}</td></tr>`
@@ -76,6 +84,24 @@ export function buildNewDemandeEmail(data: {
     plus_clients: "Plus de clients"
   };
 
+  const googleBusinessLabels: Record<string, string> = {
+    active: "Oui - gere activement",
+    exists_unmanaged: "Oui - mais pas geree",
+    unknown: "Ne sait pas",
+    none: "Non"
+  };
+
+  const hasPlaces = data.placeRating || data.placeReviews || data.placeAddress;
+  const placesSection = hasPlaces ? `
+    <tr><td colspan="2" style="padding:16px 0 6px;font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#12382F;border-top:1px solid #eee;">Donnees Google Places (automatique)</td></tr>
+    ${data.placeAddress ? `<tr><td style="padding:3px 0;color:#555;font-size:12px;">Adresse</td><td style="padding:3px 0;font-size:12px;">${data.placeAddress}</td></tr>` : ""}
+    ${data.placeRating ? `<tr><td style="padding:3px 0;color:#555;font-size:12px;">Note Google</td><td style="padding:3px 0;font-size:12px;font-weight:700;">${data.placeRating}★ · ${data.placeReviews ?? "?"} avis</td></tr>` : ""}
+    ${data.placePhotos ? `<tr><td style="padding:3px 0;color:#555;font-size:12px;">Photos</td><td style="padding:3px 0;font-size:12px;">${data.placePhotos}</td></tr>` : ""}
+    ${data.placeWebsite ? `<tr><td style="padding:3px 0;color:#555;font-size:12px;">Site web</td><td style="padding:3px 0;font-size:12px;">${data.placeWebsite}</td></tr>` : ""}
+    ${data.placePageSpeed ? `<tr><td style="padding:3px 0;color:#555;font-size:12px;">PageSpeed mobile</td><td style="padding:3px 0;font-size:12px;font-weight:700;">${data.placePageSpeed}/100</td></tr>` : ""}
+    ${data.placeTopCompetitor ? `<tr><td style="padding:3px 0;color:#555;font-size:12px;">Concurrent principal</td><td style="padding:3px 0;font-size:12px;">${data.placeTopCompetitor}</td></tr>` : ""}
+  ` : "";
+
   return {
     to: "joaopedro.suisse@gmail.com",
     subject: `Nouvelle demande - ${data.businessName} (${data.city})`,
@@ -94,6 +120,8 @@ export function buildNewDemandeEmail(data: {
             <tr><td style="padding:4px 0;color:#555;font-size:13px;">Niche</td><td style="padding:4px 0;font-size:13px;">${data.niche}</td></tr>
             <tr><td style="padding:4px 0;color:#555;font-size:13px;">Objectif</td><td style="padding:4px 0;font-size:13px;">${objectiveLabels[data.mainObjective] ?? data.mainObjective}</td></tr>
             <tr><td style="padding:4px 0;color:#555;font-size:13px;">Plan</td><td style="padding:4px 0;font-size:13px;font-weight:700;">${planLabels[data.desiredPlan] ?? data.desiredPlan}</td></tr>
+            ${data.googleBusiness ? `<tr><td style="padding:4px 0;color:#555;font-size:13px;">Fiche Google Business</td><td style="padding:4px 0;font-size:13px;">${googleBusinessLabels[data.googleBusiness] ?? data.googleBusiness}</td></tr>` : ""}
+            ${placesSection}
           </table>
           <div style="margin-top:20px;">
             <a href="https://atelier-nox-growth-system.vercel.app/demandes" style="display:inline-block;background:#12382F;color:#fff;padding:12px 20px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;text-decoration:none;">

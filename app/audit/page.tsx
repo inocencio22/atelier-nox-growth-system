@@ -1,4 +1,4 @@
-import { Star, Globe, Phone, MapPin, Image, Clock, TrendingUp, ExternalLink } from "lucide-react";
+import { Star, Globe, Phone, MapPin, Image as ImageIcon, Clock, TrendingUp, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { AuditSearchForm } from "@/components/AuditSearchForm";
 import { searchBusinessAudit, type PlaceAuditResult } from "@/lib/audit-actions";
@@ -96,7 +96,7 @@ function AuditCard({ result, query, city }: { result: PlaceAuditResult & { found
             accent={result.reviewCount < 10 ? "border-orange-200 bg-orange-50" : undefined}
           />
           <KpiCard
-            icon={<Image className="h-5 w-5" alt="" />}
+            icon={<ImageIcon className="h-5 w-5" />}
             label="Photos"
             value={result.photoCount > 0 ? `${result.photoCount}+` : "Aucune"}
             sub={result.photoCount < 5 ? "Peu de visuels - a ameliorer" : "Photos presentes"}

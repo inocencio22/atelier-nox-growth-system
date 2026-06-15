@@ -1,15 +1,10 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect, type ReactNode } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   ArrowRight,
   FileSearch,
-  Star,
-  Globe,
-  Camera,
-  Users,
   Loader2,
-  TrendingUp,
   Search,
 } from "lucide-react";
 import { createOnboardingSubmission } from "@/lib/onboarding-actions";
@@ -37,188 +32,57 @@ interface Competitor {
   reviewCount: number;
 }
 
-interface AuditState {
-  details: PlaceDetails;
-  competitors: Competitor[];
-  pageSpeed: number | null;
-  pageSpeedLoading: boolean;
-}
+// ── BusinessConfirmation ───────────────────────────────────────────────────────
 
-// ── Score ──────────────────────────────────────────────────────────────────────
-
-function computeScore(audit: AuditState): number {
-  const { details, pageSpeed } = audit;
-  let s = 0;
-  s += Math.min(Math.round((details.rating / 5) * 25), 25);
-  s += Math.min(Math.round((details.reviewCount / 50) * 25), 25);
-  if (details.website) {
-    s += pageSpeed !== null ? Math.round((pageSpeed / 100) * 25) : 10;
-  }
-  s += Math.min(Math.round((details.photoCount / 10) * 25), 25);
-  return Math.min(s, 100);
-}
-
-function scoreColor(score: number): string {
-  if (score < 35) return "#f87171";
-  if (score < 60) return "#fb923c";
-  return "#34d399";
-}
-
-function scoreLabel(score: number): string {
-  if (score < 35) return "Présence à développer";
-  if (score < 60) return "Potentiel non exploité";
-  return "Bonne base à amplifier";
-}
-
-// ── MetricRow ──────────────────────────────────────────────────────────────────
-
-function MetricRow({
-  icon,
-  label,
-  value,
-  pct,
-  loading = false,
-}: {
-  icon: ReactNode;
-  label: string;
-  value: string;
-  pct: number;
-  loading?: boolean;
-}) {
-  const barColor = pct < 35 ? "#f87171" : pct < 60 ? "#fb923c" : "#34d399";
-  return (
-    <div className="space-y-1.5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {icon}
-          <span className="text-[10px] font-black uppercase tracking-[0.14em] text-white/40">
-            {label}
-          </span>
-        </div>
-        {loading ? (
-          <Loader2 className="h-3 w-3 animate-spin text-white/30" />
-        ) : (
-          <span className="text-xs font-black text-white">{value}</span>
-        )}
-      </div>
-      <div className="h-px w-full overflow-hidden bg-white/10">
-        <div
-          className="h-full transition-all duration-700"
-          style={{
-            width: loading ? "0%" : `${Math.min(pct, 100)}%`,
-            backgroundColor: barColor,
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
-// ── AuditPanel ─────────────────────────────────────────────────────────────────
-
-function AuditPanel({
-  audit,
+function BusinessConfirmation({
   name,
+  address,
+  onClear,
   visible,
 }: {
-  audit: AuditState;
   name: string;
+  address: string;
+  onClear: () => void;
   visible: boolean;
 }) {
-  const score = computeScore(audit);
-  const { details, competitors, pageSpeed, pageSpeedLoading } = audit;
-  const top = competitors[0] ?? null;
-
-  const ratingPct = details.rating > 0 ? (details.rating / 5) * 100 : 0;
-  const photosPct = Math.min((details.photoCount / 10) * 100, 100);
-  const sitePct = !details.website
-    ? 0
-    : pageSpeed !== null
-    ? pageSpeed
-    : 40;
-
   return (
     <div
-      className={`overflow-hidden transition-all duration-500 ease-out ${
-        visible ? "max-h-[420px] opacity-100" : "max-h-0 opacity-0"
+      className={`overflow-hidden transition-all duration-300 ease-out ${
+        visible ? "max-h-28 opacity-100" : "max-h-0 opacity-0"
       }`}
     >
-      <div className="mt-4 border border-[#E85D2A]/30 bg-[#0a1510] p-5">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#E85D2A]">
-              Analyse instantanée
-            </p>
-            <p className="mt-0.5 truncate text-xs font-bold text-white/50">{name}</p>
-          </div>
-          <div className="shrink-0 text-right">
-            <span
-              className="block text-3xl font-black leading-none"
-              style={{ color: scoreColor(score) }}
+      <div className="mt-3 flex items-start justify-between gap-3 border border-emerald-500/30 bg-emerald-950/40 p-4">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-500">
+            <svg
+              className="h-2.5 w-2.5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={3}
             >
-              {score}
-            </span>
-            <span className="text-[9px] font-black text-white/25">/100</span>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-emerald-400">
+              Commerce identifié
+            </p>
+            <p className="mt-0.5 text-xs font-black leading-tight text-white">{name}</p>
+            {address && (
+              <p className="mt-0.5 truncate text-[10px] font-semibold text-white/40">
+                {address}
+              </p>
+            )}
           </div>
         </div>
-        <p
-          className="mt-0.5 text-[10px] font-black"
-          style={{ color: scoreColor(score) }}
+        <button
+          type="button"
+          onClick={onClear}
+          className="shrink-0 text-[10px] font-black uppercase tracking-wider text-white/25 transition hover:text-white/60"
         >
-          {scoreLabel(score)}
-        </p>
-
-        {/* Metrics */}
-        <div className="mt-4 space-y-3.5">
-          <MetricRow
-            icon={<Star className="h-3 w-3 text-[#E85D2A]" />}
-            label="Note Google"
-            value={
-              details.rating > 0
-                ? `${details.rating.toFixed(1)}★ · ${details.reviewCount} avis`
-                : "Non renseignée"
-            }
-            pct={ratingPct}
-          />
-          <MetricRow
-            icon={<Camera className="h-3 w-3 text-[#E85D2A]" />}
-            label="Photos"
-            value={`${details.photoCount} photo${details.photoCount !== 1 ? "s" : ""}`}
-            pct={photosPct}
-          />
-          <MetricRow
-            icon={<Globe className="h-3 w-3 text-[#E85D2A]" />}
-            label="Site web mobile"
-            value={
-              !details.website
-                ? "Absent"
-                : pageSpeed !== null
-                ? `${pageSpeed}/100`
-                : "Présent"
-            }
-            pct={sitePct}
-            loading={pageSpeedLoading}
-          />
-          {top && (
-            <MetricRow
-              icon={<Users className="h-3 w-3 text-[#E85D2A]" />}
-              label="Concurrent le plus actif"
-              value={`${top.rating.toFixed(1)}★ · ${top.reviewCount} avis`}
-              pct={(top.rating / 5) * 100}
-            />
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="mt-4 flex items-start gap-2 border-t border-white/10 pt-3.5">
-          <TrendingUp className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#E85D2A]" />
-          <p className="text-[10px] font-semibold leading-4 text-white/40">
-            Nos clients atteignent en moyenne{" "}
-            <span className="font-black text-white">78/100</span> après 3 mois
-            d&apos;accompagnement.
-          </p>
-        </div>
+          Changer
+        </button>
       </div>
     </div>
   );
@@ -264,9 +128,18 @@ export default function DiagnosticForm({ status }: { status?: string }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedPlaceId, setSelectedPlaceId] = useState("");
   const [selectedName, setSelectedName] = useState("");
-  const [audit, setAudit] = useState<AuditState | null>(null);
-  const [auditVisible, setAuditVisible] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+  const [confirmAddress, setConfirmAddress] = useState("");
   const [auditLoading, setAuditLoading] = useState(false);
+
+  // Silently captured Places data — passed as hidden fields for João's admin
+  const [placeRating, setPlaceRating] = useState("");
+  const [placeReviews, setPlaceReviews] = useState("");
+  const [placePhotos, setPlacePhotos] = useState("");
+  const [placeWebsite, setPlaceWebsite] = useState("");
+  const [placeAddress, setPlaceAddress] = useState("");
+  const [placePageSpeed, setPlacePageSpeed] = useState("");
+  const [placeTopCompetitor, setPlaceTopCompetitor] = useState("");
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -294,18 +167,15 @@ export default function DiagnosticForm({ status }: { status?: string }) {
     const val = e.target.value;
     setQuery(val);
     setSelectedPlaceId("");
-    setAudit(null);
-    setAuditVisible(false);
+    setConfirmed(false);
+    setConfirmAddress("");
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => void fetchSuggestions(val), 300);
   };
 
-  // Fetch full audit after business selection
-  const fetchAudit = useCallback(async (placeId: string) => {
+  // Silently fetch Places data after selection
+  const fetchAuditSilently = useCallback(async (placeId: string) => {
     setAuditLoading(true);
-    setAudit(null);
-    setAuditVisible(false);
-
     try {
       const [detailsRes, competitorsRes] = await Promise.all([
         fetch(`/api/places/details?placeId=${placeId}`),
@@ -314,40 +184,37 @@ export default function DiagnosticForm({ status }: { status?: string }) {
       const details = (await detailsRes.json()) as PlaceDetails | null;
       const competitors = (await competitorsRes.json()) as Competitor[];
 
-      if (!details) {
-        setAuditLoading(false);
-        return;
-      }
+      if (details) {
+        setConfirmAddress(details.address);
+        setPlaceRating(String(details.rating));
+        setPlaceReviews(String(details.reviewCount));
+        setPlacePhotos(String(details.photoCount));
+        setPlaceWebsite(details.website ?? "");
+        setPlaceAddress(details.address);
 
-      const initial: AuditState = {
-        details,
-        competitors,
-        pageSpeed: null,
-        pageSpeedLoading: !!details.website,
-      };
-      setAudit(initial);
-      setAuditLoading(false);
-      setTimeout(() => setAuditVisible(true), 50);
+        const top = competitors[0];
+        if (top) {
+          setPlaceTopCompetitor(
+            `${top.name} — ${top.rating.toFixed(1)}★ · ${top.reviewCount} avis`
+          );
+        }
 
-      // PageSpeed in background
-      if (details.website) {
-        try {
-          const psRes = await fetch(
-            `/api/pagespeed?url=${encodeURIComponent(details.website)}`
-          );
-          const psData = (await psRes.json()) as { score: number } | null;
-          setAudit((prev) =>
-            prev
-              ? { ...prev, pageSpeed: psData?.score ?? null, pageSpeedLoading: false }
-              : null
-          );
-        } catch {
-          setAudit((prev) =>
-            prev ? { ...prev, pageSpeedLoading: false } : null
-          );
+        // PageSpeed in background (silent)
+        if (details.website) {
+          try {
+            const psRes = await fetch(
+              `/api/pagespeed?url=${encodeURIComponent(details.website)}`
+            );
+            const psData = (await psRes.json()) as { score: number } | null;
+            if (psData?.score != null) setPlacePageSpeed(String(psData.score));
+          } catch {
+            // silent
+          }
         }
       }
     } catch {
+      // silent
+    } finally {
       setAuditLoading(false);
     }
   }, []);
@@ -358,7 +225,23 @@ export default function DiagnosticForm({ status }: { status?: string }) {
     setSelectedPlaceId(s.placeId);
     setSuggestions([]);
     setShowSuggestions(false);
-    void fetchAudit(s.placeId);
+    setConfirmed(true);
+    void fetchAuditSilently(s.placeId);
+  };
+
+  const handleClear = () => {
+    setQuery("");
+    setSelectedPlaceId("");
+    setSelectedName("");
+    setConfirmed(false);
+    setConfirmAddress("");
+    setPlaceRating("");
+    setPlaceReviews("");
+    setPlacePhotos("");
+    setPlaceWebsite("");
+    setPlaceAddress("");
+    setPlacePageSpeed("");
+    setPlaceTopCompetitor("");
   };
 
   // Close dropdown on outside click
@@ -385,10 +268,20 @@ export default function DiagnosticForm({ status }: { status?: string }) {
       action={createOnboardingSubmission}
       className="flex flex-col bg-[#12382F] p-8 lg:p-12"
     >
+      {/* Hidden fields */}
       <input name="returnPath" type="hidden" value="/diagnostic-gratuit" />
       <input name="desiredPlan" type="hidden" value="pas_encore" />
       {selectedPlaceId && (
         <input name="placeId" type="hidden" value={selectedPlaceId} />
+      )}
+      {placeRating && <input name="placeRating" type="hidden" value={placeRating} />}
+      {placeReviews && <input name="placeReviews" type="hidden" value={placeReviews} />}
+      {placePhotos && <input name="placePhotos" type="hidden" value={placePhotos} />}
+      {placeWebsite && <input name="placeWebsite" type="hidden" value={placeWebsite} />}
+      {placeAddress && <input name="placeAddress" type="hidden" value={placeAddress} />}
+      {placePageSpeed && <input name="placePageSpeed" type="hidden" value={placePageSpeed} />}
+      {placeTopCompetitor && (
+        <input name="placeTopCompetitor" type="hidden" value={placeTopCompetitor} />
       )}
 
       {/* Header */}
@@ -407,7 +300,7 @@ export default function DiagnosticForm({ status }: { status?: string }) {
       {/* Status messages */}
       {status === "ok" && (
         <div className="mt-5 border border-white/20 bg-white/10 p-4 text-sm font-bold text-white">
-          ✓ Votre demande a bien été envoyée. Nous vous répondrons sous 24–48h ouvrables.
+          ✓ Votre demande a bien été envoyée. Votre analyse complète vous sera envoyée sous 24–48h.
         </div>
       )}
       {(status === "error" || status === "missing") && (
@@ -464,13 +357,16 @@ export default function DiagnosticForm({ status }: { status?: string }) {
             </div>
           )}
 
-          {/* Audit panel */}
-          {audit && (
-            <AuditPanel audit={audit} name={selectedName} visible={auditVisible} />
-          )}
+          {/* Business confirmation — replaces audit panel */}
+          <BusinessConfirmation
+            name={selectedName}
+            address={confirmAddress}
+            onClear={handleClear}
+            visible={confirmed}
+          />
         </div>
 
-        {/* Google Business question — réponse au besoin identifié */}
+        {/* Google Business question */}
         <label className="grid gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/50">
           Fiche Google Business
           <select
