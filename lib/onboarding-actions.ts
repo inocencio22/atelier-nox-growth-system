@@ -254,25 +254,43 @@ export async function createClientBusinessFromSubmission(formData: FormData) {
       .eq("id", id);
   }
 
-  // 3. Invite user via Supabase Auth (sends magic-link email)
+  // 3. Invite user via Supabase Auth (sends invite email with activation link)
+  // redirectTo must be in Supabase Dashboard → URL Configuration → Additional Redirect URLs
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://atelier-nox-growth-system.vercel.app";
+  let inviteOk = false;
   try {
     await admin.auth.admin.inviteUserByEmail(submission.ownerEmail, {
-      redirectTo: "https://atelier-nox-growth-system.vercel.app/portal"
+      redirectTo: `${appUrl}/auth/callback?next=/activation`
     });
+    inviteOk = true;
   } catch (inviteErr) {
     // Non-blocking: log and continue (user may already exist)
     console.warn("[create-client] inviteUserByEmail failed:", inviteErr);
   }
 
-  // 4. Send custom welcome email via Resend
-  void sendEmail(
-    buildClientWelcomeEmail({
-      businessName: submission.businessName,
-      ownerEmail:   submission.ownerEmail,
-      plan:         safePlan as string,
-      portalUrl:    "https://atelier-nox-growth-system.vercel.app/portal"
-    })
-  );
+  // 4. Send custom welcome email via Resend (only after invite confirmed)
+  if (inviteOk) {
+    void sendEmail(
+      buildClientWelcomeEmail({
+        businessName: submission.businessName,
+              ownerEmail:   submission.ownerEmail,
+        plan:         safePlan as string,
+        portalUrl:    `${appUrl}/activation`
+      })
+    );
+  }
+
+  revalidatePath("/clients");
+  revalidatePath("/demandes");
+  revalidatePath(`/demandes/${id}`);
+  redirect(`/clients/${businessId}`);
+}
+nerEmail:   submission.ownerEmail,
+        plan:         safePlan as string,
+        portalUrl:    `${appUrl}/activation`
+      })
+    );
+  }
 
   revalidatePath("/clients");
   revalidatePath("/demandes");

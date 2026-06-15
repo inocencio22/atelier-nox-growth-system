@@ -7,6 +7,8 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
   const type = requestUrl.searchParams.get("type");
+  // `next` is set by inviteUserByEmail redirectTo: /auth/callback?next=/activation
+  const next = requestUrl.searchParams.get("next");
 
   if (code) {
     const cookieStore = await cookies();
@@ -29,13 +31,14 @@ export async function GET(request: Request) {
 
     await supabase.auth.exchangeCodeForSession(code);
 
-    // Password recovery → redirect to reset page
+    // Password recovery flow: always go to reset page
     if (type === "recovery") {
       return NextResponse.redirect(new URL("/reset-password", requestUrl.origin));
     }
 
-    // Invite → redirect to portal
-    return NextResponse.redirect(new URL("/reset-password?invite=1", requestUrl.origin));
+    // Invite flow: use ?next param (default /activation)
+    const destination = next ?? "/activation";
+    return NextResponse.redirect(new URL(destination, requestUrl.origin));
   }
 
   return NextResponse.redirect(new URL("/login", requestUrl.origin));

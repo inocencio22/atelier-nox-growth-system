@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/admin-client";
 
 export const DEMO_BUSINESS_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -77,6 +78,25 @@ export async function getCurrentBusiness(): Promise<Business> {
   }
 
   return mapBusiness(data);
+}
+
+/**
+ * Find a business by owner_email.
+ * Used during activation before owner_id is linked.
+ * Uses admin client to bypass RLS (owner_id is still null at this stage).
+ * Returns null if not found or admin client unavailable.
+ */
+export async function getBusinessByOwnerEmail(email: string): Promise<Business | null> {
+  const admin = createAdminClient();
+  if (!admin) return null;
+
+  const { data, error } = await (admin.from("businesses") as unknown as BusinessQueryClient)
+    .select("id,name,city,niche,website,instagram_handle,plan,status")
+    .eq("owner_email", email)
+    .limit(1);
+
+  if (error || !data?.[0]) return null;
+  return mapBusiness(data[0]);
 }
 
 export async function getBusinessForOwner(ownerId: string): Promise<Business> {
