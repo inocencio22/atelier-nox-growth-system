@@ -1,4 +1,4 @@
-import { getSupabaseClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/admin-client";
 import type { Database } from "@/lib/supabase.types";
 
 export type ClientBusinessPlan = Database["public"]["Tables"]["businesses"]["Row"]["plan"];
@@ -93,13 +93,13 @@ export async function getClientBusinesses(): Promise<{
   clients: ClientBusiness[];
   source: "mock" | "supabase";
 }> {
-  const supabase = getSupabaseClient();
+  const admin = createAdminClient();
 
-  if (!supabase) {
+  if (!admin) {
     return { clients: demoClientBusinesses, source: "mock" };
   }
 
-  const { data, error } = await (supabase.from("businesses") as unknown as ClientBusinessQueryClient)
+  const { data, error } = await (admin.from("businesses") as unknown as ClientBusinessQueryClient)
     .select("id,owner_id,owner_email,name,city,niche,website,instagram_handle,plan,status,created_at,updated_at")
     .order("updated_at", { ascending: false });
 
@@ -114,16 +114,16 @@ export async function getClientBusinessById(id: string): Promise<{
   client: ClientBusiness | null;
   source: "mock" | "supabase";
 }> {
-  const supabase = getSupabaseClient();
+  const admin = createAdminClient();
 
-  if (!supabase) {
+  if (!admin) {
     return {
       client: demoClientBusinesses.find((client) => client.id === id) ?? null,
       source: "mock"
     };
   }
 
-  const { data, error } = await (supabase.from("businesses") as unknown as ClientBusinessQueryClient)
+  const { data, error } = await (admin.from("businesses") as unknown as ClientBusinessQueryClient)
     .select("id,owner_id,owner_email,name,city,niche,website,instagram_handle,plan,status,created_at,updated_at")
     .eq("id", id)
     .single();
