@@ -9,23 +9,53 @@ type Props = {
 };
 
 const errorMessages: Record<string, string> = {
-  missing:          "Veuillez remplir tous les champs obligatoires.",
-  password_short:   "Le mot de passe doit contenir au moins 8 caractères.",
+  missing:           "Veuillez remplir tous les champs obligatoires.",
+  password_short:    "Le mot de passe doit contenir au moins 8 caractères.",
   password_mismatch: "Les mots de passe ne correspondent pas.",
-  conditions:       "Vous devez accepter les conditions d'utilisation.",
-  password_update:  "Erreur lors de la création du mot de passe. Veuillez réessayer.",
-  server:           "Erreur serveur. Veuillez contacter le support.",
+  conditions:        "Vous devez accepter les conditions d'utilisation.",
+  password_update:   "Erreur lors de la création du mot de passe. Veuillez réessayer.",
+  server:            "Erreur serveur. Veuillez contacter le support.",
+  link_expired:      "Ce lien d'invitation est invalide ou a expiré. Demandez une nouvelle invitation à votre conseiller Atelier Nox.",
+  invalid_link:      "Lien invalide. Veuillez utiliser le lien reçu par e-mail.",
 };
+
+function InvalidLinkPage({ msg }: { msg: string }) {
+  return (
+    <section className="grid min-h-[calc(100vh-4rem)] place-items-center py-10 px-4">
+      <div className="w-full max-w-lg border border-[#12382F] shadow-[6px_6px_0_rgba(18,56,47,0.12)]">
+        <div className="bg-[#12382F] p-8">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-[#E85D2A]">
+            Atelier Nox
+          </p>
+          <h1 className="mt-3 text-3xl font-black uppercase leading-none text-white">
+            Lien invalide
+          </h1>
+        </div>
+        <div className="bg-[#fffaf0] p-8">
+          <p className="text-sm font-semibold leading-6 text-[#101820]">{msg}</p>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default async function ActivationPage({ searchParams }: Props) {
   const { error } = await searchParams;
 
-  // Require active session (code already exchanged in /auth/callback)
+  // Require active session (established by /auth/confirm via verifyOtp)
   const supabase = await createSupabaseServerClient();
-  if (!supabase) redirect("/login");
+
+  if (!supabase) {
+    const msg = errorMessages[error ?? "link_expired"] ?? errorMessages.link_expired;
+    return <InvalidLinkPage msg={msg} />;
+  }
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email) redirect("/login");
+
+  if (!user?.email) {
+    const msg = errorMessages[error ?? "link_expired"] ?? errorMessages.link_expired;
+    return <InvalidLinkPage msg={msg} />;
+  }
 
   // If already activated (profile has full_name set), go straight to portal
   const { data: profile } = await supabase
@@ -76,7 +106,7 @@ export default async function ActivationPage({ searchParams }: Props) {
                 <CheckCircle className="h-4 w-4 shrink-0 text-[#12382F]" />
                 <span>{business.name}</span>
                 {business.city && (
-                  <span className="text-xs font-normal text-[#12382F]/50">— {business.city}</span>
+                  <span className="text-xs font-normal text-[#12382F]/50">&mdash; {business.city}</span>
                 )}
               </div>
             )}
@@ -91,7 +121,7 @@ export default async function ActivationPage({ searchParams }: Props) {
 
           <form action={activateAccount} className="space-y-4">
 
-            {/* Prénom + Nom */}
+            {/* Prenom + Nom */}
             <div className="grid grid-cols-2 gap-4">
               <label className="block">
                 <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[#12382F]/50">
@@ -118,14 +148,14 @@ export default async function ActivationPage({ searchParams }: Props) {
                     name="nom"
                     type="text"
                     required
-                    placeholder="Müller"
+                    placeholder="Durand"
                     className="w-full border border-[#12382F]/25 bg-white py-3 pl-9 pr-4 text-sm font-semibold text-[#101820] outline-none focus:border-[#12382F]"
                   />
                 </div>
               </label>
             </div>
 
-            {/* Téléphone */}
+            {/* Telephone */}
             <label className="block">
               <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[#12382F]/50">
                 Téléphone <span className="text-[#E85D2A]">*</span>
