@@ -22,7 +22,7 @@ export async function inviteClient(formData: FormData): Promise<void> {
 
   // Invite via Supabase Auth — sends magic link, client sets own password
   const { data: inviteData, error: inviteError } = await admin.auth.admin.inviteUserByEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://atelier-nox-growth-system.vercel.app"}/reset-password`,
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://atelier-nox-growth-system.vercel.app"}/auth/invite-handler`,
     data: {
       business_id: businessId,
       role: "client"

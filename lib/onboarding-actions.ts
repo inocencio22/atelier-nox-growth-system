@@ -260,7 +260,7 @@ export async function createClientBusinessFromSubmission(formData: FormData) {
   let inviteOk = false;
   try {
     await admin.auth.admin.inviteUserByEmail(submission.ownerEmail, {
-      redirectTo: `${appUrl}/auth/callback?next=/activation`
+      redirectTo: `${appUrl}/auth/invite-handler`
     });
     inviteOk = true;
   } catch (inviteErr) {
