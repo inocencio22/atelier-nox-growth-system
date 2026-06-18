@@ -1,0 +1,16 @@
+{
+  "_note": "T01 — invite flow. Use with a valid SEND_EMAIL_HOOK_SECRET signature in B3.",
+  "user": {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "delivered@resend.dev"
+  },
+  "email_data": {
+    "email_action_type": "invite",
+    "token": "12345678",
+    "token_hash": "pkce_test_invite_token_hash_aaabbbccc",
+    "redirect_to": "https://atelier-nox-growth-system.vercel.app",
+    "site_url": "https://atelier-nox-growth-system.vercel.app"
+  }
+}

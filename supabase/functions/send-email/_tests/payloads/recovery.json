@@ -1,0 +1,16 @@
+{
+  "_note": "T02 — recovery (password reset) flow.",
+  "user": {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "delivered@resend.dev"
+  },
+  "email_data": {
+    "email_action_type": "recovery",
+    "token": "12345678",
+    "token_hash": "pkce_test_recovery_token_hash_dddeeefff",
+    "redirect_to": "https://atelier-nox-growth-system.vercel.app",
+    "site_url": "https://atelier-nox-growth-system.vercel.app"
+  }
+}

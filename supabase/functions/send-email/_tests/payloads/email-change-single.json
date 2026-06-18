@@ -1,0 +1,17 @@
+{
+  "_note": "T06 — email_change with double_confirm_changes=false (single confirmation). token_hash_new absent. Expects 1 email to user.new_email only.",
+  "user": {
+    "id": "00000000-0000-0000-0000-000000000007",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "current@example.com",
+    "new_email": "delivered@resend.dev"
+  },
+  "email_data": {
+    "email_action_type": "email_change",
+    "token": "12345678",
+    "token_hash": "pkce_test_email_change_single_hash_mmm",
+    "redirect_to": "https://atelier-nox-growth-system.vercel.app",
+    "site_url": "https://atelier-nox-growth-system.vercel.app"
+  }
+}

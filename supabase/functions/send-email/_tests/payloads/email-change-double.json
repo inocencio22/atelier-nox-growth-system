@@ -1,0 +1,20 @@
+{
+  "_note": "T07 — email_change with double_confirm_changes=true. Both token_hash and token_hash_new present. Expects 2 emails via Promise.allSettled.",
+  "_naming_reminder": "token_hash_new belongs to the CURRENT (old) address. token_hash belongs to the NEW address. Counterintuitive by design.",
+  "user": {
+    "id": "00000000-0000-0000-0000-000000000006",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "delivered@resend.dev",
+    "new_email": "bounced@resend.dev"
+  },
+  "email_data": {
+    "email_action_type": "email_change",
+    "token": "12345678",
+    "token_hash": "pkce_test_email_change_new_addr_hash_kkk",
+    "token_new": "87654321",
+    "token_hash_new": "pkce_test_email_change_current_addr_hash_lll",
+    "redirect_to": "https://atelier-nox-growth-system.vercel.app",
+    "site_url": "https://atelier-nox-growth-system.vercel.app"
+  }
+}

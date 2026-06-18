@@ -1,0 +1,16 @@
+{
+  "_note": "T03 — signup email confirmation flow.",
+  "user": {
+    "id": "00000000-0000-0000-0000-000000000003",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "delivered@resend.dev"
+  },
+  "email_data": {
+    "email_action_type": "signup",
+    "token": "12345678",
+    "token_hash": "pkce_test_signup_token_hash_ggghhh111",
+    "redirect_to": "https://atelier-nox-growth-system.vercel.app",
+    "site_url": "https://atelier-nox-growth-system.vercel.app"
+  }
+}

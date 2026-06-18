@@ -1,0 +1,105 @@
+import type { EmailContent } from "../_shared/types.ts";
+import { escapeHtml, escapeHtmlAttr } from "../_shared/escape-html.ts";
+
+/**
+ * Email sent to the USER'S NEW email address during email change.
+ *
+ * With double_confirm_changes = true:
+ *   The confirmUrl is built using token_hash (NOT token_hash_new).
+ *   This hash belongs to the new address (counterintuitive naming in Supabase).
+ *
+ * With double_confirm_changes = false (single confirmation):
+ *   Same template, same token_hash -- only this email is sent.
+ */
+interface EmailChangeNewData {
+  confirmUrl: string;
+}
+
+export function buildEmailChangeNewEmail(
+  data: EmailChangeNewData,
+): EmailContent {
+  const { confirmUrl } = data;
+  const safeHref = escapeHtmlAttr(confirmUrl);
+  const safeUrl = escapeHtml(confirmUrl);
+
+  return {
+    subject: "Confirmez votre nouvelle adresse e-mail — Atelier Nox",
+    html: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body style="margin:0;padding:0;background:#f5f0eb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f5f0eb;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="540" cellpadding="0" cellspacing="0" role="presentation" style="max-width:540px;width:100%;background:#ffffff;border:1px solid #dedad4;">
+
+          <!-- Header -->
+          <tr>
+            <td style="background:#12382F;padding:32px 40px;">
+              <p style="margin:0 0 10px;color:#E85D2A;font-size:10px;font-weight:900;letter-spacing:0.22em;text-transform:uppercase;">Atelier Nox</p>
+              <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:900;text-transform:uppercase;line-height:1.25;letter-spacing:0.04em;">
+                Confirmer la nouvelle adresse
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px;background:#fffaf0;">
+              <p style="margin:0 0 20px;color:#101820;font-size:15px;line-height:1.65;">
+                Bonjour,
+              </p>
+              <p style="margin:0 0 20px;color:#101820;font-size:15px;line-height:1.65;">
+                Cette adresse e-mail a été désignée comme nouvelle adresse pour un compte Atelier Nox. Cliquez sur le bouton ci-dessous pour valider ce changement.
+              </p>
+              <p style="margin:0 0 32px;color:#6b6660;font-size:13px;line-height:1.6;">
+                Ce lien est valide pendant <strong>1 heure</strong>. Si vous n'avez pas demandé ce changement, ignorez ce message.
+              </p>
+
+              <!-- CTA -->
+              <table cellpadding="0" cellspacing="0" role="presentation">
+                <tr>
+                  <td style="background:#12382F;">
+                    <a href="${safeHref}"
+                       style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:12px;font-weight:900;text-transform:uppercase;text-decoration:none;letter-spacing:0.12em;">
+                      Confirmer ma nouvelle adresse →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 40px;background:#f0ebe3;border-top:1px solid #dedad4;">
+              <p style="margin:0;color:#9c9690;font-size:11px;line-height:1.6;">
+                Atelier Nox · Service de croissance locale · Lausanne, Suisse<br />
+                Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br />
+                <span style="color:#12382F;word-break:break-all;">${safeUrl}</span>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`,
+    text:
+      `Cette adresse e-mail a été désignée comme nouvelle adresse pour un compte Atelier Nox.
+
+Cliquez sur le lien ci-dessous pour valider ce changement :
+
+${confirmUrl}
+
+Ce lien est valide pendant 1 heure.
+Si vous n'avez pas demandé ce changement, ignorez ce message.
+
+Atelier Nox · Lausanne, Suisse`,
+  };
+}

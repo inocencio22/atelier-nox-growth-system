@@ -1,0 +1,15 @@
+{
+  "_note": "T05 — reauthentication OTP flow. MUST BE VALIDATED IN B3 against a real Inbucket capture. Fields marked with _test_notes are assumptions -- confirm before use in production.",
+  "user": {
+    "id": "00000000-0000-0000-0000-000000000005",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "delivered@resend.dev"
+  },
+  "email_data": {
+    "email_action_type": "reauthentication",
+    "_test_notes": "token: the OTP code the user types. Length set by otp_length in config (8 locally). Actual production length may differ. token_hash: expected to be absent (user types code, not clicks link). Confirm both with Inbucket in B3.",
+    "token": "12345678",
+    "site_url": "https://atelier-nox-growth-system.vercel.app"
+  }
+}
