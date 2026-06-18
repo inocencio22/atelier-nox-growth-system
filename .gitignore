@@ -10,3 +10,29 @@ dist/
 .supabase-admin.local
 .supabase-client-test.local
 supabase/.temp/
+
+# TypeScript build cache — gerado automaticamente, não deve entrar no Git
+/tsconfig.tsbuildinfo
+
+# Scripts Windows de automação Git — locais, não pertencem ao repositório
+/COMMIT.vbs
+/DIAG.vbs
+/DOPUSH.bat
+/FIXPUSH.vbs
+/GITFIX2.vbs
+/KILLFIX.bat
+/PUSH.bat
+/PUSHLOG.vbs
+/PUSHME.vbs
+/PUSH_CLIENTS_FIX.bat
+/PUSH_INVITE_FLOW.bat
+/PUSH_INVITE_HANDLER.bat
+/push.vbs
+
+# Logs de execução locais
+/commit_log.txt
+/push_log.txt
+/push_invite_result.txt
+/push_invite_handler_result.txt
+/killfix_result.txt
+/*_result.txt
