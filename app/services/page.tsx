@@ -154,14 +154,14 @@ export default function ServicesPage() {
               href="/diagnostic-gratuit"
               className="inline-flex items-center justify-center gap-2 border border-[#E85D2A] bg-[#E85D2A] px-5 py-4 text-sm font-black uppercase text-white shadow-[4px_4px_0_rgba(232,93,42,0.35)] transition hover:-translate-y-0.5"
             >
-              Diagnostic offert
+              Demander mon diagnostic gratuit
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/abonnement"
               className="inline-flex items-center justify-center gap-2 border border-white/30 bg-white/10 px-5 py-4 text-sm font-black uppercase text-white transition hover:bg-white/20"
             >
-              Voir les tarifs
+              Voir nos solutions
             </Link>
           </div>
         </article>

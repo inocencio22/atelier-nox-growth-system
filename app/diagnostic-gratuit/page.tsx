@@ -14,7 +14,7 @@ const deliverables = [
   ["01", "Lecture locale", "Une première lecture claire de votre présence locale."],
   ["02", "Opportunités", "Les points qui peuvent aider à générer plus de conversations utiles."],
   ["03", "Actions simples", "Les premières actions qu'Atelier Nox peut préparer avec vous."],
-  ["04", "Plan conseillé", "La formule adaptée : Local Clarity, Managed Growth ou Done For You Local."]
+  ["04", "Proposition personnalisée", "Une proposition adaptée : niveau d'accompagnement, périmètre et tarif selon votre situation."]
 ];
 
 export default async function DiagnosticGratuitPage({ searchParams }: DiagnosticLandingProps) {

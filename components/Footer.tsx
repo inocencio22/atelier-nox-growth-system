@@ -55,9 +55,9 @@ export function Footer() {
               {[
                 { href: "/", label: "Notre approche" },
                 { href: "/services", label: "Services" },
-                { href: "/abonnement", label: "Tarifs" },
+                { href: "/abonnement", label: "Solutions" },
                 { href: "/a-propos", label: "Notre histoire" },
-                { href: "/diagnostic-gratuit", label: "Diagnostic offert" },
+                { href: "/diagnostic-gratuit", label: "Diagnostic gratuit" },
               ].map((item) => (
                 <li key={item.href}>
                   <Link
@@ -117,7 +117,7 @@ export function Footer() {
               href="/diagnostic-gratuit"
               className="mt-5 inline-flex w-full items-center justify-center border border-[#E85D2A] bg-[#E85D2A] px-4 py-3 text-xs font-black uppercase text-white shadow-[3px_3px_0_rgba(255,255,255,0.15)] transition hover:bg-[#d44e22]"
             >
-              Diagnostic offert
+              Demander mon diagnostic gratuit
             </Link>
           </div>
 
