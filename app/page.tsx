@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Handshake, NotebookTabs } from "lucide-react";
 import { InstagramFeed } from "@/components/InstagramFeed";
-import { subscriptionPlans } from "@/lib/data";
 
 const badges = ["100% local", "Basé à Lausanne", "Service géré", "Rapports clairs"];
 
@@ -88,7 +87,7 @@ export default function HomePage() {
                 href="/diagnostic-gratuit"
                 className="inline-flex items-center gap-2 border border-[#E85D2A] bg-[#E85D2A] px-5 py-4 text-sm font-black uppercase text-white shadow-[5px_5px_0_rgba(232,93,42,0.45)] transition hover:-translate-y-0.5"
               >
-                Diagnostic offert
+                Demander mon diagnostic gratuit
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
@@ -129,57 +128,50 @@ export default function HomePage() {
       </section>
 
 
-      <section id="tarifs" className="border-t border-[#12382F]/20 pt-10">
+      <section id="secteurs" className="border-t border-[#12382F]/20 pt-10">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E85D2A]">Tarifs</p>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E85D2A]">Nos secteurs</p>
             <h2 className="mt-2 text-4xl font-black leading-none text-[#101820]">
-              Des plans simples, un service réel.
+              Nous travaillons avec trois types de commerces.
             </h2>
           </div>
-          <Link href="/abonnement" className="text-sm font-black uppercase text-[#E85D2A] underline underline-offset-4 hover:text-[#c94e22]">
-            Voir tous les détails →
+          <Link href="/diagnostic-gratuit" className="text-sm font-black uppercase text-[#E85D2A] underline underline-offset-4 hover:text-[#c94e22]">
+            Demander mon diagnostic gratuit →
           </Link>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
-          {subscriptionPlans.map((plan) => (
-            <article
-              key={plan.name}
-              className={
-                plan.highlighted
-                  ? "border border-[#12382F] bg-[#12382F] p-7 shadow-[6px_6px_0_#E85D2A]"
-                  : "border border-[#12382F]/30 bg-[#fffaf0] p-7"
-              }
+          <article className="border border-[#12382F]/30 bg-[#fffaf0] p-7">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E85D2A]">Salons & coiffeurs</p>
+            <p className="mt-4 text-sm font-semibold leading-6 text-[#12382F]">
+              Centralisez les demandes, suivez les nouveaux contacts et transformez davantage d&apos;intérêt en rendez-vous confirmés. Atelier Nox vous aide à mieux organiser les demandes provenant de votre site, de Google, d&apos;Instagram ou de vos autres canaux.
+            </p>
+          </article>
+
+          <article className="border border-[#12382F] bg-[#12382F] p-7 shadow-[6px_6px_0_#E85D2A]">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E85D2A]">Tatoueurs & studios</p>
+            <p className="mt-4 text-sm font-semibold leading-6 text-white/80">
+              Recevez des projets mieux renseignés avant de commencer la conversation. Style, dimensions, emplacement, références et disponibilités sont organisés dans un parcours clair, puis transmis dans votre espace de suivi.
+            </p>
+            <Link
+              href="/diagnostic-gratuit"
+              className="mt-6 flex w-full items-center justify-center border border-[#E85D2A] bg-[#E85D2A] px-4 py-3 text-xs font-black uppercase text-white transition hover:bg-[#d44e22]"
             >
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E85D2A]">
-                {plan.name}
-              </p>
-              <div className="mt-4 flex items-end gap-1">
-                <span className={`text-5xl font-black leading-none ${plan.highlighted ? "text-white" : "text-[#101820]"}`}>
-                  {plan.price}
-                </span>
-                <span className={`mb-1 text-sm font-black ${plan.highlighted ? "text-white/60" : "text-[#12382F]/50"}`}>
-                  /mois
-                </span>
-              </div>
-              <p className={`mt-4 text-sm font-semibold leading-6 ${plan.highlighted ? "text-white/80" : "text-[#12382F]"}`}>
-                {plan.description}
-              </p>
-              {plan.highlighted && (
-                <Link
-                  href="/diagnostic-gratuit"
-                  className="mt-6 flex w-full items-center justify-center border border-[#E85D2A] bg-[#E85D2A] px-4 py-3 text-xs font-black uppercase text-white transition hover:bg-[#d44e22]"
-                >
-                  Commencer par un diagnostic
-                </Link>
-              )}
-            </article>
-          ))}
+              Demander mon diagnostic gratuit
+            </Link>
+          </article>
+
+          <article className="border border-[#12382F]/30 bg-[#fffaf0] p-7">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E85D2A]">Restaurants, bars & cafés</p>
+            <p className="mt-4 text-sm font-semibold leading-6 text-[#12382F]">
+              Centralisez les demandes, réservations, événements et contacts provenant de plusieurs canaux. Atelier Nox vous aide à suivre les opportunités, mieux organiser les demandes et favoriser le retour des clients.
+            </p>
+          </article>
         </div>
 
         <p className="mt-5 text-center text-xs font-semibold text-[#12382F]/45">
-          Les détails de chaque plan, les extras et les budgets publicitaires sont présentés lors du diagnostic offert.
+          Nous commençons toujours par un diagnostic gratuit avant de vous remettre une proposition personnalisée.
         </p>
       </section>
 
@@ -197,7 +189,7 @@ export default function HomePage() {
             href="/diagnostic-gratuit"
             className="inline-flex items-center gap-2 border border-[#F5F1E8] bg-[#E85D2A] px-5 py-4 text-sm font-black uppercase text-white"
           >
-            Demander un diagnostic
+            Demander mon diagnostic gratuit
             <Handshake className="h-4 w-4" />
           </Link>
         </div>

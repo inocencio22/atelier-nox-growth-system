@@ -271,7 +271,7 @@ export const separateFeesIntro =
   "Nous séparons les frais pour garder les forfaits mensuels clairs, accessibles et adaptés à votre situation réelle.";
 
 export const separateFeesNotice =
-  "Les budgets publicitaires, frais de plateformes, outils externes, hébergement, domaines, créations de sites avancées et shootings photo/vidéo ne sont pas inclus dans les forfaits mensuels. Ils sont proposés séparément selon les besoins du client.";
+  "La publicité (Meta, Google), les outils externes, WhatsApp Business, les SMS et les intégrations spéciales ne sont pas automatiquement inclus. Ils sont présentés séparément dans la proposition, uniquement si pertinents pour votre situation.";
 
 export const officialServices = [
   {
@@ -325,89 +325,92 @@ export const officialServices = [
 
 export const planPositioning = [
   {
-    plan: "Local Clarity",
-    summary: "Clarté, diagnostic, priorités, recommandations.",
-    boundary: "Ce plan ne promet pas d'exécution lourde: il sert à savoir quoi faire, dans quel ordre, et pourquoi."
+    plan: "Système Essentiel",
+    pourQui: "Commerce qui veut installer un parcours de demandes clair et organisé.",
+    probleme: "Les demandes arrivent de plusieurs endroits, rien n\'est centralisé, des opportunités sont perdues.",
+    summary: "Plateforme, CRM, parcours principal, point d\'entrée, alertes, hébergement, maintenance et support limité.",
+    boundary: "Ce niveau installe et maintient le système. Le suivi régulier des demandes n\'est pas inclus."
   },
   {
-    plan: "Managed Growth",
-    summary: "Accompagnement régulier, contenus, relances, Google Business basique, avis clients, suivi.",
-    boundary:
-      "Les campagnes peuvent être préparées et suivies, mais les budgets publicitaires restent séparés du forfait."
+    plan: "Suivi & Optimisation",
+    pourQui: "Commerce qui veut un regard régulier sur ses demandes et des recommandations concrètes.",
+    probleme: "Le système tourne, mais personne ne regarde ce qui se passe vraiment chaque mois.",
+    summary: "Tout l\'essentiel, revue mensuelle des demandes, rapport court, identification des opportunités oubliées, une réunion et petits ajustements du parcours.",
+    boundary: "Les actions de réactivation, follow-ups préparés et campagnes ne sont pas inclus."
   },
   {
-    plan: "Done For You Local",
-    summary:
-      "Exécution plus complète, campagnes locales simples, landing pages simples ou ajustements, automatisations légères, suivi renforcé.",
-    boundary:
-      "Les créations avancées, outils externes, budgets média et setups spécifiques sont proposés séparément si nécessaire."
+    plan: "Accompagnement Géré",
+    pourQui: "Commerce qui veut déléguer davantage et obtenir des actions concrètes en plus du suivi.",
+    probleme: "Le suivi existe mais les relances, réactivations et campagnes restent non traitées.",
+    summary: "Tout le suivi, revue plus fréquente, actions de réactivation, follow-ups préparés, campagnes ou événements quand prévus, optimisations supplémentaires et heures définies dans la proposition.",
+    boundary: "Les heures et livrables exacts sont définis dans la proposition personnalisée."
   }
 ];
 
 export const subscriptionPlans = [
   {
-    name: "Local Clarity",
-    price: "CHF 190",
-    rhythm: "/mois",
-    description: "Pour clarifier la situation, choisir les priorités et recevoir des recommandations simples.",
-    positioning: "Clarté, diagnostic, priorités, recommandations.",
+    name: "Système Essentiel",
+    description: "Pour installer un parcours de demandes clair, centralisé et maintenu.",
+    pourQui: "Commerce qui veut organiser la réception et le suivi de ses demandes.",
+    probleme: "Les demandes arrivent de partout, rien n\'est centralisé, des opportunités sont perdues avant même d\'avoir commencé.",
+    positioning: "Plateforme, CRM, parcours principal, point d\'entrée, alertes, hébergement, maintenance et support limité.",
     features: [
-      "Diagnostic mensuel de visibilité",
-      "Plan d'actions priorisées",
-      "Recommandations claires",
-      "Recommandations Google / Instagram",
-      "Rapport mensuel simple dans le portail"
+      "Plateforme et CRM installés",
+      "Parcours principal configuré",
+      "Formulaire ou point d\'entrée adapté",
+      "Alertes sur nouvelles demandes",
+      "Hébergement, mises à jour et maintenance technique",
+      "Support limité"
     ],
-    note: "Pas d'exécution lourde dans ce plan."
+    note: "Le suivi régulier des demandes n\'est pas inclus dans ce niveau."
   },
   {
-    name: "Managed Growth",
-    price: "CHF 390",
-    rhythm: "/mois",
-    description: "Le plan principal pour avancer chaque mois avec contenus, relances et suivi commercial.",
-    positioning: "Accompagnement régulier, contenus, relances, Google Business basique, avis clients, suivi.",
+    name: "Suivi & Optimisation",
+    description: "Pour avoir un regard régulier sur les demandes et des recommandations concrètes chaque mois.",
+    pourQui: "Commerce dont le système tourne mais qui veut savoir ce qui se passe vraiment.",
+    probleme: "Des demandes passent entre les mailles. Personne ne regarde les opportunités oubliées.",
+    positioning: "Tout l\'essentiel, revue mensuelle, rapport court, opportunités identifiées, ajustements et une réunion.",
     features: [
-      "Tout Local Clarity",
-      "Plan hebdomadaire d'actions",
-      "Relances et messages personnalisés",
-      "Organisation légère des contacts",
-      "Google Business basique et avis clients",
-      "Suivi des résultats et validations"
+      "Tout Système Essentiel",
+      "Revue mensuelle des demandes",
+      "Rapport court sur les résultats",
+      "Identification des opportunités oubliées",
+      "Une réunion mensuelle",
+      "Petits ajustements du parcours",
+      "Recommandations concrètes"
     ],
     highlighted: true,
-    note: "Les budgets publicitaires restent séparés."
+    note: "Les actions de réactivation et campagnes ne sont pas incluses."
   },
   {
-    name: "Done For You Local",
-    price: "CHF 690",
-    rhythm: "/mois",
-    description: "Pour déléguer davantage d'exécution locale avec un suivi renforcé et des actions plus complètes.",
-    positioning:
-      "Exécution plus complète, campagnes locales simples, landing pages simples ou ajustements, automatisations légères, suivi renforcé.",
+    name: "Accompagnement Géré",
+    description: "Pour déléguer davantage et obtenir des actions concrètes en plus du suivi.",
+    pourQui: "Commerce qui veut que les relances et réactivations soient préparées et exécutées.",
+    probleme: "Le suivi existe mais les follow-ups, réactivations et campagnes restent non traitées.",
+    positioning: "Tout le suivi, revue plus fréquente, réactivations, follow-ups préparés, campagnes quand prévues et heures définies.",
     features: [
-      "Tout Managed Growth",
-      "Optimisation Google Business",
-      "Campagnes locales simples à préparer",
-      "Landing pages simples ou ajustements",
-      "Automatisations légères",
-      "Analyse concurrence locale",
-      "Revue stratégique mensuelle"
+      "Tout Suivi & Optimisation",
+      "Revue plus fréquente",
+      "Actions de réactivation préparées",
+      "Follow-ups organisés",
+      "Campagnes ou événements quand prévus",
+      "Optimisations supplémentaires",
+      "Heures et livrables définis dans la proposition"
     ],
-    note: "Budget média, outils, hosting et créations avancées séparés."
+    note: "Les heures et livrables exacts sont définis dans la proposition personnalisée."
   }
 ];
 
 export const paidExtras = [
-  { name: "Setup Google Business complet", price: "CHF 250–490" },
-  { name: "Setup Meta Ads", price: "CHF 190–390" },
-  { name: "Setup Google Ads local", price: "CHF 390–690" },
-  { name: "Landing page locale simple", price: "CHF 590–1’490" },
-  { name: "Mini-site PME", price: "CHF 1’490–2’900" },
-  { name: "Automatisation légère de relance", price: "CHF 290–790" },
-  { name: "Setup tracking / pixel / conversions", price: "CHF 190–490" },
-  { name: "Audit concurrence locale", price: "CHF 190–390" },
-  { name: "Session stratégie IA pratique pour PME", price: "CHF 190–390" },
-  { name: "Pack messages de relance", price: "CHF 150–300" }
+  { name: "Setup Google Business complet" },
+  { name: "Setup publicité Meta ou Google" },
+  { name: "Landing page locale" },
+  { name: "Mini-site PME" },
+  { name: "Automatisation légère de relance" },
+  { name: "Setup tracking et conversions" },
+  { name: "Audit concurrence locale" },
+  { name: "Intégration WhatsApp, SMS ou outils externes" },
+  { name: "Pack messages de relance" }
 ];
 
 export const recommendedAdBudgets = [
@@ -454,9 +457,9 @@ export const faqItems = [
       "Le démarrage peut rester simple. Les conditions exactes sont confirmées dans l'offre afin de garder un cadre clair pour les deux côtés."
   },
   {
-    question: "Quel plan choisir pour commencer ?",
+    question: "Par où commencer ?",
     answer:
-      "Local Clarity convient pour clarifier. Managed Growth est le plan principal pour avancer chaque mois. Done For You Local convient si vous voulez déléguer davantage."
+      "Par le diagnostic gratuit. En 30 minutes, nous comprenons votre situation, vos outils actuels et vos priorités. Vous recevez ensuite une proposition personnalisée avec un périmètre clair et un tarif transparent."
   }
 ];
 
