@@ -28,7 +28,7 @@ export type NavMode = "public" | "client" | "admin";
 export const publicNavItems: NavItem[] = [
   { href: "/", label: "Notre approche", icon: Home },
   { href: "/services", label: "Services", icon: Layers3 },
-  { href: "/abonnement", label: "Tarifs", icon: CreditCard },
+  { href: "/abonnement", label: "Solutions", icon: CreditCard },
   { href: "/a-propos", label: "À propos", icon: Info }
 ];
 

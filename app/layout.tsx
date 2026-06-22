@@ -22,11 +22,18 @@ export const metadata: Metadata = {
     "Service humain, clair et mesurable pour aider les PME de Suisse romande \u00e0 piloter leur croissance locale.",
   keywords: [
     "Atelier Nox",
-    "marketing local Suisse romande",
+    "service géré croissance locale",
+    "PME Suisse romande",
+    "PME Canton de Vaud",
     "croissance locale Lausanne",
-    "coiffure Lausanne",
-    "Google Business",
-    "r\u00e9seaux sociaux PME"
+    "salon coiffure Lausanne",
+    "salon coiffure Vaud",
+    "tatoueur Lausanne",
+    "tatoueur Suisse romande",
+    "restaurant bar Lausanne",
+    "restaurant bar Vaud",
+    "diagnostic gratuit PME",
+    "accompagnement local PME"
   ],
   applicationName: "Atelier Nox Growth System",
   authors: [{ name: "Atelier Nox" }],

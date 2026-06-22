@@ -1,38 +1,23 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Eye, ShieldCheck, Wrench } from "lucide-react";
-import { PlanCard } from "@/components/PlanCard";
 import { PageHeader } from "@/components/PageHeader";
-import {
-  faqItems,
-  paidExtras,
-  planPositioning,
-  recommendedAdBudgets,
-  separateFeesIntro,
-  separateFeesNotice,
-  subscriptionPlans
-} from "@/lib/data";
-
-const deliveryPoints = [
-  "Service géré pour PME locales.",
-  "Suivi clair dans un portail client.",
-  "Actions préparées avec validation humaine."
-];
+import { faqItems, paidExtras, separateFeesIntro, separateFeesNotice, subscriptionPlans } from "@/lib/data";
 
 const serviceBlocks = [
   {
-    title: "Nous faisons",
+    title: "Nous installons",
     icon: Wrench,
-    items: ["Diagnostic", "Relances", "Messages", "Google / réseaux", "Suivi des actions"]
+    items: ["Parcours de demandes", "CRM et formulaires", "Points d'entrée", "Alertes", "Hébergement et maintenance"]
   },
   {
     title: "Vous voyez",
     icon: Eye,
-    items: ["Actions réalisées", "À approuver", "Résultats", "Prochaines étapes", "Rapport mensuel"]
+    items: ["Demandes centralisées", "Opportunités identifiées", "Rapport mensuel", "Recommandations claires", "Prochaines étapes"]
   },
   {
     title: "Cadre fiable",
     icon: ShieldCheck,
-    items: ["Qualité", "Précision", "Consentement", "Sans bruit", "Mesurable"]
+    items: ["Proposition personnalisée", "Prix transparent", "Sans engagement initial", "Périmètre défini", "Frais externes séparés"]
   }
 ];
 
@@ -40,62 +25,87 @@ export default function AbonnementPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Tarifs"
-        title="Des forfaits mensuels clairs, avec les frais externes séparés."
-        description="Atelier Nox prépare, organise et suit votre croissance locale. Les budgets publicitaires, outils et créations spécifiques restent séparés pour garder un cadre transparent."
+        eyebrow="Solutions"
+        title="Trois niveaux d'accompagnement, une proposition personnalisée."
+        description="Chaque entreprise possède une organisation, des outils et un parcours client différents. Nous commençons par un diagnostic gratuit afin de comprendre votre fonctionnement actuel, les demandes que vous recevez et les points où des opportunités peuvent être perdues. Vous recevez ensuite une proposition personnalisée avec un périmètre clair, un prix transparent et les éventuels frais externes séparés. Sans engagement."
       />
 
-      <section className="mb-8 border border-[#12382F] bg-[#12382F] p-6 text-white shadow-[8px_8px_0_#E85D2A]">
-        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Promesse</p>
-        <h2 className="mt-2 max-w-5xl text-4xl font-black leading-none">
-          Qualité, clarté, suivi et précision pour votre visibilité locale.
+      <section className="grid gap-4 lg:grid-cols-3">
+        {subscriptionPlans.map((plan) => (
+          <article
+            key={plan.name}
+            className={
+              plan.highlighted
+                ? "border border-[#12382F] bg-[#12382F] p-6 shadow-[6px_6px_0_#E85D2A]"
+                : "border border-[#12382F]/30 bg-[#fffaf0] p-6 shadow-[4px_4px_0_rgba(18,56,47,0.10)]"
+            }
+          >
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E85D2A]">{plan.name}</p>
+            <p className={`mt-3 min-h-12 text-sm font-semibold leading-6 ${plan.highlighted ? "text-white/85" : "text-[#12382F]"}`}>
+              {plan.description}
+            </p>
+
+            <div className={`mt-4 border px-3 py-2 text-xs font-black uppercase leading-5 ${plan.highlighted ? "border-white/20 bg-white/10 text-white" : "border-[#D9D3C7] bg-[#F5F1E8] text-[#12382F]"}`}>
+              Pour qui : {plan.pourQui}
+            </div>
+
+            <ul className="mt-5 space-y-2">
+              {plan.features.map((feature) => (
+                <li
+                  key={feature}
+                  className={`flex items-start gap-2 text-sm font-bold ${plan.highlighted ? "text-white" : "text-[#101820]"}`}
+                >
+                  <CheckCircle2
+                    className={`mt-0.5 h-4 w-4 shrink-0 ${plan.highlighted ? "text-[#E85D2A]" : "text-[#12382F]"}`}
+                    aria-hidden="true"
+                  />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+
+            {plan.note && (
+              <p className={`mt-4 text-xs font-bold leading-5 ${plan.highlighted ? "text-white/55" : "text-stone-500"}`}>
+                {plan.note}
+              </p>
+            )}
+
+            <Link
+              href="/diagnostic-gratuit"
+              className={`mt-6 flex w-full items-center justify-center gap-2 border px-4 py-3 text-xs font-black uppercase transition ${
+                plan.highlighted
+                  ? "border-[#E85D2A] bg-[#E85D2A] text-white hover:bg-[#d44e22]"
+                  : "border-[#12382F] bg-[#fffaf0] text-[#12382F] hover:bg-[#F5F1E8]"
+              }`}
+            >
+              Demander mon diagnostic gratuit
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </article>
+        ))}
+      </section>
+
+      <section className="mt-8 border border-[#12382F] bg-[#fffaf0] p-6 shadow-[6px_6px_0_rgba(18,56,47,0.12)]">
+        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Frais externes</p>
+        <h2 className="mt-2 text-3xl font-black leading-none text-[#101820]">
+          Des forfaits lisibles, sans frais cachés.
         </h2>
-        <div className="mt-5 grid gap-3 md:grid-cols-3">
-          {deliveryPoints.map((point) => (
-            <div key={point} className="flex items-start gap-2 border border-[#F5F1E8]/40 bg-[#F5F1E8] p-3">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#E85D2A]" />
-              <span className="text-sm font-black leading-5 text-[#12382F]">{point}</span>
+        <p className="mt-4 max-w-4xl text-sm font-semibold leading-6 text-[#12382F]">{separateFeesIntro}</p>
+        <p className="mt-3 max-w-5xl border border-[#D9D3C7] bg-[#F5F1E8] p-4 text-sm font-bold leading-6 text-[#12382F]">
+          {separateFeesNotice}
+        </p>
+        <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {paidExtras.map((extra) => (
+            <div key={extra.name} className="border border-[#D9D3C7] bg-white p-3">
+              <p className="text-sm font-black text-[#101820]">{extra.name}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-3">
-        {subscriptionPlans.map((plan) => (
-          <PlanCard key={plan.name} plan={plan} />
-        ))}
-      </section>
-
-      <section className="mt-8 grid gap-4 lg:grid-cols-3">
-        {planPositioning.map((item) => (
-          <article key={item.plan} className="border border-[#12382F] bg-[#fffaf0] p-5">
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">{item.plan}</p>
-            <h2 className="mt-3 text-2xl font-black leading-none text-[#101820]">{item.summary}</h2>
-            <p className="mt-4 text-sm font-semibold leading-6 text-[#12382F]">{item.boundary}</p>
-          </article>
-        ))}
-      </section>
-
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Link
-          href="/diagnostic-gratuit"
-          className="inline-flex items-center gap-2 border border-[#12382F] bg-[#E85D2A] px-5 py-3 text-sm font-black uppercase text-white shadow-[4px_4px_0_#12382F]"
-        >
-          Diagnostic offert
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-        <Link
-          href="/services"
-          className="inline-flex items-center gap-2 border border-[#12382F] bg-[#fffaf0] px-5 py-3 text-sm font-black uppercase text-[#12382F]"
-        >
-          Voir les services
-        </Link>
-      </div>
-
       <section className="mt-8 grid gap-4 lg:grid-cols-3">
         {serviceBlocks.map((block) => {
           const Icon = block.icon;
-
           return (
             <article
               key={block.title}
@@ -120,54 +130,10 @@ export default function AbonnementPage() {
         })}
       </section>
 
-      <section className="mt-8 border border-[#12382F] bg-[#fffaf0] p-6 shadow-[6px_6px_0_rgba(18,56,47,0.12)]">
-        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Frais séparés</p>
-        <h2 className="mt-2 text-3xl font-black leading-none text-[#101820]">
-          Des forfaits lisibles, sans frais cachés.
-        </h2>
-        <p className="mt-4 max-w-4xl text-sm font-semibold leading-6 text-[#12382F]">{separateFeesIntro}</p>
-        <p className="mt-3 max-w-5xl border border-[#D9D3C7] bg-[#F5F1E8] p-4 text-sm font-bold leading-6 text-[#12382F]">
-          {separateFeesNotice}
-        </p>
-      </section>
-
-      <section className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <article className="border border-[#12382F] bg-[#fffaf0] p-6">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Extras disponibles</p>
-          <h2 className="mt-2 text-3xl font-black leading-none text-[#101820]">À activer seulement si nécessaire.</h2>
-          <div className="mt-5 grid gap-2 sm:grid-cols-2">
-            {paidExtras.map((extra) => (
-              <div key={extra.name} className="border border-[#D9D3C7] bg-[#F5F1E8] p-3">
-                <p className="text-sm font-black text-[#101820]">{extra.name}</p>
-                <p className="mt-1 text-sm font-black text-[#E85D2A]">{extra.price}</p>
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className="border border-[#12382F] bg-[#12382F] p-6 text-white">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Budgets publicitaires</p>
-          <h2 className="mt-2 text-3xl font-black leading-none">Le budget média reste votre budget.</h2>
-          <p className="mt-4 text-sm font-semibold leading-6 text-[#F5F1E8]">
-            Nous pouvons préparer et suivre les campagnes, mais l&apos;argent investi chez Meta ou Google est séparé du
-            forfait Atelier Nox.
-          </p>
-          <div className="mt-5 grid gap-2">
-            {recommendedAdBudgets.map((item) => (
-              <div key={item.name} className="border border-[#F5F1E8]/30 bg-[#F5F1E8] p-3 text-[#12382F]">
-                <p className="text-sm font-black">{item.name}</p>
-                <p className="mt-1 text-sm font-black text-[#E85D2A]">{item.budget}</p>
-              </div>
-            ))}
-          </div>
-        </article>
-      </section>
-
       <section className="mt-8 border border-[#12382F] bg-[#fffaf0] p-6">
         <h2 className="text-3xl font-black leading-none text-[#101820]">Pourquoi ce modèle ?</h2>
         <p className="mt-5 max-w-4xl text-sm font-semibold leading-6 text-[#12382F]">
-          Les entrepreneurs locaux ne veulent pas seulement des publications. Ils veulent une présence fiable, des
-          relances organisées, des actions mesurables et une personne responsable du suivi.
+          Les entrepreneurs locaux ne veulent pas seulement des publications. Ils veulent un parcours clair pour recevoir les demandes, une vision de ce qui se passe et une personne responsable du suivi.
         </p>
       </section>
 
@@ -183,6 +149,22 @@ export default function AbonnementPage() {
           ))}
         </div>
       </section>
+
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Link
+          href="/diagnostic-gratuit"
+          className="inline-flex items-center gap-2 border border-[#12382F] bg-[#E85D2A] px-5 py-3 text-sm font-black uppercase text-white shadow-[4px_4px_0_#12382F]"
+        >
+          Demander mon diagnostic gratuit
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+        <Link
+          href="/services"
+          className="inline-flex items-center gap-2 border border-[#12382F] bg-[#fffaf0] px-5 py-3 text-sm font-black uppercase text-[#12382F]"
+        >
+          Voir les services
+        </Link>
+      </div>
     </>
   );
 }

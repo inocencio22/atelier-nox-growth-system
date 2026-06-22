@@ -402,6 +402,20 @@ export default function DiagnosticForm({ status }: { status?: string }) {
           placeholder="+41 79 000 00 00"
           type="tel"
         />
+
+        <label className="grid gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/50">
+          Votre secteur
+          <select
+            className="border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold normal-case tracking-normal text-white outline-none focus:border-[#E85D2A]"
+            name="niche"
+            defaultValue="salon_coiffure"
+          >
+            <option value="salon_coiffure" className="bg-[#12382F]">Salon de coiffure / coiffeur</option>
+            <option value="tatoueur" className="bg-[#12382F]">Tatoueur / studio de tatouage</option>
+            <option value="restaurant_bar" className="bg-[#12382F]">Restaurant / bar / café</option>
+          </select>
+        </label>
+
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Ville" name="city" placeholder="Lausanne" defaultValue="Lausanne" />
           <Field label="Instagram" name="instagramHandle" placeholder="@monbusiness" />
@@ -428,7 +442,7 @@ export default function DiagnosticForm({ status }: { status?: string }) {
         </label>
 
         <button className="mt-1 flex w-full items-center justify-center gap-2 bg-[#E85D2A] px-4 py-4 text-sm font-black uppercase text-white transition hover:bg-[#d44e22]">
-          Demander le diagnostic
+          Demander mon diagnostic gratuit
           <ArrowRight className="h-4 w-4" />
         </button>
       </div>
