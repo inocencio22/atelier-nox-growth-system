@@ -67,6 +67,10 @@ Detalhes e estado de cada Gate → `docs/ai/GATES.md`.
 ## Regras de Git e produção
 - Nunca fazer commit/push/deploy sem autorização explícita de João.
 - Nunca executar `git reset`, `git clean`, `checkout`, `stash` sem autorização.
+- Nunca executar scripts de deploy locais (DEPLOY.bat ou similares): usam listas hardcoded e push directo para `main`.
+- Nunca apagar locks Git (`HEAD.lock`, `index.lock`, etc.) automaticamente.
+- Nunca manipular refs, commits ou objectos internos do Git com scripts manuais (Python plumbing, escrita directa em `.git/`).
+- Alterações de segurança ou infra: criar branch e worktree isolados; commit separado; aguardar merge por João.
 - Antes de qualquer commit: `git status --short` + `git diff --stat`.
 - Migrations numeradas sequencialmente; **criada ≠ aplicada** — distinguir sempre.
 - Local antes de remoto: testar localmente antes de qualquer operação em cloud.

@@ -29,6 +29,12 @@ supabase/.temp/
 /PUSH_INVITE_HANDLER.bat
 /push.vbs
 
+# Worktrees e outputs locais
+/worktrees/
+/mobile-screenshots/
+/mobile-prod/
+/manual-output/
+
 # Logs de execução locais
 /commit_log.txt
 /push_log.txt
