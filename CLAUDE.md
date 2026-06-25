@@ -21,6 +21,10 @@
 - **Não instalar** dependências sem aprovação explícita de João.
 - **Não fazer** commit, push, deploy, migration remota sem aprovação explícita.
 - **Não executar** `git reset`, `git clean`, `checkout`, `stash` sem autorização.
+- **Não executar scripts de deploy locais** (DEPLOY.bat ou similares) — contêm listas hardcoded e push directo para produção.
+- **Nunca apagar locks Git** (`HEAD.lock`, `index.lock`, etc.) — diagnosticar a causa primeiro.
+- **Nunca manipular refs, commits ou objectos Git directamente** (Python plumbing, escrita manual de ficheiros em `.git/`).
+- **Alterações de segurança ou infra** → criar branch e worktree isolados; nunca alterar directamente o working tree principal.
 - **Proteger isolamento** admin / cliente / visitante em cada alteração.
 - **Não avançar Gates** sem aprovação explícita de João.
 
