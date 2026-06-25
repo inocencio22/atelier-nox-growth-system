@@ -70,4 +70,4 @@ Ver `docs/ai/DECISIONS.md` para lista completa.
 Pendentes críticas:
 - Aplicar migration 016 localmente
 - Autorizar commit + push da branch `feature/gate-b1-conversion`
-- Aplicar migration 016 em produção 
+- Aplicar migration 016 em produção
