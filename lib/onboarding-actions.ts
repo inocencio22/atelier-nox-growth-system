@@ -4,16 +4,16 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 import { createAdminClient } from "@/lib/admin-client";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/supabase.types";
 import { formValue, onboardingSubmissionSchema } from "@/lib/form-schemas";
 import { generateSubmissionDiagnostic, getOnboardingSubmissionById, type OnboardingStatus } from "@/lib/onboarding";
-import { buildNewDemandeEmail, buildClientWelcomeEmail, sendEmail } from "@/lib/resend";
+import { buildNewDemandeEmail, sendEmail } from "@/lib/resend";
 
 type OnboardingInsert = Database["public"]["Tables"]["onboarding_submissions"]["Insert"];
 type OnboardingUpdate = Database["public"]["Tables"]["onboarding_submissions"]["Update"];
 type DiagnosticInsert = Database["public"]["Tables"]["diagnostics"]["Insert"];
-type ProposalInsert   = Database["public"]["Tables"]["proposals"]["Insert"];
-type BusinessInsert   = Database["public"]["Tables"]["businesses"]["Insert"];
+type ProposalInsert = Database["public"]["Tables"]["proposals"]["Insert"];
 type SupabaseWriteError = { code?: string; message?: string };
 
 type OnboardingInsertClient = {
@@ -34,31 +34,24 @@ type DiagnosticInsertClient = {
 type ProposalInsertClient = {
   insert: (value: ProposalInsert) => Promise<unknown>;
 };
-type BusinessInsertClient = {
-  insert: (value: BusinessInsert) => {
-    select: (columns: string) => {
-      single: () => Promise<{ data: { id: string } | null; error: unknown }>;
-    };
-  };
-};
 
 // ─────────────────────────────────────────────────────────────────
 // Create submission (public form)
 // ─────────────────────────────────────────────────────────────────
 export async function createOnboardingSubmission(formData: FormData) {
   const parsed = onboardingSubmissionSchema.safeParse({
-    businessName:    formValue(formData, "businessName"),
-    ownerEmail:      formValue(formData, "ownerEmail"),
-    ownerName:       formValue(formData, "ownerName"),
-    city:            formValue(formData, "city", "Lausanne"),
-    niche:           formValue(formData, "niche", "Coiffure"),
-    website:         formValue(formData, "website"),
+    businessName: formValue(formData, "businessName"),
+    ownerEmail: formValue(formData, "ownerEmail"),
+    ownerName: formValue(formData, "ownerName"),
+    city: formValue(formData, "city", "Lausanne"),
+    niche: formValue(formData, "niche", "Coiffure"),
+    website: formValue(formData, "website"),
     instagramHandle: formValue(formData, "instagramHandle"),
-    mainObjective:   formValue(formData, "mainObjective", "plus_clients"),
-    desiredPlan:     formValue(formData, "desiredPlan", "essentiel"),
-    notes:           formValue(formData, "notes"),
-    ownerPhone:      formValue(formData, "ownerPhone"),
-    returnPath:      formValue(formData, "returnPath", "/onboarding")
+    mainObjective: formValue(formData, "mainObjective", "plus_clients"),
+    desiredPlan: formValue(formData, "desiredPlan", "essentiel"),
+    notes: formValue(formData, "notes"),
+    ownerPhone: formValue(formData, "ownerPhone"),
+    returnPath: formValue(formData, "returnPath", "/onboarding")
   });
   const safeReturnPath = parsed.success ? parsed.data.returnPath : "/onboarding";
 
@@ -68,16 +61,16 @@ export async function createOnboardingSubmission(formData: FormData) {
 
   const phonePrefix = parsed.data.ownerPhone ? `📱 ${parsed.data.ownerPhone}\n\n` : "";
   const submission: OnboardingInsert = {
-    business_name:    parsed.data.businessName,
-    owner_email:      parsed.data.ownerEmail,
-    owner_name:       parsed.data.ownerName,
-    city:             parsed.data.city,
-    niche:            parsed.data.niche,
-    website:          parsed.data.website,
+    business_name: parsed.data.businessName,
+    owner_email: parsed.data.ownerEmail,
+    owner_name: parsed.data.ownerName,
+    city: parsed.data.city,
+    niche: parsed.data.niche,
+    website: parsed.data.website,
     instagram_handle: parsed.data.instagramHandle,
-    main_objective:   parsed.data.mainObjective,
-    desired_plan:     parsed.data.desiredPlan,
-    notes:            parsed.data.notes ? `${phonePrefix}${parsed.data.notes}` : (phonePrefix || null),
+    main_objective: parsed.data.mainObjective,
+    desired_plan: parsed.data.desiredPlan,
+    notes: parsed.data.notes ? `${phonePrefix}${parsed.data.notes}` : phonePrefix || null,
     status: "new"
   };
 
@@ -89,10 +82,14 @@ export async function createOnboardingSubmission(formData: FormData) {
 
   let insertError: SupabaseWriteError | null = null;
   try {
-    const result = await (supabase.from("onboarding_submissions") as unknown as OnboardingInsertClient).insert(submission);
+    const result = await (supabase.from("onboarding_submissions") as unknown as OnboardingInsertClient).insert(
+      submission
+    );
     insertError = result.error;
   } catch (error) {
-    console.error("[onboarding] Unexpected submission failure.", { name: error instanceof Error ? error.name : "unknown" });
+    console.error("[onboarding] Unexpected submission failure.", {
+      name: error instanceof Error ? error.name : "unknown"
+    });
     redirect(`${safeReturnPath}?status=error`);
   }
 
@@ -105,21 +102,21 @@ export async function createOnboardingSubmission(formData: FormData) {
 
   void sendEmail(
     buildNewDemandeEmail({
-      businessName:      parsed.data.businessName,
-      ownerEmail:        parsed.data.ownerEmail,
-      ownerPhone:        parsed.data.ownerPhone ?? null,
-      city:              parsed.data.city,
-      niche:             parsed.data.niche,
-      mainObjective:     parsed.data.mainObjective,
-      desiredPlan:       parsed.data.desiredPlan,
-      googleBusiness:    str("googleBusiness"),
-      placeRating:       str("placeRating"),
-      placeReviews:      str("placeReviews"),
-      placePhotos:       str("placePhotos"),
-      placeWebsite:      str("placeWebsite"),
-      placeAddress:      str("placeAddress"),
-      placePageSpeed:    str("placePageSpeed"),
-      placeTopCompetitor: str("placeTopCompetitor"),
+      businessName: parsed.data.businessName,
+      ownerEmail: parsed.data.ownerEmail,
+      ownerPhone: parsed.data.ownerPhone ?? null,
+      city: parsed.data.city,
+      niche: parsed.data.niche,
+      mainObjective: parsed.data.mainObjective,
+      desiredPlan: parsed.data.desiredPlan,
+      googleBusiness: str("googleBusiness"),
+      placeRating: str("placeRating"),
+      placeReviews: str("placeReviews"),
+      placePhotos: str("placePhotos"),
+      placeWebsite: str("placeWebsite"),
+      placeAddress: str("placeAddress"),
+      placePageSpeed: str("placePageSpeed"),
+      placeTopCompetitor: str("placeTopCompetitor")
     })
   );
 
@@ -130,7 +127,7 @@ export async function createOnboardingSubmission(formData: FormData) {
 // Update status
 // ─────────────────────────────────────────────────────────────────
 export async function updateOnboardingStatus(formData: FormData) {
-  const id     = String(formData.get("id") ?? "").trim();
+  const id = String(formData.get("id") ?? "").trim();
   const status = String(formData.get("status") ?? "").trim() as OnboardingStatus;
   const allowed: OnboardingStatus[] = ["new", "diagnostic_ready", "contacted", "won", "lost"];
 
@@ -165,12 +162,12 @@ export async function saveGeneratedDiagnostic(formData: FormData) {
 
   const diagnosticInsert: DiagnosticInsert = {
     onboarding_submission_id: id,
-    title:           generated.title,
-    score:           generated.score,
-    summary:         generated.summary,
-    strengths:       generated.strengths,
-    risks:           generated.risks,
-    actions:         generated.actions,
+    title: generated.title,
+    score: generated.score,
+    summary: generated.summary,
+    strengths: generated.strengths,
+    risks: generated.risks,
+    actions: generated.actions,
     outreach_script: generated.outreachScript
   };
 
@@ -182,10 +179,10 @@ export async function saveGeneratedDiagnostic(formData: FormData) {
   const proposalInsert: ProposalInsert = {
     onboarding_submission_id: id,
     diagnostic_id: data?.id ?? null,
-    title:   generated.suggestedProposal.title,
-    lead:    generated.suggestedProposal.lead,
-    price:   generated.suggestedProposal.price,
-    status:  "draft",
+    title: generated.suggestedProposal.title,
+    lead: generated.suggestedProposal.lead,
+    price: generated.suggestedProposal.price,
+    status: "draft",
     summary: generated.suggestedProposal.summary
   };
 
@@ -200,88 +197,97 @@ export async function saveGeneratedDiagnostic(formData: FormData) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Create client / business — with Supabase invite + welcome email
+// Convert demande → business (atomic RPC, no invite/email)
+//
+// Gate B1.1 only: creates business + updates 3 submission fields +
+// writes audit log — all inside ONE PostgreSQL transaction.
+// Invite and welcome email belong to Gate B1.2 (next gate).
 // ─────────────────────────────────────────────────────────────────
-export async function createClientBusinessFromSubmission(formData: FormData) {
-  const id   = String(formData.get("id") ?? "").trim();
-  const plan = String(formData.get("plan") ?? "essentiel").trim() as BusinessInsert["plan"];
+export async function convertToClient(formData: FormData) {
+  const id = String(formData.get("id") ?? "").trim();
+  const plan = String(formData.get("plan") ?? "essentiel").trim();
 
   if (!id) return;
 
+  // ── 1. Verify demo data guard ────────────────────────────────────
   const { submission, source } = await getOnboardingSubmissionById(id);
-
   if (!submission || source === "mock") {
-    // Cannot create a real client from demo data
     redirect(`/demandes/${id}?client=demo`);
   }
 
+  // ── 2. Verify admin session (server-side, uses user JWT) ─────────
+  //    The RPC itself re-checks is_admin() — this is a belt-and-suspenders
+  //    guard to catch auth issues before hitting the database.
   const admin = createAdminClient();
   if (!admin) {
-    // SUPABASE_SERVICE_ROLE_KEY not set in Vercel env vars
     redirect(`/demandes/${id}?client=nokey`);
   }
 
-  const allowedPlans: Array<BusinessInsert["plan"]> = ["essentiel", "growth", "pro_local", "partner"];
-  const safePlan = allowedPlans.includes(plan) ? plan : "essentiel";
+  const serverClient = await createSupabaseServerClient();
+  if (!serverClient) {
+    redirect(`/demandes/${id}?client=nokey`);
+  }
 
-  // 1. Create business record
-  const { data, error } = await (admin.from("businesses") as unknown as BusinessInsertClient)
-    .insert({
-      owner_email:      submission.ownerEmail,
-      name:             submission.businessName,
-      city:             submission.city,
-      niche:            submission.niche,
-      website:          submission.website,
-      instagram_handle: submission.instagramHandle,
-      plan:             safePlan,
-      status:           "trial"
-    })
-    .select("id")
-    .single();
+  const {
+    data: { user },
+    error: sessionError
+  } = await serverClient.auth.getUser();
+  if (sessionError || !user) {
+    redirect(`/login`);
+  }
 
-  if (error || !data?.id) {
-    console.error("[create-client] businesses insert failed:", error);
+  // ── 3. Validate plan ─────────────────────────────────────────────
+  const allowedPlans = ["essentiel", "growth", "pro_local", "partner"] as const;
+  type AllowedPlan = (typeof allowedPlans)[number];
+  const safePlan: AllowedPlan = (allowedPlans as readonly string[]).includes(plan)
+    ? (plan as AllowedPlan)
+    : "essentiel";
+
+  // ── 4. Call atomic RPC ────────────────────────────────────────────
+  //    Uses the server client (user JWT) so auth.uid() works inside
+  //    the SECURITY DEFINER function for the is_admin() check and
+  //    audit log actor_id.
+  type RpcArgs = { p_submission_id: string; p_plan: string };
+  type RpcResult = { ok: boolean; code: string; business_id?: string };
+
+  const { data: rpcResult, error: rpcError } = await (
+    serverClient.rpc as unknown as (
+      fn: string,
+      args: RpcArgs
+    ) => Promise<{ data: RpcResult | null; error: { message: string } | null }>
+  )("convert_onboarding_submission_to_business", {
+    p_submission_id: id,
+    p_plan: safePlan
+  });
+
+  if (rpcError) {
+    console.error("[convertToClient] RPC error:", rpcError.message);
     redirect(`/demandes/${id}?client=error`);
   }
 
-  const businessId = data.id;
+  const result = rpcResult ?? { ok: false, code: "error" };
 
-  // 2. Mark submission as won
-  const supabase = getSupabaseClient();
-  if (supabase && isSupabaseConfigured) {
-    await (supabase.from("onboarding_submissions") as unknown as OnboardingUpdateClient)
-      .update({ status: "won", updated_at: new Date().toISOString() })
-      .eq("id", id);
+  // ── 5. Interpret result codes ─────────────────────────────────────
+  switch (result.code) {
+    case "converted": {
+      const businessId = result.business_id ?? "";
+      revalidatePath("/clients");
+      revalidatePath("/demandes");
+      revalidatePath(`/demandes/${id}`);
+      redirect(`/clients/${businessId}`);
+    }
+    case "already_converted": {
+      const existingBusinessId = result.business_id ?? "";
+      redirect(`/demandes/${id}?client=already_converted&business_id=${existingBusinessId}`);
+    }
+    case "unauthorized":
+      redirect(`/demandes/${id}?client=unauthorized`);
+    case "not_found":
+      redirect(`/demandes/${id}?client=error`);
+    case "invalid_plan":
+      redirect(`/demandes/${id}?client=error`);
+    default:
+      console.error("[convertToClient] Unexpected RPC code:", result.code);
+      redirect(`/demandes/${id}?client=error`);
   }
-
-  // 3. Invite user via Supabase Auth (sends invite email with activation link)
-  // redirectTo must be in Supabase Dashboard → URL Configuration → Additional Redirect URLs
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://atelier-nox-growth-system.vercel.app";
-  let inviteOk = false;
-  try {
-    await admin.auth.admin.inviteUserByEmail(submission.ownerEmail, {
-      redirectTo: `${appUrl}/auth/invite-handler`
-    });
-    inviteOk = true;
-  } catch (inviteErr) {
-    // Non-blocking: log and continue (user may already exist)
-    console.warn("[create-client] inviteUserByEmail failed:", inviteErr);
-  }
-
-  // 4. Send custom welcome email via Resend (only after invite confirmed)
-  if (inviteOk) {
-    void sendEmail(
-      buildClientWelcomeEmail({
-        businessName: submission.businessName,
-              ownerEmail:   submission.ownerEmail,
-        plan:         safePlan as string,
-        portalUrl:    `${appUrl}/activation`
-      })
-    );
-  }
-
-  revalidatePath("/clients");
-  revalidatePath("/demandes");
-  revalidatePath(`/demandes/${id}`);
-  redirect(`/clients/${businessId}`);
 }
