@@ -5,7 +5,7 @@ import { CopyButton } from "@/components/CopyButton";
 import { PageHeader } from "@/components/PageHeader";
 import { ProposalPreview } from "@/components/ProposalPreview";
 import { StatusBadge } from "@/components/StatusBadge";
-import { createClientBusinessFromSubmission, saveGeneratedDiagnostic } from "@/lib/onboarding-actions";
+import { convertToClient, saveGeneratedDiagnostic } from "@/lib/onboarding-actions";
 import {
   formatDesiredPlan,
   formatObjective,
@@ -15,7 +15,7 @@ import {
 
 type DemandeDetailPageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ client?: string; saved?: string }>;
+  searchParams?: Promise<{ client?: string; saved?: string; business_id?: string }>;
 };
 
 export default async function DemandeDetailPage({ params, searchParams }: DemandeDetailPageProps) {
@@ -29,6 +29,14 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
 
   const diagnostic = generateSubmissionDiagnostic(submission);
   const isDemo = source === "mock";
+
+  // Server-side idempotency guard: if already converted, disable the form
+  const alreadyConverted = Boolean(
+    submission &&
+    (submission.status === "converted" ||
+      (submission as { convertedAt?: string | null }).convertedAt !== null ||
+      (submission as { convertedBusinessId?: string | null }).convertedBusinessId !== null)
+  );
 
   const phonePrefix = submission.notes?.match(/^📱\s*([^\n]+)/);
   const ownerPhoneClean = phonePrefix ? phonePrefix[1].trim() : null;
@@ -76,12 +84,10 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
       )}
       {query?.client === "nokey" && (
         <div className="mb-6 border-2 border-red-400 bg-red-50 p-4">
-          <p className="text-sm font-black uppercase text-red-900">
-            Cle manquante: SUPABASE_SERVICE_ROLE_KEY
-          </p>
+          <p className="text-sm font-black uppercase text-red-900">Cle manquante: SUPABASE_SERVICE_ROLE_KEY</p>
           <p className="mt-1 text-sm font-semibold text-red-800">
-            Allez dans Vercel / Settings / Environment Variables et ajoutez la variable SUPABASE_SERVICE_ROLE_KEY avec la cle de service de votre projet Supabase.
-            Puis redeploy.
+            Allez dans Vercel / Settings / Environment Variables et ajoutez la variable SUPABASE_SERVICE_ROLE_KEY avec
+            la cle de service de votre projet Supabase. Puis redeploy.
           </p>
         </div>
       )}
@@ -93,11 +99,32 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
           </p>
         </div>
       )}
+      {query?.client === "unauthorized" && (
+        <div className="mb-6 border-2 border-red-400 bg-red-50 p-4">
+          <p className="text-sm font-black uppercase text-red-900">Acces refuse</p>
+          <p className="mt-1 text-sm font-semibold text-red-800">
+            Seul un administrateur peut convertir une demande en client.
+          </p>
+        </div>
+      )}
+      {query?.client === "already_converted" && (
+        <div className="mb-6 border-2 border-blue-400 bg-blue-50 p-4">
+          <p className="text-sm font-black uppercase text-blue-900">Deja converti</p>
+          <p className="mt-1 text-sm font-semibold text-blue-800">
+            Cette demande a deja ete convertie en client.{" "}
+            {query.business_id && (
+              <Link href={`/clients/${query.business_id}`} className="underline hover:text-blue-900">
+                Voir le client existant
+              </Link>
+            )}
+          </p>
+        </div>
+      )}
       {query?.client === "ok" && (
         <div className="mb-6 border-2 border-green-400 bg-green-50 p-4">
           <p className="text-sm font-black uppercase text-green-900">Client cree avec succes</p>
           <p className="mt-1 text-sm font-semibold text-green-800">
-            Un email d&apos;invitation Supabase et un email de bienvenue ont ete envoyes au client.
+            Le business client a ete cree et la demande marquee comme convertie.
           </p>
         </div>
       )}
@@ -108,7 +135,9 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
             <div>
               <p className="text-xs font-black uppercase tracking-[0.14em] text-[#E85D2A]">Demande recue</p>
               <h2 className="mt-2 text-3xl font-black uppercase leading-none text-ink">{submission.businessName}</h2>
-              <p className="mt-3 text-sm font-black text-stone-600">{submission.city} · {submission.niche}</p>
+              <p className="mt-3 text-sm font-black text-stone-600">
+                {submission.city} · {submission.niche}
+              </p>
             </div>
             <StatusBadge status={submission.status} />
           </div>
@@ -198,17 +227,22 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
           <Database className="h-8 w-8 text-ink" />
           <h2 className="mt-4 text-4xl font-black uppercase leading-none text-ink">Convertir en client</h2>
           <p className="mt-4 text-sm font-semibold leading-6 text-ink">
-            Quand la demande est gagnee, creez le business client. Un email d&apos;invitation est envoye
-            automatiquement au client pour creer son acces au portail.
+            Quand la demande est gagnee, creez le business client. La conversion est atomique: le business, le statut et
+            le log d&apos;audit sont ecrits dans une seule transaction.
           </p>
           {isDemo && (
             <p className="mt-3 border border-amber-200 bg-amber-50 p-3 text-xs font-bold text-amber-800">
               Mode demo actif - le bouton est desactive. Connectez-vous avec un vrai compte Supabase.
             </p>
           )}
+          {alreadyConverted && !isDemo && (
+            <p className="mt-3 border border-blue-200 bg-blue-50 p-3 text-xs font-bold text-blue-800">
+              Cette demande a deja ete convertie en client.
+            </p>
+          )}
         </article>
 
-        <form action={createClientBusinessFromSubmission} className="border border-[#dedad2] bg-white p-5 shadow-sm">
+        <form action={convertToClient} className="border border-[#dedad2] bg-white p-5 shadow-sm">
           <input type="hidden" name="id" value={submission.id} />
           <h2 className="text-2xl font-black uppercase leading-none text-ink">Creation business</h2>
           <div className="mt-5 grid gap-3 md:grid-cols-2">
@@ -217,9 +251,10 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
             <label className="grid gap-1 text-xs font-black uppercase tracking-[0.08em] text-stone-600 md:col-span-2">
               Plan confirme
               <select
-                className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee]"
+                className="border border-[#dedad2] bg-[#f8f7f2] px-3 py-3 text-sm font-bold normal-case tracking-normal text-ink outline-none focus:bg-[#e8f5ee] disabled:cursor-not-allowed disabled:opacity-50"
                 name="plan"
                 defaultValue={submission.desiredPlan === "pas_encore" ? "essentiel" : submission.desiredPlan}
+                disabled={isDemo || alreadyConverted}
               >
                 <option value="essentiel">Local Clarity - CHF 190/mois</option>
                 <option value="growth">Managed Growth - CHF 390/mois</option>
@@ -230,11 +265,17 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
           </div>
           <button
             className="mt-5 w-full border border-[#dedad2] bg-ink px-4 py-3 text-sm font-black uppercase text-white hover:bg-[#0d1a14] disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={isDemo}
-            title={isDemo ? "Activez Supabase pour creer un client reel" : undefined}
+            disabled={isDemo || alreadyConverted}
+            title={
+              isDemo
+                ? "Activez Supabase pour creer un client reel"
+                : alreadyConverted
+                  ? "Cette demande a deja ete convertie"
+                  : undefined
+            }
             type="submit"
           >
-            Creer client / business
+            {alreadyConverted ? "Deja converti" : "Creer client / business"}
           </button>
         </form>
       </section>
@@ -242,17 +283,14 @@ export default async function DemandeDetailPage({ params, searchParams }: Demand
       <section className="border border-[#dedad2] bg-white p-5 shadow-sm">
         <h2 className="text-3xl font-black uppercase leading-none text-ink">Checklist avant proposition</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-4">
-          {[
-            "Verifier Instagram",
-            "Verifier site / reservation",
-            "Choisir le plan",
-            "Preparer appel de vente"
-          ].map((item) => (
-            <div key={item} className="flex items-start gap-2 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
-              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-green" />
-              <span className="text-sm font-black uppercase leading-5 text-ink">{item}</span>
-            </div>
-          ))}
+          {["Verifier Instagram", "Verifier site / reservation", "Choisir le plan", "Preparer appel de vente"].map(
+            (item) => (
+              <div key={item} className="flex items-start gap-2 border-2 border-[#e8e5dd] bg-[#f8f7f2] p-3">
+                <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-green" />
+                <span className="text-sm font-black uppercase leading-5 text-ink">{item}</span>
+              </div>
+            )
+          )}
         </div>
       </section>
     </>
@@ -265,7 +303,10 @@ function DiagnosticList({ title, items, accent }: { title: string; items: string
       <h3 className={`px-3 py-2 text-sm font-black uppercase tracking-[0.12em] text-ink ${accent}`}>{title}</h3>
       <ul className="space-y-2 p-3">
         {items.map((item) => (
-          <li key={item} className="border border-[#e8e5dd] bg-[#f8f7f2] px-3 py-2 text-sm font-bold leading-5 text-ink">
+          <li
+            key={item}
+            className="border border-[#e8e5dd] bg-[#f8f7f2] px-3 py-2 text-sm font-bold leading-5 text-ink"
+          >
             {item}
           </li>
         ))}

@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -39,15 +34,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          target_id: string | null
+          target_table: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_table: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_table?: string
+        }
+        Relationships: []
+      }
       businesses: {
         Row: {
+          auto_approve: boolean
           city: string
+          contract_signed: boolean
+          contract_signed_at: string | null
           created_at: string
           id: string
           instagram_handle: string | null
+          monthly_results: string | null
           name: string
           niche: string
           owner_email: string | null
+          owner_email_invite: string | null
           owner_id: string | null
           plan: string
           status: string
@@ -55,13 +85,18 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          auto_approve?: boolean
           city?: string
+          contract_signed?: boolean
+          contract_signed_at?: string | null
           created_at?: string
           id?: string
           instagram_handle?: string | null
+          monthly_results?: string | null
           name: string
           niche?: string
           owner_email?: string | null
+          owner_email_invite?: string | null
           owner_id?: string | null
           plan?: string
           status?: string
@@ -69,13 +104,18 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          auto_approve?: boolean
           city?: string
+          contract_signed?: boolean
+          contract_signed_at?: string | null
           created_at?: string
           id?: string
           instagram_handle?: string | null
+          monthly_results?: string | null
           name?: string
           niche?: string
           owner_email?: string | null
+          owner_email_invite?: string | null
           owner_id?: string | null
           plan?: string
           status?: string
@@ -340,56 +380,147 @@ export type Database = {
           },
         ]
       }
+      invoices: {
+        Row: {
+          amount_chf: number
+          client_email: string
+          client_name: string
+          created_at: string
+          demande_id: string | null
+          id: string
+          invoice_number: string
+          paid_at: string | null
+          plan: string
+          status: string
+        }
+        Insert: {
+          amount_chf: number
+          client_email: string
+          client_name: string
+          created_at?: string
+          demande_id?: string | null
+          id?: string
+          invoice_number: string
+          paid_at?: string | null
+          plan: string
+          status?: string
+        }
+        Update: {
+          amount_chf?: number
+          client_email?: string
+          client_name?: string
+          created_at?: string
+          demande_id?: string | null
+          id?: string
+          invoice_number?: string
+          paid_at?: string | null
+          plan?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_demande_id_fkey"
+            columns: ["demande_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       onboarding_submissions: {
         Row: {
+          activated_at: string | null
+          agreed_price: number | null
+          archived_at: string | null
           business_name: string
+          chosen_plan: string | null
           city: string
+          contract_accepted_at: string | null
+          converted_at: string | null
+          converted_business_id: string | null
           created_at: string
+          currency: string
           desired_plan: string
           id: string
           instagram_handle: string | null
+          last_contacted_at: string | null
+          last_invited_at: string | null
           main_objective: string
           niche: string
           notes: string | null
           owner_email: string
           owner_name: string | null
+          owner_phone: string | null
+          payment_confirmed_at: string | null
           status: string
           updated_at: string
           website: string | null
         }
         Insert: {
+          activated_at?: string | null
+          agreed_price?: number | null
+          archived_at?: string | null
           business_name: string
+          chosen_plan?: string | null
           city?: string
+          contract_accepted_at?: string | null
+          converted_at?: string | null
+          converted_business_id?: string | null
           created_at?: string
+          currency?: string
           desired_plan?: string
           id?: string
           instagram_handle?: string | null
+          last_contacted_at?: string | null
+          last_invited_at?: string | null
           main_objective?: string
           niche?: string
           notes?: string | null
           owner_email: string
           owner_name?: string | null
+          owner_phone?: string | null
+          payment_confirmed_at?: string | null
           status?: string
           updated_at?: string
           website?: string | null
         }
         Update: {
+          activated_at?: string | null
+          agreed_price?: number | null
+          archived_at?: string | null
           business_name?: string
+          chosen_plan?: string | null
           city?: string
+          contract_accepted_at?: string | null
+          converted_at?: string | null
+          converted_business_id?: string | null
           created_at?: string
+          currency?: string
           desired_plan?: string
           id?: string
           instagram_handle?: string | null
+          last_contacted_at?: string | null
+          last_invited_at?: string | null
           main_objective?: string
           niche?: string
           notes?: string | null
           owner_email?: string
           owner_name?: string | null
+          owner_phone?: string | null
+          payment_confirmed_at?: string | null
           status?: string
           updated_at?: string
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_submissions_converted_business_id_fkey"
+            columns: ["converted_business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -397,6 +528,7 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
+          phone: string | null
           role: string
           updated_at: string
         }
@@ -405,6 +537,7 @@ export type Database = {
           email: string
           full_name?: string | null
           id: string
+          phone?: string | null
           role?: string
           updated_at?: string
         }
@@ -413,6 +546,7 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
+          phone?: string | null
           role?: string
           updated_at?: string
         }
@@ -477,6 +611,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      convert_onboarding_submission_to_business: {
+        Args: { p_plan: string; p_submission_id: string }
+        Returns: Json
+      }
       current_user_role: { Args: never; Returns: string }
       is_admin: { Args: never; Returns: boolean }
     }
